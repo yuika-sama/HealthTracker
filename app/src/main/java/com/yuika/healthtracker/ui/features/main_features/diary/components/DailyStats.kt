@@ -1,0 +1,60 @@
+package com.yuika.healthtracker.ui.features.main_features.diary.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.ui.theme.Emerald
+import com.yuika.healthtracker.ui.theme.EnergyAmber
+
+@Composable
+fun DailyStats(
+    modifier: Modifier = Modifier,
+    eatenKcal: Int = 1250,
+    remainingKcal: Int = 750,
+    burnedKcal: Int = 320
+)
+{
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        StatItem(
+            modifier = Modifier.weight(1f),
+            label = "Eaten",
+            value = eatenKcal,
+            valueColor = MaterialTheme.colorScheme.secondary,
+            bgColor = MaterialTheme.colorScheme.background
+        )
+
+        StatItem(
+            modifier = Modifier.weight(1f),
+            label = "Remaining",
+            value = remainingKcal,
+            valueColor = MaterialTheme.colorScheme.onSecondary,
+            bgColor = MaterialTheme.colorScheme.secondary,
+            labelColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.8f)
+        )
+
+        StatItem(
+            modifier = Modifier.weight(1f),
+            label = "Burned",
+            value = burnedKcal,
+            valueColor = EnergyAmber,
+            bgColor = MaterialTheme.colorScheme.background
+        )
+    }
+}
