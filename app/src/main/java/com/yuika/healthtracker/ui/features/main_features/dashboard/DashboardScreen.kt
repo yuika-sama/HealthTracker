@@ -96,8 +96,8 @@ fun DashboardScreen(
                     title = "Intake",
                     value = "1,860",
                     icon = Icons.Outlined.LocalDining,
-                    iconTint = InfoBlue,
-                    iconBgColor = InfoBlue.copy(alpha = 0.15f)
+                    iconTint = MaterialTheme.colorScheme.tertiary,
+                    iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f)
                 )
                 
                 StatCard(
@@ -116,8 +116,8 @@ fun DashboardScreen(
                 title = "Net Balance",
                 value = "1,440",
                 icon = Icons.Outlined.Balance,
-                iconTint = Emerald,
-                iconBgColor = Emerald.copy(alpha = 0.15f)
+                iconTint = MaterialTheme.colorScheme.secondary,
+                iconBgColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f)
             )
             
             Spacer(modifier = Modifier.height(24.dp))
@@ -130,15 +130,15 @@ fun DashboardScreen(
                     .height(56.dp),
                 shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Emerald,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.background
                 )
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Thêm bữa ăn",
+                        text = "More meal",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
                     )
