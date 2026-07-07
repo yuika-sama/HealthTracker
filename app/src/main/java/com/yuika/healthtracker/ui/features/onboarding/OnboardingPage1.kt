@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.CalendarToday
@@ -19,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +34,6 @@ fun OnboardingPage1Screen() {
             .padding(24.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        // Top Step Indicator
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -130,8 +127,7 @@ fun OnboardingPage1Screen() {
         }
         
         Spacer(modifier = Modifier.height(16.dp))
-        
-        // Gender
+
         OnboardingField(
             icon = Icons.Default.People,
             label = "Gender"
@@ -186,8 +182,7 @@ fun OnboardingPage1Screen() {
         }
         
         Spacer(modifier = Modifier.height(24.dp))
-        
-        // Info Box
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -240,8 +235,7 @@ fun OnboardingPage1Screen() {
         }
         
         Spacer(modifier = Modifier.height(32.dp))
-        
-        // Buttons
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
