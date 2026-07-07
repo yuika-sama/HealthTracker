@@ -11,6 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage1Screen
+import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage2Screen
+import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage3Screen
+import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage4Screen
 import com.yuika.healthtracker.ui.features.register.RegisterScreen
 import com.yuika.healthtracker.ui.theme.HealthTrackerTheme
 
@@ -23,7 +27,7 @@ class MainActivity : ComponentActivity()
         setContent {
             HealthTrackerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RegisterScreen(modifier = Modifier.padding(innerPadding))
+                    OnboardingPage4Screen()
                 }
             }
         }
