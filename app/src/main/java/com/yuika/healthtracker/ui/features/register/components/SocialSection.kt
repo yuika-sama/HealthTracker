@@ -28,16 +28,16 @@ fun SocialSection(
 {
     val spacing = LocalSpacing.current
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             HorizontalDivider(
-                modifier.weight(1f),
-                DividerDefaults.Thickness,
-                DividerDefaults.color
+                modifier = Modifier.weight(1f),
+                thickness = DividerDefaults.Thickness,
+                color = DividerDefaults.color
             )
             Text(
                 text = "OR",
@@ -46,9 +46,9 @@ fun SocialSection(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             HorizontalDivider(
-                modifier.weight(1f),
-                DividerDefaults.Thickness,
-                DividerDefaults.color
+                modifier = Modifier.weight(1f),
+                thickness = DividerDefaults.Thickness,
+                color = DividerDefaults.color
             )
         }
         Spacer(modifier = Modifier.height(spacing.large))

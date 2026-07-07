@@ -1,7 +1,5 @@
 package com.yuika.healthtracker.ui.core.components
 
-import android.R
-import android.graphics.Outline
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,8 +10,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.Placeholder
-import androidx.room.util.TableInfo
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
@@ -26,10 +22,10 @@ fun LabeledField(
 ){
     val spacing = LocalSpacing.current
 
-    Column{
+    Column {
         Text(
-            text =  label,
-            style  = MaterialTheme.typography.bodyLarge,
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
 
@@ -44,7 +40,7 @@ fun LabeledField(
             placeholder = {
                 Text(text = placeholder)
             },
-            leadingIcon =  leadingIcon,
+            leadingIcon = leadingIcon,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,

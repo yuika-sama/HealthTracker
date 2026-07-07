@@ -6,6 +6,17 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+configurations.configureEach {
+    resolutionStrategy.force(
+        "androidx.core:core:1.18.0",
+        "androidx.core:core-ktx:1.18.0",
+        "org.jetbrains.kotlin:kotlin-stdlib:2.2.20",
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.20",
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.20",
+        "org.jetbrains.kotlin:kotlin-stdlib-common:2.2.20"
+    )
+}
+
 android {
     namespace = "com.yuika.healthtracker"
     compileSdk {
@@ -44,7 +55,6 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
@@ -66,23 +76,14 @@ dependencies {
     // hilt / dagger
     implementation("com.google.dagger:hilt-android:2.60")
     ksp("com.google.dagger:hilt-compiler:2.60")
-    implementation("androidx.hilt:hilt-navigation-compose:1.4.0")
 
     // icon extended
     implementation("androidx.compose.material:material-icons-extended")
-
-    // navigation compose
-    implementation("androidx.navigation:navigation-compose:2.9.8")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
 
     // room db
     implementation("androidx.room:room-runtime:2.8.4")
     implementation("androidx.room:room-ktx:2.8.4")
     ksp("androidx.room:room-compiler:2.8.4")
-
-    // lifecycle compose
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
 
     // coroutine kotlin
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
