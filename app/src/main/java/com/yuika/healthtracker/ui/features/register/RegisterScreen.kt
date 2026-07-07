@@ -17,11 +17,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.ui.features.register.components.LoginFooter
 import com.yuika.healthtracker.ui.features.register.components.RegisterForm
 import com.yuika.healthtracker.ui.features.register.components.RegisterHeader
-import com.yuika.healthtracker.ui.features.register.components.SocialSection
+import com.yuika.healthtracker.ui.features.login.components.SocialSection
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
@@ -82,11 +81,6 @@ fun RegisterScreen(
             )
 
             Spacer(modifier.height(spacing.large))
-
-            SocialSection(
-                onGoogleClick = onGoogleClick,
-                onFacebookClick = onFacebookClick
-            )
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 

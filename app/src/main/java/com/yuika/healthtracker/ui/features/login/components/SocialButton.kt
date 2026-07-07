@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.register.components
+package com.yuika.healthtracker.ui.features.login.components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height

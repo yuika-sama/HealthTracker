@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.register.components
+package com.yuika.healthtracker.ui.features.login.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Facebook
-import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
@@ -61,7 +63,7 @@ fun SocialSection(
                 modifier = Modifier.weight(1f),
                 text = "Google",
                 onClick = onGoogleClick,
-                icon = Icons.Default.MarkEmailRead //Google
+                icon = ImageVector.vectorResource(id = R.drawable.ic_google_custom)
             )
             SocialButton(
                 modifier = Modifier.weight(1f),
