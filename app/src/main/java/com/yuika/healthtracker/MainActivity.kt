@@ -15,7 +15,7 @@ import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage1Screen
 import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage2Screen
 import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage3Screen
 import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage4Screen
-import com.yuika.healthtracker.ui.features.register.RegisterScreen
+import com.yuika.healthtracker.ui.features.auth.register.RegisterScreen
 import com.yuika.healthtracker.ui.theme.HealthTrackerTheme
 
 class MainActivity : ComponentActivity()
