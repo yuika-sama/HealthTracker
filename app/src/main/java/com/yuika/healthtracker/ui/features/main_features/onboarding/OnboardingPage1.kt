@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.onboarding
+package com.yuika.healthtracker.ui.features.main_features.onboarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,8 +22,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.ui.features.main_features.onboarding.components.BasicInputField
+import com.yuika.healthtracker.ui.features.main_features.onboarding.components.BasicInputFieldWithSuffix
+import com.yuika.healthtracker.ui.features.main_features.onboarding.components.OnboardingField
 import com.yuika.healthtracker.ui.theme.*
-import com.yuika.healthtracker.ui.features.onboarding.components.*
 
 @Composable
 fun OnboardingPage1Screen() {
@@ -98,7 +100,7 @@ fun OnboardingPage1Screen() {
         }
         
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         OnboardingField(
             icon = Icons.Outlined.CalendarToday,
             label = "Date of Birth"
@@ -113,7 +115,7 @@ fun OnboardingPage1Screen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "mm/dd/yyyy", 
+                    text = "mm/dd/yyyy",
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                     style = MaterialTheme.typography.bodyLarge
                 )
@@ -155,7 +157,10 @@ fun OnboardingPage1Screen() {
                     ) {
                         Text(
                             text = gender,
-                            color = if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                            color = if (isSelected) MaterialTheme.colorScheme.secondary
+                            else MaterialTheme.colorScheme.onBackground.copy(
+                                alpha = 0.8f
+                            ),
                             fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -170,13 +175,21 @@ fun OnboardingPage1Screen() {
             Box(modifier = Modifier.weight(1f)) {
                 OnboardingField(icon = Icons.Default.MonitorWeight, label = "Weight") {
                     var weight by remember { mutableStateOf("70") }
-                    BasicInputFieldWithSuffix(value = weight, onValueChange = { weight = it }, suffix = "kg")
+                    BasicInputFieldWithSuffix(
+                        value = weight,
+                        onValueChange = { weight = it },
+                        suffix = "kg"
+                    )
                 }
             }
             Box(modifier = Modifier.weight(1f)) {
                 OnboardingField(icon = Icons.Default.Height, label = "Height") {
                     var height by remember { mutableStateOf("175") }
-                    BasicInputFieldWithSuffix(value = height, onValueChange = { height = it }, suffix = "cm")
+                    BasicInputFieldWithSuffix(
+                        value = height,
+                        onValueChange = { height = it },
+                        suffix = "cm"
+                    )
                 }
             }
         }
