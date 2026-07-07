@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.main_features.onboarding
+package com.yuika.healthtracker.ui.features.onboarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,16 +19,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.yuika.healthtracker.ui.features.main_features.onboarding.components.MacroCard
-import com.yuika.healthtracker.ui.features.main_features.onboarding.components.NutritionCard
-import com.yuika.healthtracker.ui.features.main_features.onboarding.components.TargetOverviewCard
+import com.yuika.healthtracker.ui.features.onboarding.components.MacroCard
+import com.yuika.healthtracker.ui.features.onboarding.components.NutritionCard
+import com.yuika.healthtracker.ui.features.onboarding.components.TargetOverviewCard
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.EnergyAmber
 import com.yuika.healthtracker.ui.theme.InfoBlue
@@ -263,7 +262,7 @@ fun OnboardingPage4Screen(
                 )
                 Text(
                     text = "\"Every great journey begins with a single, calculated step.\"",
-                    style = MaterialTheme.typography.titleMedium.copy(fontStyle = FontStyle.Italic),
+                    style = MaterialTheme.typography.titleMedium.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
                     color = Color.White,
                     modifier = Modifier.padding(20.dp)
                 )

@@ -1,10 +1,13 @@
-package com.yuika.healthtracker.ui.features.main_features.onboarding.components
+package com.yuika.healthtracker.ui.features.onboarding.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun GoalCard(
+fun ActivityLevelCard(
     icon: ImageVector,
     title: String,
     description: String,
@@ -37,9 +40,9 @@ fun GoalCard(
             .background(backgroundColor)
             .clickable { onClick() }
             .padding(16.dp),
-        verticalAlignment = Alignment.Top
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        // Icon container
+
         Box(
             modifier = Modifier
                 .size(48.dp)
@@ -50,7 +53,7 @@ fun GoalCard(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (isSelected) Color.White else MaterialTheme.colorScheme.secondary,
+                tint = if (isSelected) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -63,16 +66,34 @@ fun GoalCard(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                lineHeight = 20.sp
+                fontSize = 13.sp
+            )
+        }
+        
+        Spacer(modifier = Modifier.width(16.dp))
+
+        if (isSelected) {
+            Icon(
+                imageVector = Icons.Filled.CheckCircle,
+                contentDescription = "Selected",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(24.dp)
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Outlined.Circle,
+                contentDescription = "Not selected",
+                tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                modifier = Modifier.size(24.dp)
             )
         }
     }

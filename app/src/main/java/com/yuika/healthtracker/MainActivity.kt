@@ -5,9 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.yuika.healthtracker.ui.features.main_features.onboarding.OnboardingPage4Screen
+import androidx.compose.ui.tooling.preview.Preview
+import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage1Screen
+import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage2Screen
+import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage3Screen
+import com.yuika.healthtracker.ui.features.onboarding.OnboardingPage4Screen
+import com.yuika.healthtracker.ui.features.auth.register.RegisterScreen
 import com.yuika.healthtracker.ui.theme.HealthTrackerTheme
 
 class MainActivity : ComponentActivity()

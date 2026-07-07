@@ -1,5 +1,6 @@
-package com.yuika.healthtracker.ui.features.main_features.onboarding
+package com.yuika.healthtracker.ui.features.onboarding
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -23,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.yuika.healthtracker.ui.features.main_features.onboarding.components.GoalCard
+import com.yuika.healthtracker.ui.features.onboarding.components.GoalCard
 
 data class HealthGoalOption(
     val id: String,
