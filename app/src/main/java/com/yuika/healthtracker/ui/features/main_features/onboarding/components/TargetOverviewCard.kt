@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.onboarding.components
+package com.yuika.healthtracker.ui.features.main_features.onboarding.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
