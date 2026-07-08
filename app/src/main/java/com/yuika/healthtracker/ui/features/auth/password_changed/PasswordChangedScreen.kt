@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.auth.passwordchanged
+package com.yuika.healthtracker.ui.features.auth.password_changed
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yuika.healthtracker.ui.features.auth.passwordchanged.components.PasswordChangedHeader
+import com.yuika.healthtracker.ui.features.auth.password_changed.components.PasswordChangedHeader
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable

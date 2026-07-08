@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.auth.passwordchanged.components
+package com.yuika.healthtracker.ui.features.auth.password_changed.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

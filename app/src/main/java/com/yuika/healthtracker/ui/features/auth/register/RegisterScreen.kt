@@ -27,8 +27,6 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 fun RegisterScreen(
     modifier: Modifier = Modifier,
     onCreateAccountClick: () -> Unit = {},
-    onGoogleClick: () -> Unit = {},
-    onFacebookClick: () -> Unit = {},
     onLoginClick: () -> Unit = {},
 )
 {
