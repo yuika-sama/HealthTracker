@@ -1,0 +1,15 @@
+package com.yuika.healthtracker.ui.features.auth.login
+
+import com.yuika.healthtracker.ui.core.base.UiState
+
+data class LoginUiState(
+    val email: String = "",
+    val password: String = "",
+    val emailErrorMessage: String? = null,
+    val passwordErrorMessage: String? = null,
+    val errorMessage: String? = null,
+    val isShowPassword: Boolean = false,
+    val isRememberAccount: Boolean = false,
+    val oauthErrorMessage: String? = null,
+    val isLoading: Boolean = false
+) : UiState

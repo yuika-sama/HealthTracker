@@ -25,11 +25,10 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onLoginClick: () -> Unit = {},
-    onGoogleClick: () -> Unit = {},
-    onFacebookClick: () -> Unit = {},
-    onRegisterClick: () -> Unit = {},
-    onForgotPasswordClick: () -> Unit = {},
+    viewModel: LoginViewModel? = null,
+    onNavigateToClientPage: () -> Unit = {},
+    onNavigateToRegister: () -> Unit = {},
+    onNavigateToForgotPassword: () -> Unit = {}
 ){
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
@@ -60,16 +59,19 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 
             LoginForm(
-                onLoginClick = onLoginClick,
-                onForgotPasswordClick = onForgotPasswordClick
+                onLoginClick = {
+                    viewModel?.onIntent(LoginUiIntent.LoginClick)
+                    onNavigateToClientPage()
+                },
+                onForgotPasswordClick = onNavigateToForgotPassword
             )
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 
             LoginFooter(
-                onGoogleClick = onGoogleClick,
-                onFacebookClick = onFacebookClick,
-                onRegisterClick = onRegisterClick
+                onGoogleClick = onNavigateToClientPage,
+                onFacebookClick = onNavigateToClientPage,
+                onRegisterClick = onNavigateToRegister
             )
         }
     }
