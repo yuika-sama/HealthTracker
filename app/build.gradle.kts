@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
@@ -20,7 +21,7 @@ configurations.configureEach {
 android {
     namespace = "com.yuika.healthtracker"
     compileSdk {
-        version = release(36) {
+        version = release(37) {
             minorApiLevel = 1
         }
     }
@@ -61,7 +62,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.navigation.common.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,6 +77,7 @@ dependencies {
     // hilt / dagger
     implementation("com.google.dagger:hilt-android:2.60")
     ksp("com.google.dagger:hilt-compiler:2.60")
+    implementation("androidx.hilt:hilt-navigation-compose:1.4.0")
 
     // icon extended
     implementation("androidx.compose.material:material-icons-extended")
@@ -98,4 +99,12 @@ dependencies {
     // widget
     implementation("androidx.glance:glance-appwidget:1.1.1")
     implementation("androidx.glance:glance-material3:1.1.1")
+
+    // navigation & serialization
+    implementation("androidx.navigation:navigation-compose:2.9.8")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+
+    // lifecycle
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
 }
