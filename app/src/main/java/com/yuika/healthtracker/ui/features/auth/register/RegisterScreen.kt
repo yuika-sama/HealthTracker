@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.core.components.ClickableTextLink
@@ -29,8 +30,8 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
-    onCreateAccountClick: () -> Unit = {},
-    onLoginClick: () -> Unit = {},
+    onNavigateToVerifyOtp: (String) -> Unit = {},
+    onNavigateToLogin: () -> Unit = {},
 )
 {
     val spacing = LocalSpacing.current
@@ -85,7 +86,7 @@ fun RegisterScreen(
                 onConfirmPasswordVisibleChange = { confirmPasswordVisible = it },
                 agreedToTerms = agreedToTerms,
                 onAgreedToTermsChange = { agreedToTerms = it },
-                onCreateAccountClick = onCreateAccountClick
+                onCreateAccountClick = { onNavigateToVerifyOtp(email) }
             )
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))
@@ -93,7 +94,7 @@ fun RegisterScreen(
             ClickableTextLink(
                 descriptionText = "Already have an account? ",
                 linkText = "Log in",
-                onClick = onLoginClick
+                onClick = onNavigateToLogin
             )
 
             Spacer(modifier = Modifier.height(spacing.small))
