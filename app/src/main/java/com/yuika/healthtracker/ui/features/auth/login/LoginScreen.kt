@@ -13,9 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.features.auth.login.components.LoginFooter
 import com.yuika.healthtracker.ui.features.auth.login.components.LoginForm
-import com.yuika.healthtracker.ui.features.auth.login.components.LoginHeader
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
@@ -44,7 +48,14 @@ fun LoginScreen(
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            LoginHeader()
+            AuthHeader(
+                title = "Welcome Back",
+                subtitle = "Sign in to continue your progress.",
+                icon = Icons.Outlined.FavoriteBorder,
+                iconShape = RoundedCornerShape(24.dp),
+                iconContainerSize = 104.dp,
+                iconSize = 48.dp
+            )
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 

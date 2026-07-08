@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yuika.healthtracker.ui.features.main_features.diary.components.StatItem
+import com.yuika.healthtracker.ui.core.components.StatCard
 import com.yuika.healthtracker.ui.theme.Emerald
 
 @Composable
@@ -119,9 +119,17 @@ fun ProfileHeaderCard(
         // Stats Row
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            StatItem(label = "WEIGHT", value = weight, valueColor = MaterialTheme.colorScheme.onBackground)
+            StatCard(
+                title = "WEIGHT",
+                value = weight,
+                unit = null,
+                valueColor = MaterialTheme.colorScheme.onBackground,
+                labelColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                showContainer = false
+            )
 
             HorizontalDivider(
                 modifier = Modifier
@@ -131,7 +139,14 @@ fun ProfileHeaderCard(
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
             )
             
-            StatItem(label = "HEIGHT", value = height, valueColor = MaterialTheme.colorScheme.onBackground)
+            StatCard(
+                title = "HEIGHT",
+                value = height,
+                unit = null,
+                valueColor = MaterialTheme.colorScheme.onBackground,
+                labelColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                showContainer = false
+            )
 
             HorizontalDivider(
                 modifier = Modifier
@@ -141,7 +156,14 @@ fun ProfileHeaderCard(
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
             )
 
-            StatItem(label = "BMI", value = bmi, valueColor = MaterialTheme.colorScheme.secondary)
+            StatCard(
+                title = "BMI",
+                value = bmi,
+                unit = null,
+                valueColor = MaterialTheme.colorScheme.secondary,
+                labelColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                showContainer = false
+            )
         }
     }
 }

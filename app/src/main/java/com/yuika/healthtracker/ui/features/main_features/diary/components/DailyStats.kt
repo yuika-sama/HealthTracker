@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.ui.core.components.StatCard
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.EnergyAmber
 
@@ -32,29 +33,32 @@ fun DailyStats(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        StatItem(
+        StatCard(
             modifier = Modifier.weight(1f),
-            label = "Eaten",
-            value = eatenKcal,
+            title = "Eaten",
+            value = eatenKcal.toString(),
             valueColor = MaterialTheme.colorScheme.secondary,
-            bgColor = MaterialTheme.colorScheme.background
+            bgColor = MaterialTheme.colorScheme.background,
+            horizontalAlignment = Alignment.CenterHorizontally
         )
 
-        StatItem(
+        StatCard(
             modifier = Modifier.weight(1f),
-            label = "Remaining",
-            value = remainingKcal,
+            title = "Remaining",
+            value = remainingKcal.toString(),
             valueColor = MaterialTheme.colorScheme.onSecondary,
             bgColor = MaterialTheme.colorScheme.secondary,
-            labelColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.8f)
+            labelColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.8f),
+            horizontalAlignment = Alignment.CenterHorizontally
         )
 
-        StatItem(
+        StatCard(
             modifier = Modifier.weight(1f),
-            label = "Burned",
-            value = burnedKcal,
+            title = "Burned",
+            value = burnedKcal.toString(),
             valueColor = EnergyAmber,
-            bgColor = MaterialTheme.colorScheme.background
+            bgColor = MaterialTheme.colorScheme.background,
+            horizontalAlignment = Alignment.CenterHorizontally
         )
     }
 }

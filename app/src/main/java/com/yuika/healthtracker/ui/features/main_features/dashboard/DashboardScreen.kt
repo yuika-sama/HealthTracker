@@ -38,7 +38,7 @@ import com.yuika.healthtracker.ui.features.main_features.dashboard.components.Da
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.InfoBanner
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.StatCard
+import com.yuika.healthtracker.ui.core.components.StatCard
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.EnergyAmber
 import com.yuika.healthtracker.ui.theme.InfoBlue

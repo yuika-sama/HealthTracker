@@ -1,7 +1,9 @@
-package com.yuika.healthtracker.ui.features.auth.register.components
+package com.yuika.healthtracker.ui.core.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,23 +12,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
-fun LoginFooter(
+fun ClickableTextLink(
     modifier: Modifier = Modifier,
-    onLoginClick: () -> Unit
+    descriptionText: String,
+    linkText: String,
+    onClick: () -> Unit
 ) {
     Row(
-        modifier = modifier.clickable { onLoginClick() },
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Already have an account? ",
+            text = descriptionText,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
-            text = "Log in",
+            text = linkText,
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.clickable { onClick() }
         )
     }
 }

@@ -21,7 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yuika.healthtracker.ui.features.auth.password_changed.components.PasswordChangedHeader
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircle
+import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
@@ -56,7 +58,11 @@ fun PasswordChangedScreen(
                         .padding(horizontal = spacing.large, vertical = 32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    PasswordChangedHeader()
+                    AuthHeader(
+                        title = "Password Changed!",
+                        subtitle = "Your password has been successfully reset. You can now login with your new credentials.",
+                        icon = Icons.Outlined.CheckCircle
+                    )
                     
                     Spacer(modifier = Modifier.height(32.dp))
                     

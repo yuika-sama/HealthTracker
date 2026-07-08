@@ -37,6 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.ui.theme.Emerald
+import com.yuika.healthtracker.ui.core.components.SegmentedSelector
+import com.yuika.healthtracker.ui.core.components.OutlinedDropdownField
 
 @Composable
 fun UpdateProfileForm(
@@ -90,32 +92,11 @@ fun UpdateProfileForm(
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
-            ) {
-                listOf("Male", "Female").forEach { option ->
-                    val isSelected = gender == option
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .height(48.dp)
-                            .background(if (isSelected) MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f) else Color.Transparent)
-                            .clickable { gender = option },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = option,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                            color = if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-            }
+            SegmentedSelector(
+                options = listOf("Male", "Female"),
+                selectedOption = gender,
+                onOptionSelected = { gender = it }
+            )
         }
 
         Row(
@@ -185,39 +166,12 @@ fun UpdateProfileForm(
             }
         }
 
-        Box(modifier = Modifier.fillMaxWidth()) {
-            OutlinedTextField(
-                value = goal,
-                onValueChange = { },
-                label = { Text("Goal") },
-                modifier = Modifier.fillMaxWidth(),
-                readOnly = true,
-                colors = textFieldColors()
-            )
-
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(Color.Transparent)
-                    .clickable { goalExpanded = true }
-            )
-            
-            DropdownMenu(
-                expanded = goalExpanded,
-                onDismissRequest = { goalExpanded = false },
-                modifier = Modifier.fillMaxWidth(0.85f)
-            ) {
-                goals.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            goal = option
-                            goalExpanded = false
-                        }
-                    )
-                }
-            }
-        }
+        OutlinedDropdownField(
+            label = "Goal",
+            selectedOption = goal,
+            options = goals,
+            onOptionSelected = { goal = it }
+        )
     }
 }
 

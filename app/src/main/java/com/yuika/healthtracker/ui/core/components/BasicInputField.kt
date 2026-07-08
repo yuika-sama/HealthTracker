@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.main_features.onboarding.components
+package com.yuika.healthtracker.ui.core.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,13 +17,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BasicInputFieldWithSuffix(
+fun BasicInputField(
     value: String,
     onValueChange: (String) -> Unit,
-    suffix: String
+    modifier: Modifier = Modifier,
+    suffix: String? = null
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.surface)
@@ -40,11 +41,13 @@ fun BasicInputFieldWithSuffix(
             singleLine = true,
             modifier = Modifier.weight(1f)
         )
-        Text(
-            text = suffix,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Bold
-        )
+        if (suffix != null) {
+            Text(
+                text = suffix,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }

@@ -17,10 +17,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.yuika.healthtracker.ui.features.auth.register.components.LoginFooter
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.ui.core.components.AuthHeader
+import com.yuika.healthtracker.ui.core.components.ClickableTextLink
 import com.yuika.healthtracker.ui.features.auth.register.components.RegisterForm
-import com.yuika.healthtracker.ui.features.auth.register.components.RegisterHeader
-import com.yuika.healthtracker.ui.features.auth.login.components.SocialSection
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
@@ -56,7 +59,14 @@ fun RegisterScreen(
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            RegisterHeader()
+            AuthHeader(
+                title = "Create Account",
+                subtitle = "Sign up to start your progress.",
+                icon = Icons.Outlined.FavoriteBorder,
+                iconShape = RoundedCornerShape(24.dp),
+                iconContainerSize = 104.dp,
+                iconSize = 48.dp
+            )
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 
@@ -78,12 +88,12 @@ fun RegisterScreen(
                 onCreateAccountClick = onCreateAccountClick
             )
 
-            Spacer(modifier.height(spacing.large))
-
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 
-            LoginFooter(
-                onLoginClick = onLoginClick
+            ClickableTextLink(
+                descriptionText = "Already have an account? ",
+                linkText = "Log in",
+                onClick = onLoginClick
             )
 
             Spacer(modifier = Modifier.height(spacing.small))

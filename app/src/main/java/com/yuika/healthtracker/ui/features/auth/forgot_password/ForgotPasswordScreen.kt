@@ -18,9 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.LockReset
+import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.features.auth.forgot_password.components.ForgotPasswordFooter
 import com.yuika.healthtracker.ui.features.auth.forgot_password.components.ForgotPasswordForm
-import com.yuika.healthtracker.ui.features.auth.forgot_password.components.ForgotPasswordHeader
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
@@ -58,7 +60,11 @@ fun ForgotPasswordScreen(
                         .padding(horizontal = spacing.large, vertical = 32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ForgotPasswordHeader()
+                    AuthHeader(
+                        title = "Forgot Password?",
+                        subtitle = "Enter your email address and we'll send you an OTP code to reset your password.",
+                        icon = Icons.Outlined.LockReset
+                    )
                     
                     Spacer(modifier = Modifier.height(32.dp))
 

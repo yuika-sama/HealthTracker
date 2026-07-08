@@ -12,9 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.glance.layout.Column
-import androidx.glance.layout.Row
-import androidx.glance.layout.Spacer
+import com.yuika.healthtracker.ui.core.components.ClickableTextLink
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
@@ -37,22 +35,10 @@ fun LoginFooter(
 
         Spacer(modifier = Modifier.height(spacing.extraLarge))
 
-        Row(
-            modifier  = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Don't have an account? ",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                modifier = Modifier.clickable{onRegisterClick()},
-                text = "Register",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
+        ClickableTextLink(
+            descriptionText = "Don't have an account? ",
+            linkText = "Register",
+            onClick = onRegisterClick
+        )
     }
 }

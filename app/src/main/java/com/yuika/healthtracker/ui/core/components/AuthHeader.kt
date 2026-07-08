@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.auth.password_changed.components
+package com.yuika.healthtracker.ui.core.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -15,14 +13,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
-fun PasswordChangedHeader(
-    modifier: Modifier = Modifier
+fun AuthHeader(
+    modifier: Modifier = Modifier,
+    title: String,
+    icon: ImageVector,
+    iconShape: Shape = CircleShape,
+    iconContainerSize: Dp = 72.dp,
+    iconSize: Dp = 36.dp,
+    subtitle: String? = null,
+    subtitleContent: @Composable (() -> Unit)? = null
 ) {
     val spacing = LocalSpacing.current
 
@@ -31,25 +39,25 @@ fun PasswordChangedHeader(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Surface(
-            modifier = Modifier.size(72.dp),
-            shape = CircleShape,
+            modifier = Modifier.size(iconContainerSize),
+            shape = iconShape,
             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
             tonalElevation = 0.dp
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
-                    imageVector = Icons.Outlined.CheckCircle,
+                    imageVector = icon,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(iconSize)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(spacing.medium))
+        Spacer(modifier = Modifier.height(spacing.large))
 
         Text(
-            text = "Password Changed!",
+            text = title,
             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
@@ -57,11 +65,15 @@ fun PasswordChangedHeader(
 
         Spacer(modifier = Modifier.height(spacing.small))
 
-        Text(
-            text = "Your password has been successfully reset. You can now login with your new credentials.",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
+        if (subtitleContent != null) {
+            subtitleContent()
+        } else if (subtitle != null) {
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }

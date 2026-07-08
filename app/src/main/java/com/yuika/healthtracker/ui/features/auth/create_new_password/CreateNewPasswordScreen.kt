@@ -25,8 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.outlined.LockReset
+import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.features.auth.create_new_password.components.CreateNewPasswordForm
-import com.yuika.healthtracker.ui.features.auth.create_new_password.components.CreateNewPasswordHeader
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,7 +92,14 @@ fun CreateNewPasswordScreen(
                         .fillMaxWidth()
                         .padding(spacing.large)
                 ) {
-                   CreateNewPasswordHeader()
+                    AuthHeader(
+                        title = "Create New Password",
+                        subtitle = "Your new password must be different from previously used passwords.",
+                        icon = Icons.Outlined.LockReset,
+                        iconShape = RoundedCornerShape(16.dp),
+                        iconContainerSize = 56.dp,
+                        iconSize = 28.dp
+                    )
                     
                     Box(modifier = Modifier.padding(top = 32.dp)) {
                         CreateNewPasswordForm(

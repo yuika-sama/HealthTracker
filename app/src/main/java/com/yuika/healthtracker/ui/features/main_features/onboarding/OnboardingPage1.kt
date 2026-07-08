@@ -22,8 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yuika.healthtracker.ui.features.main_features.onboarding.components.BasicInputField
-import com.yuika.healthtracker.ui.features.main_features.onboarding.components.BasicInputFieldWithSuffix
+import com.yuika.healthtracker.ui.core.components.BasicInputField
+import com.yuika.healthtracker.ui.core.components.SegmentedSelector
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.OnboardingField
 import com.yuika.healthtracker.ui.theme.*
 
@@ -134,39 +134,13 @@ fun OnboardingPage1Screen() {
             icon = Icons.Default.People,
             label = "Gender"
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                val genders = listOf("Male", "Female", "Other")
-                var selected by remember { mutableStateOf("Male") }
-                genders.forEach { gender ->
-                    val isSelected = selected == gender
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(if (isSelected) MaterialTheme.colorScheme.background else Color.Transparent)
-                            .clickable { selected = gender }
-                            .padding(vertical = 10.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = gender,
-                            color = if (isSelected) MaterialTheme.colorScheme.secondary
-                            else MaterialTheme.colorScheme.onBackground.copy(
-                                alpha = 0.8f
-                            ),
-                            fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
+            val genders = listOf("Male", "Female", "Other")
+            var selected by remember { mutableStateOf("Male") }
+            SegmentedSelector(
+                options = genders,
+                selectedOption = selected,
+                onOptionSelected = { selected = it }
+            )
         }
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -175,7 +149,7 @@ fun OnboardingPage1Screen() {
             Box(modifier = Modifier.weight(1f)) {
                 OnboardingField(icon = Icons.Default.MonitorWeight, label = "Weight") {
                     var weight by remember { mutableStateOf("70") }
-                    BasicInputFieldWithSuffix(
+                    BasicInputField(
                         value = weight,
                         onValueChange = { weight = it },
                         suffix = "kg"
@@ -185,7 +159,7 @@ fun OnboardingPage1Screen() {
             Box(modifier = Modifier.weight(1f)) {
                 OnboardingField(icon = Icons.Default.Height, label = "Height") {
                     var height by remember { mutableStateOf("175") }
-                    BasicInputFieldWithSuffix(
+                    BasicInputField(
                         value = height,
                         onValueChange = { height = it },
                         suffix = "cm"

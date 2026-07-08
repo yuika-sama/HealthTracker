@@ -16,12 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.ui.core.components.SegmentedSelector
+import com.yuika.healthtracker.ui.core.components.StatCard
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.features.main_features.trends.components.CalorieIntakeChart
 import com.yuika.healthtracker.ui.features.main_features.trends.components.NetCaloriesChart
-import com.yuika.healthtracker.ui.features.main_features.trends.components.TimeRangeSelector
-import com.yuika.healthtracker.ui.features.main_features.trends.components.TrendStatCard
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.InfoBlue
 import com.yuika.healthtracker.ui.theme.LocalSpacing
@@ -66,29 +66,34 @@ fun TrendsScreen(
                 )
             }
             
-            TimeRangeSelector(
-                selectedRange = "Week"
+            SegmentedSelector(
+                options = listOf("Week", "Month"),
+                selectedOption = "Week",
+                onOptionSelected = {}
             )
             
-            TrendStatCard(
+            StatCard(
                 title = "Avg Intake / Day",
                 value = "2,150",
                 valueColor = MaterialTheme.colorScheme.secondary,
-                unit = "kcal"
+                unit = "kcal",
+                bgColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
             )
             
-            TrendStatCard(
+            StatCard(
                 title = "Avg Burned / Day",
                 value = "640",
                 valueColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
-                unit = "kcal"
+                unit = "kcal",
+                bgColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
             )
             
-            TrendStatCard(
+            StatCard(
                 title = "Days Meeting Goal",
                 value = "5",
                 valueColor = MaterialTheme.colorScheme.tertiary,
-                unit = "/ 7 days"
+                unit = "/ 7 days",
+                bgColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
             )
             
             CalorieIntakeChart()
