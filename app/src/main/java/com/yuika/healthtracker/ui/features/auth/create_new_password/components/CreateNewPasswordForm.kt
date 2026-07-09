@@ -45,7 +45,8 @@ fun CreateNewPasswordForm(
     onShowConfirmPassword: () -> Unit,
     onResetPasswordClick: () -> Unit,
     isLoading: Boolean = false,
-) {
+)
+{
     val spacing = LocalSpacing.current
 
     Column(
@@ -74,7 +75,8 @@ fun CreateNewPasswordForm(
                 )
             },
             supportingText = {
-                if (newPasswordErr != null){
+                if (newPasswordErr != null)
+                {
                     ErrorText(newPasswordErr)
                 }
             },
@@ -98,7 +100,8 @@ fun CreateNewPasswordForm(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        val strength = when {
+        val strength = when
+        {
             newPassword.isEmpty() -> 0
             newPassword.length < 6 -> 1
             newPassword.length < 8 -> 2
@@ -136,7 +139,8 @@ fun CreateNewPasswordForm(
                 )
             },
             supportingText = {
-                if (confirmPasswordErr != null){
+                if (confirmPasswordErr != null)
+                {
                     ErrorText(confirmPasswordErr)
                 }
             },

@@ -1,25 +1,30 @@
 package com.yuika.healthtracker.ui.features.auth.otpverify
 
 import com.yuika.healthtracker.domain.repository.UserRepository
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.VerifyOtpUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.NETWORK_DELAY
 import com.yuika.healthtracker.utils.TRUE_OTP
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class OtpVerifyViewModel @Inject constructor(
-    private val userRepository: UserRepository
-) : BaseViewModel<OtpVerifyUiState, OtpVerifyIntent, OtpVerifyEffect> (
+    private val verifyOtpUseCase: VerifyOtpUseCase
+) : BaseViewModel<OtpVerifyUiState, OtpVerifyIntent, OtpVerifyEffect>(
     initialState = OtpVerifyUiState()
 )
 {
     override fun onIntent(intent: OtpVerifyIntent)
     {
-        when (intent){
-            is OtpVerifyIntent.OtpCodeChanged -> {
-                if (intent.code.length <= state.value.otpLength){
+        when (intent)
+        {
+            is OtpVerifyIntent.OtpCodeChanged ->
+            {
+                if (intent.code.length <= state.value.otpLength)
+                {
                     updateState {
                         it.copy(
                             otpCode = intent.code,
@@ -28,6 +33,7 @@ class OtpVerifyViewModel @Inject constructor(
                     }
                 }
             }
+
             is OtpVerifyIntent.Submit -> handleSubmit()
             is OtpVerifyIntent.ResendOtp -> handleResend()
         }
@@ -42,8 +48,8 @@ class OtpVerifyViewModel @Inject constructor(
             )
         }
 
-        launchSafe (
-            onError =  { throwable ->
+        launchSafe(
+            onError = { throwable ->
                 updateState {
                     it.copy(
                         isLoading = false,
@@ -52,9 +58,9 @@ class OtpVerifyViewModel @Inject constructor(
                 }
             }
         ) {
-            delay(NETWORK_DELAY.toLong())
+            delay(NETWORK_DELAY.toLong().milliseconds)
 
-            updateState{it.copy(isLoading = false)}
+            updateState { it.copy(isLoading = false) }
             sendEffect(OtpVerifyEffect.ShowToast("OTP has been resend to ${state.value.email}"))
         }
     }
@@ -63,7 +69,8 @@ class OtpVerifyViewModel @Inject constructor(
     {
         val currentState = state.value
 
-        if (currentState.otpCode.length <= currentState.otpLength) {
+        if (currentState.otpCode.length <= currentState.otpLength)
+        {
             updateState {
                 it.copy(
                     errorMessage = "Please enter the full OTP code"
@@ -75,7 +82,7 @@ class OtpVerifyViewModel @Inject constructor(
         updateState { it.copy(isLoading = true, errorMessage = null) }
 
         launchSafe(
-            onError = {throwable ->
+            onError = { throwable ->
                 updateState {
                     it.copy(
                         isLoading = false,
@@ -83,16 +90,11 @@ class OtpVerifyViewModel @Inject constructor(
                     )
                 }
             }
-        ){
-            delay(NETWORK_DELAY.toLong())
+        ) {
+            verifyOtpUseCase(currentState.otpCode)
 
-            // TODO: mock OTP exception
-            if(currentState.otpCode == TRUE_OTP){
-                updateState { it.copy(isLoading = true) }
-                sendEffect(OtpVerifyEffect.NavigateToHome)
-            } else {
-                updateState { it.copy(isLoading = false, errorMessage = "Invalid OTP") }
-            }
+            updateState { it.copy(isLoading = false) }
+            sendEffect(OtpVerifyEffect.NavigateToHome)
         }
     }
 }

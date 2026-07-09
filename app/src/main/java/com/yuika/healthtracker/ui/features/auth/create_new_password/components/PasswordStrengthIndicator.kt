@@ -17,18 +17,22 @@ import androidx.compose.ui.unit.dp
 fun PasswordStrengthIndicator(
     modifier: Modifier = Modifier,
     strength: Int
-) {
+)
+{
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         repeat(4) { index ->
-            val color = if (index < strength) {
+            val color = if (index < strength)
+            {
                 MaterialTheme.colorScheme.primary.copy(alpha = 0.5f + (index * 0.15f))
-            } else {
+            }
+            else
+            {
                 MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
             }
-            
+
             Box(
                 modifier = Modifier
                     .weight(1f)

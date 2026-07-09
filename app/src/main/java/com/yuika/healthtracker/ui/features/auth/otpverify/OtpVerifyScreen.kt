@@ -47,20 +47,25 @@ fun OtpVerifyScreen(
     viewModel: OtpVerifyViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit = {},
     onBackToLoginClick: () -> Unit = {}
-) {
+)
+{
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
-    val uiState by viewModel.state?.collectAsStateWithLifecycle() ?: rememberSaveable { mutableStateOf(
-        OtpVerifyUiState()
-    ) }
+    val uiState by viewModel.state?.collectAsStateWithLifecycle() ?: rememberSaveable {
+        mutableStateOf(
+            OtpVerifyUiState()
+        )
+    }
     val context = LocalContext.current
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
-            when (effect) {
+            when (effect)
+            {
                 is OtpVerifyEffect.NavigateToHome -> onNavigateToHome()
                 is OtpVerifyEffect.NavigateToLogin -> onBackToLoginClick()
-                is OtpVerifyEffect.ShowToast -> {
+                is OtpVerifyEffect.ShowToast ->
+                {
                     // Show toast
                 }
             }
@@ -100,7 +105,12 @@ fun OtpVerifyScreen(
                             Text(
                                 text = buildAnnotatedString {
                                     append("Please enter the ${uiState.otpLength}-digit code sent to\nyour email address\n")
-                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onBackground)) {
+                                    withStyle(
+                                        style = SpanStyle(
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                    ) {
                                         append(uiState.email.ifEmpty { "your email" })
                                     }
                                     append(".")
@@ -111,7 +121,7 @@ fun OtpVerifyScreen(
                             )
                         }
                     )
-                    
+
                     Spacer(modifier = Modifier.height(32.dp))
 
                     OtpVerifyForm(
@@ -122,7 +132,7 @@ fun OtpVerifyScreen(
                         onResendOtp = { viewModel?.onIntent(OtpVerifyIntent.ResendOtp) },
                         onVerify = { viewModel?.onIntent(OtpVerifyIntent.Submit) },
                     )
-                    
+
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OtpVerifyFooter(
@@ -136,6 +146,7 @@ fun OtpVerifyScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun OtpVerifyScreenPreview() {
+fun OtpVerifyScreenPreview()
+{
     OtpVerifyScreen()
 }

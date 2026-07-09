@@ -38,7 +38,8 @@ fun OtpVerifyForm(
     isLoading: Boolean = false,
     onResendOtp: () -> Unit = {},
     onVerify: () -> Unit = {},
-) {
+)
+{
     val spacing = LocalSpacing.current
 
     Column(
@@ -58,7 +59,7 @@ fun OtpVerifyForm(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        
+
         Spacer(modifier = Modifier.height(spacing.small))
 
         Row {
@@ -93,9 +94,12 @@ fun OtpVerifyForm(
             ),
             enabled = otpCode.length == otpLength && !isLoading
         ) {
-            if (isLoading){
+            if (isLoading)
+            {
                 LoadingIndicator()
-            } else {
+            }
+            else
+            {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {

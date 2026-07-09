@@ -38,7 +38,8 @@ fun LoginScreen(
     onNavigateToClientPage: () -> Unit = {},
     onNavigateToRegister: () -> Unit = {},
     onNavigateToForgotPassword: () -> Unit = {}
-) {
+)
+{
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     val context = LocalContext.current
@@ -47,11 +48,13 @@ fun LoginScreen(
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
-            when (effect) {
+            when (effect)
+            {
                 is LoginUiEffect.NavigateToDashboard -> onNavigateToClientPage()
                 is LoginUiEffect.NavigateToRegister -> onNavigateToRegister()
                 is LoginUiEffect.NavigateToForgotPassword -> onNavigateToForgotPassword()
-                is LoginUiEffect.ShowToast -> {
+                is LoginUiEffect.ShowToast ->
+                {
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -116,6 +119,7 @@ fun LoginScreen(
 
 @Preview
 @Composable
-fun LoginScreenPreview() {
+fun LoginScreenPreview()
+{
     LoginScreen()
 }

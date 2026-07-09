@@ -23,42 +23,50 @@ fun OtpInputFields(
     otpCode: String,
     otpLength: Int,
     onOtpChange: (String) -> Unit
-){
-    val focusRequesters = remember{List(otpLength){ FocusRequester() } }
+)
+{
+    val focusRequesters = remember { List(otpLength) { FocusRequester() } }
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
-        for (i in 0 until otpLength) {
+        for (i in 0 until otpLength)
+        {
             val char = otpCode.getOrNull(i)?.toString() ?: ""
             OutlinedTextField(
                 value = char,
                 onValueChange = { newValue ->
-                    if (newValue.length <= 1) {
+                    if (newValue.length <= 1)
+                    {
                         val newOtp = buildString {
-                            for (j in 0 until otpLength) {
+                            for (j in 0 until otpLength)
+                            {
                                 if (j == i) append(newValue)
                                 else append(otpCode.getOrNull(j) ?: "")
                             }
                         }
                         onOtpChange(newOtp)
 
-                        if (newValue.isNotEmpty() && i < otpLength - 1) {
+                        if (newValue.isNotEmpty() && i < otpLength - 1)
+                        {
                             focusRequesters[i + 1].requestFocus()
                         }
                     }
-                    else if (newValue.isEmpty()) {
+                    else if (newValue.isEmpty())
+                    {
                         val newOtp = buildString {
-                            for (j in 0 until otpLength) {
+                            for (j in 0 until otpLength)
+                            {
                                 if (j == i) append("")
                                 else append(otpCode.getOrNull(j) ?: "")
                             }
                         }
                         onOtpChange(newOtp)
 
-                        if (i > 0) {
+                        if (i > 0)
+                        {
                             focusRequesters[i - 1].requestFocus()
                         }
                     }
@@ -77,7 +85,8 @@ fun OtpInputFields(
     }
 
     LaunchedEffect(Unit) {
-        if (focusRequesters.isNotEmpty()) {
+        if (focusRequesters.isNotEmpty())
+        {
             focusRequesters[0].requestFocus()
         }
     }

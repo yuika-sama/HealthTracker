@@ -3,6 +3,8 @@ package com.yuika.healthtracker.ui.features.auth.login
 import android.util.Patterns
 import com.yuika.healthtracker.data.local.entity.UserEntity
 import com.yuika.healthtracker.domain.repository.UserRepository
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.LoginUseCase
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.OAuthLoginUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.MOCK_ERROR_LOGIN_EMAIL
 import com.yuika.healthtracker.utils.MOCK_OAUTH_ACCOUNT_ID
@@ -13,12 +15,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val loginUseCase: LoginUseCase,
+    private val oAuthLoginUseCase: OAuthLoginUseCase
 ) : BaseViewModel<LoginUiState, LoginUiIntent, LoginUiEffect>(
     initialState = LoginUiState()
-) {
-    override fun onIntent(intent: LoginUiIntent) {
-        when (intent) {
+)
+{
+    override fun onIntent(intent: LoginUiIntent)
+    {
+        when (intent)
+        {
             is LoginUiIntent.EmailChanged -> updateState {
                 it.copy(
                     email = intent.email,
@@ -45,7 +51,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun handleLogin() {
+    private fun handleLogin()
+    {
+        updateState { it.copy(isLoading = true, errorMessage = null) }
+
         val email = state.value.email.trim()
         val password = state.value.password.trim()
 
@@ -54,23 +63,30 @@ class LoginViewModel @Inject constructor(
         var passwordErr: String? = null
 
         // Validate Input
-        if (email.isEmpty()) {
+        if (email.isEmpty())
+        {
             emailErr = "Email would not be blank"
             hasError = true
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        }
+        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
+        {
             emailErr = "Email format is invalid"
             hasError = true
         }
 
-        if (password.isEmpty()) {
+        if (password.isEmpty())
+        {
             passwordErr = "Password would not be blank"
             hasError = true
-        } else if (password.length < state.value.passwordLength) {
+        }
+        else if (password.length < state.value.passwordLength)
+        {
             passwordErr = "Password length would be longer than ${state.value.passwordLength}"
             hasError = true
         }
 
-        if (hasError) {
+        if (hasError)
+        {
             updateState {
                 it.copy(
                     emailErrorMessage = emailErr,
@@ -93,28 +109,14 @@ class LoginViewModel @Inject constructor(
             }
         ) {
 
-            delay(NETWORK_DELAY.toLong())
-
-            if (email == MOCK_ERROR_LOGIN_EMAIL) {
-                throw Exception("Error connect to server")
-            }
-
-            val user = userRepository.getUserByEmail(email)
-            if (user != null && user.password == password) {
-                updateState { it.copy(isLoading = false) }
-                sendEffect(LoginUiEffect.NavigateToDashboard)
-            } else {
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Email or password is wrong."
-                    )
-                }
-            }
+            loginUseCase(email, password)
+            updateState { it.copy(isLoading = false) }
+            sendEffect(LoginUiEffect.NavigateToDashboard)
         }
     }
 
-    private fun handleOAuthLogin(provider: String) {
+    private fun handleOAuthLogin(provider: String)
+    {
         updateState { it.copy(isLoading = true, errorMessage = null) }
 
         launchSafe(
@@ -127,39 +129,20 @@ class LoginViewModel @Inject constructor(
                 }
             }
         ) {
-            delay(NETWORK_DELAY.toLong())
-
-            var oauthUser = userRepository.getUserById(MOCK_OAUTH_ACCOUNT_ID)
-
-            if (oauthUser == null) {
-                val dummyUser = UserEntity(
-                    id = 0,
-                    email = "oauth.user@healthtracker.com",
-                    password = "oauth_dummy_password",
-                    name = "OAuth User 1",
-                    dob = "2000-01-01",
-                    gender = "Other",
-                    height = 170.0,
-                    weight = 65.0,
-                    activityLevel = "Moderate",
-                    goal = "Stay Healthy",
-                    avatarPath = null
-                )
-                userRepository.insertUser(dummyUser)
-//                oauthUser = dummyUser
-            }
-
+            oAuthLoginUseCase(provider)
             updateState { it.copy(isLoading = false) }
             sendEffect(LoginUiEffect.ShowToast("$provider Login Success"))
             sendEffect(LoginUiEffect.NavigateToDashboard)
         }
     }
 
-    private fun handleRegister() {
+    private fun handleRegister()
+    {
         sendEffect(LoginUiEffect.NavigateToRegister)
     }
 
-    private fun handleForgotPassword() {
+    private fun handleForgotPassword()
+    {
         sendEffect(LoginUiEffect.NavigateToForgotPassword)
     }
 }

@@ -35,13 +35,15 @@ fun PasswordChangedScreen(
     modifier: Modifier = Modifier,
     viewModel: PasswordChangedViewModel = hiltViewModel(),
     onBackToLoginClick: () -> Unit = {}
-) {
+)
+{
     val spacing = LocalSpacing.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
-            when (effect) {
+            when (effect)
+            {
                 is PasswordChangedEffect.NavigateToLogin -> onBackToLoginClick()
             }
         }
@@ -77,9 +79,9 @@ fun PasswordChangedScreen(
                         subtitle = "Your password has been successfully reset. You can now login with your new credentials.",
                         icon = Icons.Outlined.CheckCircle
                     )
-                    
+
                     Spacer(modifier = Modifier.height(32.dp))
-                    
+
                     Button(
                         onClick = { viewModel.onIntent(PasswordChangedIntent.BackToLoginClick) },
                         modifier = Modifier
@@ -105,6 +107,7 @@ fun PasswordChangedScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun PasswordChangedScreenPreview() {
+fun PasswordChangedScreenPreview()
+{
     PasswordChangedScreen()
 }

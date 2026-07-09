@@ -2,6 +2,7 @@ package com.yuika.healthtracker.ui.features.auth.register
 
 import android.util.Patterns
 import com.yuika.healthtracker.domain.repository.UserRepository
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.RegisterUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.ui.features.auth.login.LoginUiEffect
 import com.yuika.healthtracker.ui.features.auth.login.LoginUiIntent
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val registerUseCase: RegisterUseCase
 ) : BaseViewModel<RegisterUiState, RegisterIntent, RegisterEffect>(
     initialState = RegisterUiState()
 )
@@ -32,9 +33,30 @@ class RegisterViewModel @Inject constructor(
                 )
             }
 
-            is RegisterIntent.EmailChanged -> updateState { it.copy(email = intent.email, emailError = null, errorMessage = null) }
-            is RegisterIntent.PasswordChanged -> updateState { it.copy(password = intent.password, passwordError = null, errorMessage = null) }
-            is RegisterIntent.ConfirmPasswordChanged -> updateState { it.copy(confirmPassword = intent.confirmPassword, confirmPasswordError = null, errorMessage = null) }
+            is RegisterIntent.EmailChanged -> updateState {
+                it.copy(
+                    email = intent.email,
+                    emailError = null,
+                    errorMessage = null
+                )
+            }
+
+            is RegisterIntent.PasswordChanged -> updateState {
+                it.copy(
+                    password = intent.password,
+                    passwordError = null,
+                    errorMessage = null
+                )
+            }
+
+            is RegisterIntent.ConfirmPasswordChanged -> updateState {
+                it.copy(
+                    confirmPassword = intent.confirmPassword,
+                    confirmPasswordError = null,
+                    errorMessage = null
+                )
+            }
+
             is RegisterIntent.ShowPasswordChanged -> updateState { it.copy(showPassword = !it.showPassword) }
             is RegisterIntent.ShowConfirmPasswordChanged -> updateState {
                 it.copy(
@@ -123,7 +145,7 @@ class RegisterViewModel @Inject constructor(
         }
 
         launchSafe(
-            onError = {throwable ->
+            onError = { throwable ->
                 updateState {
                     it.copy(
                         isLoading = false,
@@ -132,24 +154,9 @@ class RegisterViewModel @Inject constructor(
                 }
             }
         ) {
-            delay(NETWORK_DELAY.toLong())
-
-            if (currentState.email == MOCK_ERROR_LOGIN_EMAIL){
-                throw Exception("Error connect to server")
-            }
-
-            val existingUser = userRepository.getUserByEmail(currentState.email)
-            if (existingUser != null){
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Email already exists"
-                    )
-                }
-            } else {
-                updateState { it.copy(isLoading = false) }
-                sendEffect(RegisterEffect.NavigateToVerifyOtp(currentState.email))
-            }
+            registerUseCase(currentState.email)
+            updateState { it.copy(isLoading = false) }
+            sendEffect(RegisterEffect.NavigateToVerifyOtp(currentState.email))
         }
     }
 }

@@ -8,9 +8,12 @@ import javax.inject.Inject
 class PasswordChangedViewModel @Inject constructor(
 ) : BaseViewModel<PasswordChangedUiState, PasswordChangedIntent, PasswordChangedEffect>(
     initialState = PasswordChangedUiState()
-) {
-    override fun onIntent(intent: PasswordChangedIntent) {
-        when (intent) {
+)
+{
+    override fun onIntent(intent: PasswordChangedIntent)
+    {
+        when (intent)
+        {
             is PasswordChangedIntent.BackToLoginClick -> sendEffect(PasswordChangedEffect.NavigateToLogin)
         }
     }

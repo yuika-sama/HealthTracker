@@ -37,7 +37,8 @@ fun ForgotPasswordScreen(
     viewModel: ForgotPasswordViewModel = hiltViewModel(),
     onBackToLoginClick: () -> Unit = {},
     onSendCodeClick: (String) -> Unit = {}
-) {
+)
+{
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -45,10 +46,12 @@ fun ForgotPasswordScreen(
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
-            when (effect) {
+            when (effect)
+            {
                 is ForgotPasswordUiEffect.NavigateToLogin -> onBackToLoginClick()
                 is ForgotPasswordUiEffect.NavigateToVerifyOtp -> onSendCodeClick(effect.email)
-                is ForgotPasswordUiEffect.ShowToast -> {
+                is ForgotPasswordUiEffect.ShowToast ->
+                {
                     // show toast
                 }
             }
@@ -57,7 +60,7 @@ fun ForgotPasswordScreen(
     }
 
     LaunchedEffect(state.value.emailError) {
-        state.value.error?.let{errorMsg ->
+        state.value.error?.let { errorMsg ->
             Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
         }
     }
@@ -93,7 +96,7 @@ fun ForgotPasswordScreen(
                         subtitle = "Enter your email address and we'll send you an OTP code to reset your password.",
                         icon = Icons.Outlined.LockReset
                     )
-                    
+
                     Spacer(modifier = Modifier.height(32.dp))
 
                     ForgotPasswordForm(
@@ -107,11 +110,11 @@ fun ForgotPasswordScreen(
                             viewModel.onIntent(ForgotPasswordUiIntent.SubmitClick)
                         }
                     )
-                    
+
                     Spacer(modifier = Modifier.height(32.dp))
 
                     ForgotPasswordFooter(
-                        onBackToLoginClick = {viewModel.onIntent(ForgotPasswordUiIntent.LoginClick)}
+                        onBackToLoginClick = { viewModel.onIntent(ForgotPasswordUiIntent.LoginClick) }
                     )
                 }
             }
@@ -121,6 +124,7 @@ fun ForgotPasswordScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun ForgotPasswordScreenPreview() {
+fun ForgotPasswordScreenPreview()
+{
     ForgotPasswordScreen()
 }

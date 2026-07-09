@@ -6,5 +6,5 @@ sealed class ForgotPasswordUiEffect : UiEffect
 {
     data class NavigateToVerifyOtp(val email: String) : ForgotPasswordUiEffect()
     object NavigateToLogin : ForgotPasswordUiEffect()
-    data class ShowToast(val message: String): ForgotPasswordUiEffect()
+    data class ShowToast(val message: String) : ForgotPasswordUiEffect()
 }

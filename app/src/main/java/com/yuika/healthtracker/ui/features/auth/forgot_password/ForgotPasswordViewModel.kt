@@ -2,21 +2,30 @@ package com.yuika.healthtracker.ui.features.auth.forgot_password
 
 import android.util.Patterns
 import com.yuika.healthtracker.domain.repository.UserRepository
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.CheckEmailExistsUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ForgotPasswordViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val checkEmailExistsUseCase: CheckEmailExistsUseCase
 ) : BaseViewModel<ForgotPasswordUiState, ForgotPasswordUiIntent, ForgotPasswordUiEffect>(
     initialState = ForgotPasswordUiState()
 )
 {
     override fun onIntent(intent: ForgotPasswordUiIntent)
     {
-        when (intent){
-            is ForgotPasswordUiIntent.EmailChanged -> updateState { it.copy(email = intent.email, emailError = null, error = null) }
+        when (intent)
+        {
+            is ForgotPasswordUiIntent.EmailChanged -> updateState {
+                it.copy(
+                    email = intent.email,
+                    emailError = null,
+                    error = null
+                )
+            }
+
             is ForgotPasswordUiIntent.SubmitClick -> handleSubmit()
             is ForgotPasswordUiIntent.LoginClick -> handleLogin()
         }
@@ -26,12 +35,14 @@ class ForgotPasswordViewModel @Inject constructor(
     {
         val email = state.value.email.trim()
 
-        if (email.isEmpty() || email.isBlank()) {
+        if (email.isEmpty() || email.isBlank())
+        {
             updateState { it.copy(emailError = "Email is required") }
             return
         }
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
+        {
             updateState { it.copy(emailError = "Invalid email format") }
             return
         }
@@ -40,15 +51,22 @@ class ForgotPasswordViewModel @Inject constructor(
 
         launchSafe(
             onError = { throwable ->
-                updateState { it.copy(isLoading = false, error = throwable.message ?: "An unexpected error occurred") }
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        error = throwable.message ?: "An unexpected error occurred"
+                    )
+                }
             }
         ) {
-            val user = userRepository.getUserByEmail(email)
+            val exists = checkEmailExistsUseCase(email)
             updateState { it.copy(isLoading = false) }
-
-            if (user != null) {
+            if (exists)
+            {
                 sendEffect(ForgotPasswordUiEffect.NavigateToVerifyOtp(email))
-            } else {
+            }
+            else
+            {
                 updateState { it.copy(error = "Account with this email does not exist") }
             }
         }

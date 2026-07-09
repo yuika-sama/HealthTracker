@@ -24,7 +24,8 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 fun OtpVerifyFooter(
     modifier: Modifier = Modifier,
     onBackToLoginClick: () -> Unit
-) {
+)
+{
     val spacing = LocalSpacing.current
 
     OutlinedButton(

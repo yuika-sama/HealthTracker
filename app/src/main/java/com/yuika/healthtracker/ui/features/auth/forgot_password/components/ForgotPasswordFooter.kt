@@ -21,7 +21,8 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 fun ForgotPasswordFooter(
     modifier: Modifier = Modifier,
     onBackToLoginClick: () -> Unit
-) {
+)
+{
     val spacing = LocalSpacing.current
 
     Row(
