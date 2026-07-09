@@ -8,7 +8,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-abstract class DiaryRepositoryImpl @Inject constructor(
+class DiaryRepositoryImpl @Inject constructor(
     private val diaryDao: DiaryDao
 ) : DiaryRepository
 {

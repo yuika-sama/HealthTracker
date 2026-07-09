@@ -1,0 +1,11 @@
+package com.yuika.healthtracker.utils
+
+const val NETWORK_DELAY = 1500
+
+val PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!\\-_*])(?=\\S+$).{8,}$".toRegex()
+
+val PHONE_REGEX = "^[0-9]{10}$".toRegex()
+
+const val MOCK_ERROR_LOGIN_EMAIL = "error@healthtracker.com"
+
+const val MOCK_OAUTH_ACCOUNT_ID = 0

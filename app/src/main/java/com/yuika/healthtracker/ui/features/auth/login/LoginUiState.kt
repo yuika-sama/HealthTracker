@@ -11,5 +11,6 @@ data class LoginUiState(
     val isShowPassword: Boolean = false,
     val isRememberAccount: Boolean = false,
     val oauthErrorMessage: String? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val passwordLength: Int = 8
 ) : UiState

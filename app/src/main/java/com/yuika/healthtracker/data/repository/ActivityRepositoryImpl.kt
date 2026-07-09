@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-abstract class ActivityRepositoryImpl @Inject constructor(
+class ActivityRepositoryImpl @Inject constructor(
     private val activityDao: ActivityDao
 ) : ActivityRepository
 {

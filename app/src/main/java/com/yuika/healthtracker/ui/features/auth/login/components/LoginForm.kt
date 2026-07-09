@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -20,6 +21,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,10 +29,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -41,20 +39,24 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun LoginForm(
     modifier: Modifier = Modifier,
+    email: String,
+    onEmailChange: (String) -> Unit,
+    emailError: String?,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    passwordError: String?,
+    rememberMe: Boolean,
+    onRememberMeChange: (Boolean) -> Unit,
+    passwordVisible: Boolean,
+    onPasswordVisibleChange: () -> Unit,
+    isLoading: Boolean,
     onLoginClick: () -> Unit,
     onForgotPasswordClick: () -> Unit
-)
-{
+) {
     val spacing = LocalSpacing.current
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var rememberMe by remember { mutableStateOf(false) }
-    var passwordVisible by remember { mutableStateOf(false) }
-
     Card(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -76,11 +78,14 @@ fun LoginForm(
 
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = onEmailChange,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                enabled = !isLoading,
                 shape = MaterialTheme.shapes.medium,
                 placeholder = { Text("name@example.com") },
+                isError = emailError != null,
+                supportingText = emailError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Email,
@@ -109,7 +114,7 @@ fun LoginForm(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    modifier = Modifier.clickable{onForgotPasswordClick()},
+                    modifier = Modifier.clickable(enabled = !isLoading) { onForgotPasswordClick() },
                     text = "Forgot Password?",
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary
@@ -120,11 +125,14 @@ fun LoginForm(
 
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = onPasswordChange,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                enabled = !isLoading,
                 shape = MaterialTheme.shapes.medium,
                 placeholder = { Text("••••••••") },
+                isError = passwordError != null,
+                supportingText = passwordError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Lock,
@@ -132,7 +140,10 @@ fun LoginForm(
                     )
                 },
                 trailingIcon = {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    IconButton(
+                        onClick = onPasswordVisibleChange,
+                        enabled = !isLoading
+                    ) {
                         Icon(
                             imageVector = if (passwordVisible) {
                                 Icons.Outlined.VisibilityOff
@@ -164,7 +175,8 @@ fun LoginForm(
             ) {
                 Checkbox(
                     checked = rememberMe,
-                    onCheckedChange = { rememberMe = it }
+                    onCheckedChange = onRememberMeChange,
+                    enabled = !isLoading
                 )
                 Spacer(modifier = Modifier.width(spacing.small))
                 Text(
@@ -178,6 +190,7 @@ fun LoginForm(
 
             Button(
                 onClick = onLoginClick,
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -187,15 +200,28 @@ fun LoginForm(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text(
-                    text = "Log in",
-                    style = MaterialTheme.typography.labelLarge
-                )
-                Spacer(modifier = Modifier.width(spacing.small))
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
-                    contentDescription = null
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                    ) {
+                        Text(
+                            text = "Log in",
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                        Spacer(modifier = Modifier.width(spacing.small))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                            contentDescription = null
+                        )
+                    }
+                }
             }
         }
     }
