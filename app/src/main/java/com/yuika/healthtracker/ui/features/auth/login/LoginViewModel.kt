@@ -53,7 +53,7 @@ class LoginViewModel @Inject constructor(
         var emailErr: String? = null
         var passwordErr: String? = null
 
-        // Validate Input Đầu Vào
+        // Validate Input
         if (email.isEmpty()) {
             emailErr = "Email would not be blank"
             hasError = true
@@ -150,7 +150,7 @@ class LoginViewModel @Inject constructor(
             }
 
             updateState { it.copy(isLoading = false) }
-            sendEffect(LoginUiEffect.showToast("Đăng nhập thành công với tài khoản OAuth có ID = 1"))
+            sendEffect(LoginUiEffect.showToast("$provider Login Success"))
             sendEffect(LoginUiEffect.NavigateToDashboard)
         }
     }

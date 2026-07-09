@@ -59,13 +59,13 @@ fun SocialSection(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(spacing.medium)
         ) {
-            _root_ide_package_.com.yuika.healthtracker.ui.features.auth.login.components.SocialButton(
+            SocialButton(
                 modifier = Modifier.weight(1f),
                 text = "Google",
                 onClick = onGoogleClick,
                 icon = ImageVector.vectorResource(id = R.drawable.ic_google_custom)
             )
-            _root_ide_package_.com.yuika.healthtracker.ui.features.auth.login.components.SocialButton(
+            SocialButton(
                 modifier = Modifier.weight(1f),
                 text = "Facebook",
                 onClick = onFacebookClick,
