@@ -18,6 +18,8 @@ fun LabeledField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
+    supportingText: String? = null,
+    enabled: Boolean = false,
     leadingIcon: @Composable (() -> Unit)
 ){
     val spacing = LocalSpacing.current
@@ -47,7 +49,12 @@ fun LabeledField(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 cursorColor = MaterialTheme.colorScheme.primary
-            )
+            ),
+            enabled = enabled
         )
+
+        if (supportingText != null){
+            ErrorText(supportingText)
+        }
     }
 }

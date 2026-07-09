@@ -20,31 +20,44 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.unit.dp
+import androidx.glance.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.core.components.ClickableTextLink
+import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.features.auth.register.components.RegisterForm
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
+    viewModel: RegisterViewModel? = null,
     onNavigateToVerifyOtp: (String) -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
 )
 {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
 
-    var fullName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var agreedToTerms by remember { mutableStateOf(false) }
+    val uiState by viewModel?.state?.collectAsStateWithLifecycle() ?: rememberSaveable { mutableStateOf(
+        RegisterUiState()) }
 
-    var passwordVisible by remember { mutableStateOf(false) }
-    var confirmPasswordVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(viewModel) {
+        viewModel?.effect?.collect { effect ->
+            when(effect) {
+                is RegisterEffect.NavigateToVerifyOtp -> onNavigateToVerifyOtp(effect.email)
+                is RegisterEffect.NavigateToLogin -> onNavigateToLogin()
+                is RegisterEffect.ShowToast -> {
+                    // show toast
+                }
+            }
+        }
+    }
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -71,22 +84,33 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 
+            uiState.errorMessage?.let { msg ->
+                ErrorText(msg = msg)
+            }
+
             RegisterForm(
-                fullName = fullName,
-                onFullNameChange = { fullName = it },
-                email = email,
-                onEmailChange = { email = it },
-                password = password,
-                onPasswordChange = { password = it },
-                passwordVisible = passwordVisible,
-                onPasswordVisibleChange = { passwordVisible = it },
-                confirmPassword = confirmPassword,
-                onConfirmPasswordChange = { confirmPassword = it },
-                confirmPasswordVisible = confirmPasswordVisible,
-                onConfirmPasswordVisibleChange = { confirmPasswordVisible = it },
-                agreedToTerms = agreedToTerms,
-                onAgreedToTermsChange = { agreedToTerms = it },
-                onCreateAccountClick = { onNavigateToVerifyOtp(email) }
+                fullName = uiState.fullName,
+                onFullNameChange = {
+                    viewModel?.onIntent(RegisterIntent.FullNameChanged(it))
+                },
+                fullNameError = uiState.fullNameError,
+                email = uiState.email,
+                onEmailChange = { viewModel?.onIntent(RegisterIntent.EmailChanged(it)) },
+                emailError = uiState.emailError,
+                password = uiState.password,
+                onPasswordChange = { viewModel?.onIntent(RegisterIntent.PasswordChanged(it)) },
+                passwordError = uiState.passwordError,
+                passwordVisible = uiState.showPassword,
+                onPasswordVisibleChange = { viewModel?.onIntent(RegisterIntent.ShowPasswordChanged) },
+                confirmPassword = uiState.confirmPassword,
+                onConfirmPasswordChange = { viewModel?.onIntent(RegisterIntent.ConfirmPasswordChanged(it)) },
+                confirmPasswordError = uiState.confirmPasswordError,
+                confirmPasswordVisible = uiState.showConfirmPassword,
+                onConfirmPasswordVisibleChange = { viewModel?.onIntent(RegisterIntent.ShowConfirmPasswordChanged) },
+                agreedToTerms = uiState.agreedToTerms,
+                onAgreedToTermsChange = { viewModel?.onIntent(RegisterIntent.AgreedToTermsChanged) },
+                onRegisterClick = { viewModel?.onIntent(RegisterIntent.Submit) },
+                isLoading = uiState.isLoading
             )
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))
@@ -94,7 +118,7 @@ fun RegisterScreen(
             ClickableTextLink(
                 descriptionText = "Already have an account? ",
                 linkText = "Log in",
-                onClick = onNavigateToLogin
+                onClick = {onNavigateToLogin()}
             )
 
             Spacer(modifier = Modifier.height(spacing.small))

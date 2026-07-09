@@ -27,6 +27,8 @@ fun LabeledPasswordField(
     placeholder: String,
     visible: Boolean,
     onToggleVisible: () -> Unit,
+    supportingText: String? = null,
+    enabled: Boolean = false,
     leadingIcon: @Composable (() -> Unit)
 ) {
     val spacing = LocalSpacing.current
@@ -63,7 +65,11 @@ fun LabeledPasswordField(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 cursorColor = MaterialTheme.colorScheme.primary
-            )
+            ),
+            enabled = enabled
         )
+        if (supportingText != null){
+            ErrorText(supportingText)
+        }
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.CheckBoxOutlineBlank
 import androidx.compose.material.icons.outlined.Email
@@ -26,8 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LabeledField
 import com.yuika.healthtracker.ui.core.components.LabeledPasswordField
+import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
@@ -35,19 +38,24 @@ fun RegisterForm(
     modifier: Modifier = Modifier,
     fullName: String,
     onFullNameChange: (String) -> Unit,
+    fullNameError: String?,
     email: String,
     onEmailChange: (String) -> Unit,
+    emailError: String?,
     password: String,
     onPasswordChange: (String) -> Unit,
+    passwordError: String?,
     passwordVisible: Boolean,
-    onPasswordVisibleChange: (Boolean) -> Unit,
+    onPasswordVisibleChange: () -> Unit,
     confirmPassword: String,
     onConfirmPasswordChange: (String) -> Unit,
+    confirmPasswordError: String?,
     confirmPasswordVisible: Boolean,
-    onConfirmPasswordVisibleChange: (Boolean) -> Unit,
+    onConfirmPasswordVisibleChange: () -> Unit,
     agreedToTerms: Boolean,
-    onAgreedToTermsChange: (Boolean) -> Unit,
-    onCreateAccountClick: () -> Unit
+    onAgreedToTermsChange: () -> Unit,
+    isLoading: Boolean,
+    onRegisterClick: () -> Unit
 )
 {
     val spacing = LocalSpacing.current
@@ -68,12 +76,14 @@ fun RegisterForm(
                 value = fullName,
                 onValueChange = onFullNameChange,
                 placeholder = "John Doe",
+                supportingText = fullNameError,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Person,
                         contentDescription = null
                     )
-                }
+                },
+                enabled = !isLoading
             )
 
             Spacer(modifier = Modifier.height(spacing.large))
@@ -83,12 +93,14 @@ fun RegisterForm(
                 value = email,
                 onValueChange = onEmailChange,
                 placeholder = "name@example.com",
+                supportingText = emailError,
                 leadingIcon =  {
                     Icon(
                         imageVector = Icons.Outlined.Email,
                         contentDescription = null
                     )
-                }
+                },
+                enabled = !isLoading
             )
             Spacer(modifier = Modifier.height(spacing.large))
 
@@ -98,7 +110,9 @@ fun RegisterForm(
                 onValueChange = onPasswordChange,
                 placeholder = "••••••••",
                 visible = passwordVisible,
-                onToggleVisible = { onPasswordVisibleChange(!passwordVisible) },
+                onToggleVisible = onPasswordVisibleChange,
+                supportingText = passwordError,
+                enabled = !isLoading,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Lock,
@@ -115,7 +129,9 @@ fun RegisterForm(
                 onValueChange = onConfirmPasswordChange,
                 placeholder = "••••••••",
                 visible = confirmPasswordVisible,
-                onToggleVisible = { onConfirmPasswordVisibleChange(!confirmPasswordVisible) },
+                onToggleVisible = onConfirmPasswordVisibleChange,
+                supportingText = confirmPasswordError,
+                enabled = !isLoading,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.CheckBoxOutlineBlank,
@@ -131,7 +147,8 @@ fun RegisterForm(
             ) {
                 Checkbox(
                     checked = agreedToTerms,
-                    onCheckedChange = onAgreedToTermsChange
+                    onCheckedChange = {onAgreedToTermsChange()},
+                    enabled = !isLoading
                 )
                 Spacer(modifier = Modifier.width(spacing.small))
                 Text(
@@ -144,8 +161,8 @@ fun RegisterForm(
             Spacer(modifier= Modifier.height(spacing.large))
 
             Button(
-                onClick = onCreateAccountClick,
-                enabled = agreedToTerms,
+                onClick = onRegisterClick,
+                enabled = agreedToTerms && !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -157,17 +174,25 @@ fun RegisterForm(
                     disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
                 )
             ) {
-                Text(
-                    text = "Create Account",
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.Medium
-                    )
-                )
-                Spacer(modifier = Modifier.width(spacing.small))
-                Icon(
-                    imageVector = Icons.Outlined.ArrowForward,
-                    contentDescription = null
-                )
+                if (!isLoading){
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Create Account",
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.Medium
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(spacing.small))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                            contentDescription = null
+                        )
+                    }
+                } else {
+                    LoadingIndicator()
+                }
             }
         }
     }
