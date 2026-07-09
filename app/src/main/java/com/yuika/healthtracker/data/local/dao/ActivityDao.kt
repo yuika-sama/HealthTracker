@@ -21,9 +21,9 @@ interface ActivityDao
     @Delete
     suspend fun deleteActivity(activity: ActivityEntity)
 
-    @Query("SELECT * FROM activities WHERE dateText = :dateText ORDER BY timestamp ASC")
-    fun getActivitiesByDate(dateText: String): Flow<List<ActivityEntity>>
+    @Query("SELECT * FROM activities WHERE userId = :userId AND dateText = :dateText ORDER BY timestamp ASC")
+    fun getActivitiesByDate(userId: Int, dateText: String): Flow<List<ActivityEntity>>
 
-    @Query("SELECT SUM(kcalBurned) FROM activities WHERE dateText = :dateText")
-    fun getTotalBurnedCaloriesByDate(dateText: String): Flow<Int?>
+    @Query("SELECT SUM(kcalBurned) FROM activities WHERE userId = :userId AND dateText = :dateText")
+    fun getTotalBurnedCaloriesByDate(userId: Int, dateText: String): Flow<Int?>
 }

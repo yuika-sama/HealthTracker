@@ -1,9 +1,25 @@
 package com.yuika.healthtracker.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "food_entries")
+@Entity(
+    tableName = "food_entries",
+    foreignKeys = [
+        ForeignKey(
+            entity = UserEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["userId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [
+        Index(value = ["userId", "dateText"]),
+        Index(value = ["userId"])
+    ]
+)
 // food-user table
 data class FoodEntryEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

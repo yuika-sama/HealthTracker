@@ -21,12 +21,12 @@ interface FoodEntryDao
     @Delete
     suspend fun deleteFoodEntry(entry: FoodEntryEntity)
 
-    @Query("SELECT * FROM food_entries WHERE dateText = :dateText AND mealType = :mealType ORDER BY timestamp ASC")
-    fun getFoodEntriesByDateAndMealType(dateText: String, mealType: String): Flow<List<FoodEntryEntity>>
+    @Query("SELECT * FROM food_entries WHERE userId = :userId AND dateText = :dateText AND mealType = :mealType ORDER BY timestamp ASC")
+    fun getFoodEntriesByDateAndMealType(userId: Int, dateText: String, mealType: String): Flow<List<FoodEntryEntity>>
 
-    @Query("SELECT * FROM food_entries WHERE dateText = :dateText ORDER BY timestamp ASC")
-    fun getFoodEntriesByDate(dateText: String): Flow<List<FoodEntryEntity>>
+    @Query("SELECT * FROM food_entries WHERE userId = :userId AND dateText = :dateText ORDER BY timestamp ASC")
+    fun getFoodEntriesByDate(userId: Int, dateText: String): Flow<List<FoodEntryEntity>>
 
-    @Query("SELECT SUM(calories) FROM food_entries WHERE dateText = :dateText")
-    fun getTotalCaloriesByDate(dateText: String): Flow<Int?>
+    @Query("SELECT SUM(calories) FROM food_entries WHERE userId = :userId AND dateText = :dateText")
+    fun getTotalCaloriesByDate(userId: Int, dateText: String): Flow<Int?>
 }
