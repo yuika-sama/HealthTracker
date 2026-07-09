@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.auth.forgot_password
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,6 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LockReset
+import androidx.compose.runtime.LaunchedEffect
+import androidx.glance.LocalContext
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.features.auth.forgot_password.components.ForgotPasswordFooter
 import com.yuika.healthtracker.ui.features.auth.forgot_password.components.ForgotPasswordForm
@@ -28,11 +34,33 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun ForgotPasswordScreen(
     modifier: Modifier = Modifier,
+    viewModel: ForgotPasswordViewModel = hiltViewModel(),
     onBackToLoginClick: () -> Unit = {},
     onSendCodeClick: (String) -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
+    val state = viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is ForgotPasswordUiEffect.NavigateToLogin -> onBackToLoginClick()
+                is ForgotPasswordUiEffect.NavigateToVerifyOtp -> onSendCodeClick(effect.email)
+                is ForgotPasswordUiEffect.ShowToast -> {
+                    // show toast
+                }
+            }
+        }
+
+    }
+
+    LaunchedEffect(state.value.emailError) {
+        state.value.error?.let{errorMsg ->
+            Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -48,7 +76,7 @@ fun ForgotPasswordScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(scrollState),
-                shape = MaterialTheme.shapes.large,
+                shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 ),
@@ -69,13 +97,21 @@ fun ForgotPasswordScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     ForgotPasswordForm(
-                        onSendCodeClick = onSendCodeClick
+                        email = state.value.email,
+                        emailError = state.value.emailError,
+                        isLoading = state.value.isLoading,
+                        onEmailChange = {
+                            viewModel.onIntent(ForgotPasswordUiIntent.EmailChanged(it))
+                        },
+                        onSendCodeClick = {
+                            viewModel.onIntent(ForgotPasswordUiIntent.SubmitClick)
+                        }
                     )
                     
                     Spacer(modifier = Modifier.height(32.dp))
 
                     ForgotPasswordFooter(
-                        onBackToLoginClick = onBackToLoginClick
+                        onBackToLoginClick = {viewModel.onIntent(ForgotPasswordUiIntent.LoginClick)}
                     )
                 }
             }

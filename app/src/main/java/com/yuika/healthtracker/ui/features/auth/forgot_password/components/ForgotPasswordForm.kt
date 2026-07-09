@@ -26,15 +26,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
 fun ForgotPasswordForm(
     modifier: Modifier = Modifier,
-    onSendCodeClick: (String) -> Unit
+    email: String,
+    emailError: String?,
+    isLoading: Boolean,
+    onEmailChange: (String) -> Unit,
+    onSendCodeClick: () -> Unit
 ) {
     val spacing = LocalSpacing.current
-    var email by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier.fillMaxWidth()
@@ -50,9 +54,15 @@ fun ForgotPasswordForm(
 
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = onEmailChange,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            isError = emailError != null,
+            supportingText = {
+                if (emailError != null){
+                    ErrorText(emailError)
+                }
+            },
             shape = MaterialTheme.shapes.medium,
             placeholder = { Text("name@example.com") },
             leadingIcon = {
@@ -73,7 +83,7 @@ fun ForgotPasswordForm(
         Spacer(modifier = Modifier.height(spacing.large))
 
         Button(
-            onClick = { onSendCodeClick(email) },
+            onClick = onSendCodeClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),

@@ -23,6 +23,7 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.core.components.ErrorText
@@ -33,7 +34,7 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel? = null,
+    viewModel: LoginViewModel = hiltViewModel(),
     onNavigateToClientPage: () -> Unit = {},
     onNavigateToRegister: () -> Unit = {},
     onNavigateToForgotPassword: () -> Unit = {}
@@ -42,10 +43,10 @@ fun LoginScreen(
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
-    val uiState by viewModel?.state?.collectAsStateWithLifecycle() ?: rememberSaveable { mutableStateOf(LoginUiState()) }
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel) {
-        viewModel?.effect?.collect { effect ->
+        viewModel.effect.collect { effect ->
             when (effect) {
                 is LoginUiEffect.NavigateToDashboard -> onNavigateToClientPage()
                 is LoginUiEffect.NavigateToRegister -> onNavigateToRegister()
@@ -88,26 +89,26 @@ fun LoginScreen(
 
             LoginForm(
                 email = uiState.email,
-                onEmailChange = { viewModel?.onIntent(LoginUiIntent.EmailChanged(it)) },
+                onEmailChange = { viewModel.onIntent(LoginUiIntent.EmailChanged(it)) },
                 emailError = uiState.emailErrorMessage,
                 password = uiState.password,
-                onPasswordChange = { viewModel?.onIntent(LoginUiIntent.PasswordChanged(it)) },
+                onPasswordChange = { viewModel.onIntent(LoginUiIntent.PasswordChanged(it)) },
                 passwordError = uiState.passwordErrorMessage,
                 rememberMe = uiState.isRememberAccount,
-                onRememberMeChange = { viewModel?.onIntent(LoginUiIntent.RememberAccountClick) },
+                onRememberMeChange = { viewModel.onIntent(LoginUiIntent.RememberAccountClick) },
                 passwordVisible = uiState.isShowPassword,
-                onPasswordVisibleChange = { viewModel?.onIntent(LoginUiIntent.ShowPasswordClick) },
+                onPasswordVisibleChange = { viewModel.onIntent(LoginUiIntent.ShowPasswordClick) },
                 isLoading = uiState.isLoading,
-                onLoginClick = { viewModel?.onIntent(LoginUiIntent.LoginClick) },
-                onForgotPasswordClick = { viewModel?.onIntent(LoginUiIntent.ForgotPasswordClick) }
+                onLoginClick = { viewModel.onIntent(LoginUiIntent.LoginClick) },
+                onForgotPasswordClick = { viewModel.onIntent(LoginUiIntent.ForgotPasswordClick) }
             )
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))
 
             LoginFooter(
-                onGoogleClick = { viewModel?.onIntent(LoginUiIntent.GoogleClick) },
-                onFacebookClick = { viewModel?.onIntent(LoginUiIntent.FacebookClick) },
-                onRegisterClick = { viewModel?.onIntent(LoginUiIntent.RegisterClick) }
+                onGoogleClick = { viewModel.onIntent(LoginUiIntent.GoogleClick) },
+                onFacebookClick = { viewModel.onIntent(LoginUiIntent.FacebookClick) },
+                onRegisterClick = { viewModel.onIntent(LoginUiIntent.RegisterClick) }
             )
         }
     }
