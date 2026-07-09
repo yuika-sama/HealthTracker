@@ -50,7 +50,7 @@ fun LoginScreen(
                 is LoginUiEffect.NavigateToDashboard -> onNavigateToClientPage()
                 is LoginUiEffect.NavigateToRegister -> onNavigateToRegister()
                 is LoginUiEffect.NavigateToForgotPassword -> onNavigateToForgotPassword()
-                is LoginUiEffect.showToast -> {
+                is LoginUiEffect.ShowToast -> {
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
             }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.unit.dp
 import androidx.glance.LocalContext
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.core.components.ClickableTextLink
@@ -35,7 +36,7 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
-    viewModel: RegisterViewModel? = null,
+    viewModel: RegisterViewModel = hiltViewModel(),
     onNavigateToVerifyOtp: (String) -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
 )
@@ -47,7 +48,7 @@ fun RegisterScreen(
     val uiState by viewModel?.state?.collectAsStateWithLifecycle() ?: rememberSaveable { mutableStateOf(
         RegisterUiState()) }
 
-    LaunchedEffect(viewModel) {
+    LaunchedEffect(viewModel?.effect) {
         viewModel?.effect?.collect { effect ->
             when(effect) {
                 is RegisterEffect.NavigateToVerifyOtp -> onNavigateToVerifyOtp(effect.email)

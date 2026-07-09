@@ -24,25 +24,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.features.auth.otpverify.OtpVerifyIntent
+import com.yuika.healthtracker.ui.features.auth.otpverify.OtpVerifyUiState
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
 fun OtpVerifyForm(
     modifier: Modifier = Modifier,
-    onVerifyClick: (String) -> Unit,
-    onResendClick: () -> Unit
+    otpCode: String = "",
+    otpLength: Int = 8,
+    onOtpChange: (String) -> Unit = {},
+    isLoading: Boolean = false,
+    onResendOtp: () -> Unit = {},
+    onVerify: () -> Unit = {},
 ) {
     val spacing = LocalSpacing.current
-    var otp by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OtpInput(
-            otpText = otp,
-            onOtpTextChange = { otp = it },
-            modifier = Modifier.fillMaxWidth()
+        OtpInputFields(
+            otpCode = otpCode,
+            otpLength = otpLength,
+            onOtpChange = { onOtpChange(it) },
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -60,9 +66,12 @@ fun OtpVerifyForm(
                 text = "Resend Code",
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { onResendClick() }
+                modifier = Modifier.clickable(enabled = !isLoading) {
+                    onResendOtp()
+                }
             )
             Spacer(modifier = Modifier.width(4.dp))
+            // TODO: Countdown timer
             Text(
                 text = "(00:57)",
                 style = MaterialTheme.typography.bodyMedium,
@@ -73,7 +82,7 @@ fun OtpVerifyForm(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { onVerifyClick(otp) },
+            onClick = { onVerify() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -82,21 +91,25 @@ fun OtpVerifyForm(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ),
-            enabled = otp.length == 6
+            enabled = otpCode.length == otpLength && !isLoading
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Verify",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                Spacer(modifier = Modifier.width(spacing.small))
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
-                    contentDescription = null
-                )
+            if (isLoading){
+                LoadingIndicator()
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Verify",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.width(spacing.small))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                        contentDescription = null
+                    )
+                }
             }
         }
     }

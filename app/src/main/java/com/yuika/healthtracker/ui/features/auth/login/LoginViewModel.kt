@@ -150,7 +150,7 @@ class LoginViewModel @Inject constructor(
             }
 
             updateState { it.copy(isLoading = false) }
-            sendEffect(LoginUiEffect.showToast("$provider Login Success"))
+            sendEffect(LoginUiEffect.ShowToast("$provider Login Success"))
             sendEffect(LoginUiEffect.NavigateToDashboard)
         }
     }

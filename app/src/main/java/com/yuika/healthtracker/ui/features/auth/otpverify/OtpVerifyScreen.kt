@@ -26,21 +26,46 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.glance.LocalContext
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
+import com.yuika.healthtracker.ui.features.auth.login.LoginUiIntent
 import com.yuika.healthtracker.ui.features.auth.otpverify.components.OtpVerifyFooter
 import com.yuika.healthtracker.ui.features.auth.otpverify.components.OtpVerifyForm
+import com.yuika.healthtracker.ui.features.auth.register.RegisterUiState
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
 fun OtpVerifyScreen(
     modifier: Modifier = Modifier,
-    email: String = "jane.doe@example.com",
-    onVerifyClick: (String) -> Unit = {},
-    onResendClick: () -> Unit = {},
+    viewModel: OtpVerifyViewModel = hiltViewModel(),
+    onNavigateToHome: () -> Unit = {},
     onBackToLoginClick: () -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
+    val uiState by viewModel.state?.collectAsStateWithLifecycle() ?: rememberSaveable { mutableStateOf(
+        OtpVerifyUiState()
+    ) }
+    val context = LocalContext.current
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is OtpVerifyEffect.NavigateToHome -> onNavigateToHome()
+                is OtpVerifyEffect.NavigateToLogin -> onBackToLoginClick()
+                is OtpVerifyEffect.ShowToast -> {
+                    // Show toast
+                }
+            }
+        }
+    }
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -74,9 +99,9 @@ fun OtpVerifyScreen(
                         subtitleContent = {
                             Text(
                                 text = buildAnnotatedString {
-                                    append("Please enter the 4-digit code sent to\nyour email address\n")
+                                    append("Please enter the ${uiState.otpLength}-digit code sent to\nyour email address\n")
                                     withStyle(style = SpanStyle(fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onBackground)) {
-                                        append(email)
+                                        append(uiState.email.ifEmpty { "your email" })
                                     }
                                     append(".")
                                 },
@@ -90,8 +115,12 @@ fun OtpVerifyScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     OtpVerifyForm(
-                        onVerifyClick = onVerifyClick,
-                        onResendClick = onResendClick
+                        otpCode = uiState.otpCode,
+                        otpLength = uiState.otpLength,
+                        onOtpChange = { viewModel?.onIntent(OtpVerifyIntent.OtpCodeChanged(it)) },
+                        isLoading = uiState.isLoading,
+                        onResendOtp = { viewModel?.onIntent(OtpVerifyIntent.ResendOtp) },
+                        onVerify = { viewModel?.onIntent(OtpVerifyIntent.Submit) },
                     )
                     
                     Spacer(modifier = Modifier.height(16.dp))

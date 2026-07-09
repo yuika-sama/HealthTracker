@@ -7,5 +7,5 @@ sealed class LoginUiEffect : UiEffect
     object NavigateToDashboard: LoginUiEffect()
     object NavigateToRegister: LoginUiEffect()
     object NavigateToForgotPassword: LoginUiEffect()
-    data class showToast(val message: String): LoginUiEffect()
+    data class ShowToast(val message: String): LoginUiEffect()
 }
