@@ -44,7 +44,8 @@ class LoginViewModel @Inject constructor
 
     private fun handleFacebookClick()
     {
-        TODO("Not yet implemented")
+        updateState { it.copy(isLoading = true, errorMessage = null) }
+
     }
 
     private fun handleGoogleClick()
