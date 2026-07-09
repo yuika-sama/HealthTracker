@@ -36,7 +36,8 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun DiaryScreen(
     modifier: Modifier = Modifier,
-    onAddFoodClick: (String) -> Unit = {}
+    onAddFoodClick: (String) -> Unit = {},
+    onTabClick: (String) -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
@@ -46,11 +47,11 @@ fun DiaryScreen(
             DashboardTopBar()
         },
         bottomBar = {
-            DashboardBottomNav(currentRoute = "diary")
+            DashboardBottomNav(currentRoute = "diary", onTabClick = onTabClick)
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO */ },
+                onClick = { onAddFoodClick("Breakfast") },
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.background

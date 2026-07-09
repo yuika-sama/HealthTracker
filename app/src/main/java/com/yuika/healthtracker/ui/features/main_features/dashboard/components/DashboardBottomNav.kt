@@ -36,7 +36,8 @@ import com.yuika.healthtracker.ui.theme.Emerald
 @Composable
 fun DashboardBottomNav(
     modifier: Modifier = Modifier,
-    currentRoute: String = "home"
+    currentRoute: String = "home",
+    onTabClick: (String) -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -49,27 +50,32 @@ fun DashboardBottomNav(
         NavItem(
             icon = Icons.Outlined.GridView,
             label = "Home",
-            isSelected = currentRoute == "home"
+            isSelected = currentRoute == "home",
+            onClick = { onTabClick("home") }
         )
         NavItem(
             icon = Icons.Outlined.Restaurant,
             label = "Diary",
-            isSelected = currentRoute == "diary"
+            isSelected = currentRoute == "diary",
+            onClick = { onTabClick("diary") }
         )
         NavItem(
             icon = Icons.Outlined.FitnessCenter,
             label = "Activity",
-            isSelected = currentRoute == "activity"
+            isSelected = currentRoute == "activity",
+            onClick = { onTabClick("activity") }
         )
         NavItem(
             icon = Icons.Outlined.BarChart,
             label = "Trends",
-            isSelected = currentRoute == "trends"
+            isSelected = currentRoute == "trends",
+            onClick = { onTabClick("trends") }
         )
         NavItem(
             icon = Icons.Outlined.Person,
             label = "Profile",
-            isSelected = currentRoute == "profile"
+            isSelected = currentRoute == "profile",
+            onClick = { onTabClick("profile") }
         )
     }
 }
@@ -78,7 +84,8 @@ fun DashboardBottomNav(
 private fun NavItem(
     icon: ImageVector,
     label: String,
-    isSelected: Boolean
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
     val tint = if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant
     val bg = if (isSelected) MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f) else Color.Transparent
@@ -87,7 +94,7 @@ private fun NavItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .clip(RoundedCornerShape(24.dp))
-            .clickable { }
+            .clickable { onClick() }
             .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Box(

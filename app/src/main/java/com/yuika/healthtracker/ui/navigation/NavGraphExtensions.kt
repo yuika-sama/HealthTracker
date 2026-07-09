@@ -87,32 +87,83 @@ fun NavGraphBuilder.onboardingNavGraph(navController: NavHostController){
 }
 
 fun NavGraphBuilder.mainNavGraph(navController: NavHostController){
+    val handleTabClick: (String) -> Unit = { tab ->
+        val targetRoute = when (tab) {
+            "home" -> Route.Dashboard
+            "diary" -> Route.Diary
+            "activity" -> Route.Activity
+            "trends" -> Route.Trends
+            "profile" -> Route.Profile
+            else -> Route.Dashboard
+        }
+        navController.navigate(targetRoute) {
+            popUpTo(Route.Dashboard) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     composable<Route.Dashboard>{
-        DashboardScreen()
+        DashboardScreen(
+            onAddMealClick = { navController.navigate(Route.AddMeal) },
+            onAddActivityClick = { navController.navigate(Route.AddActivity) },
+            onTabClick = handleTabClick
+        )
     }
 
     composable<Route.Diary>{
-        DiaryScreen()
+        DiaryScreen(
+            onAddFoodClick = { mealType ->
+                navController.navigate(Route.AddMeal)
+            },
+            onTabClick = handleTabClick
+        )
     }
     composable<Route.AddMeal>{
-        AddMealScreen()
+        AddMealScreen(
+            onBackClick = { navController.popBackStack() },
+            onSaveClick = { navController.popBackStack() }
+        )
     }
 
     composable<Route.Activity>{
-        ActivityScreen()
+        ActivityScreen(
+            onAddActivityClick = { navController.navigate(Route.AddActivity) },
+            onTabClick = handleTabClick
+        )
     }
     composable<Route.AddActivity>{
-        AddActivityScreen()
+        AddActivityScreen(
+            onBackClick = { navController.popBackStack() },
+            onSaveClick = { navController.popBackStack() }
+        )
     }
 
     composable<Route.Trends>{
-        TrendsScreen()
+        TrendsScreen(
+            onTabClick = handleTabClick
+        )
     }
 
     composable<Route.Profile>{
-        ProfileScreen()
+        ProfileScreen(
+            onLogoutClick = {
+                navController.navigate(Route.Login) {
+                    popUpTo(Route.Dashboard) { inclusive = true }
+                }
+            },
+            onEditProfileClick = {
+                navController.navigate(Route.ProfileUpdate)
+            },
+            onTabClick = handleTabClick
+        )
     }
     composable<Route.ProfileUpdate>{
-        UpdateProfileScreen()
+        UpdateProfileScreen(
+            onBackClick = { navController.popBackStack() },
+            onSaveClick = { navController.popBackStack() }
+        )
     }
 }

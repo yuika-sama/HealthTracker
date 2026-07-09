@@ -32,7 +32,9 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
 fun ActivityScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAddActivityClick: () -> Unit = {},
+    onTabClick: (String) -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
@@ -59,11 +61,11 @@ fun ActivityScreen(
             DashboardTopBar()
         },
         bottomBar = {
-            DashboardBottomNav(currentRoute = "activity")
+            DashboardBottomNav(currentRoute = "activity", onTabClick = onTabClick)
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO */ },
+                onClick = onAddActivityClick,
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.background

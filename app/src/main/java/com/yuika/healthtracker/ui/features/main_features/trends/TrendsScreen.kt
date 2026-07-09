@@ -28,7 +28,8 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
 fun TrendsScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onTabClick: (String) -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
@@ -38,7 +39,7 @@ fun TrendsScreen(
             DashboardTopBar()
         },
         bottomBar = {
-            DashboardBottomNav(currentRoute = "trends")
+            DashboardBottomNav(currentRoute = "trends", onTabClick = onTabClick)
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->

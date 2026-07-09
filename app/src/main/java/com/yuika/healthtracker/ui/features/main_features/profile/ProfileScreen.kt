@@ -45,7 +45,9 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    onLogoutClick: () -> Unit = {}
+    onLogoutClick: () -> Unit = {},
+    onEditProfileClick: () -> Unit = {},
+    onTabClick: (String) -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
@@ -55,7 +57,7 @@ fun ProfileScreen(
             DashboardTopBar()
         },
         bottomBar = {
-            DashboardBottomNav(currentRoute = "profile")
+            DashboardBottomNav(currentRoute = "profile", onTabClick = onTabClick)
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
@@ -94,7 +96,8 @@ fun ProfileScreen(
                     iconTintColor = MaterialTheme.colorScheme.tertiary,
                     title = "Edit Profile",
                     subtitle = "Name, Weight, Height, Activities, Goals",
-                    showDivider = false
+                    showDivider = false,
+                    onClick = onEditProfileClick
                 )
             }
             

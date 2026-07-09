@@ -48,7 +48,8 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     onAddMealClick: () -> Unit = {},
-    onAddActivityClick: () -> Unit = {}
+    onAddActivityClick: () -> Unit = {},
+    onTabClick: (String) -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
@@ -58,7 +59,7 @@ fun DashboardScreen(
             DashboardTopBar()
         },
         bottomBar = {
-            DashboardBottomNav()
+            DashboardBottomNav(currentRoute = "home", onTabClick = onTabClick)
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
