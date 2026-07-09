@@ -23,15 +23,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
 fun PasswordChangedScreen(
     modifier: Modifier = Modifier,
+    viewModel: PasswordChangedViewModel = hiltViewModel(),
     onBackToLoginClick: () -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is PasswordChangedEffect.NavigateToLogin -> onBackToLoginClick()
+            }
+        }
+    }
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -67,7 +81,7 @@ fun PasswordChangedScreen(
                     Spacer(modifier = Modifier.height(32.dp))
                     
                     Button(
-                        onClick = onBackToLoginClick,
+                        onClick = { viewModel.onIntent(PasswordChangedIntent.BackToLoginClick) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
