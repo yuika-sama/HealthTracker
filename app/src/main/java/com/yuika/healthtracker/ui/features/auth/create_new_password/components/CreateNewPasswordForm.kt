@@ -27,19 +27,26 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
 fun CreateNewPasswordForm(
     modifier: Modifier = Modifier,
-    onResetPasswordClick: (String, String) -> Unit
+    newPassword: String,
+    newPasswordErr: String? = null,
+    isShowNewPassword: Boolean = false,
+    confirmPassword: String,
+    confirmPasswordErr: String? = null,
+    isShowConfirmPassword: Boolean = false,
+    onNewPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onShowNewPassword: () -> Unit,
+    onShowConfirmPassword: () -> Unit,
+    onResetPasswordClick: () -> Unit,
+    isLoading: Boolean = false,
 ) {
     val spacing = LocalSpacing.current
-    var newPassword by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    
-    var newPasswordVisible by remember { mutableStateOf(false) }
-    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxWidth()
@@ -55,7 +62,7 @@ fun CreateNewPasswordForm(
 
         OutlinedTextField(
             value = newPassword,
-            onValueChange = { newPassword = it },
+            onValueChange = onNewPasswordChange,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             shape = MaterialTheme.shapes.medium,
@@ -66,15 +73,20 @@ fun CreateNewPasswordForm(
                     contentDescription = null
                 )
             },
+            supportingText = {
+                if (newPasswordErr != null){
+                    ErrorText(newPasswordErr)
+                }
+            },
             trailingIcon = {
-                IconButton(onClick = { newPasswordVisible = !newPasswordVisible }) {
+                IconButton(onClick = onShowNewPassword) {
                     Icon(
-                        imageVector = if (newPasswordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                        imageVector = if (isShowNewPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                         contentDescription = null
                     )
                 }
             },
-            visualTransformation = if (newPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (isShowNewPassword) VisualTransformation.None else PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -112,7 +124,7 @@ fun CreateNewPasswordForm(
 
         OutlinedTextField(
             value = confirmPassword,
-            onValueChange = { confirmPassword = it },
+            onValueChange = onConfirmPasswordChange,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             shape = MaterialTheme.shapes.medium,
@@ -123,15 +135,20 @@ fun CreateNewPasswordForm(
                     contentDescription = null
                 )
             },
+            supportingText = {
+                if (confirmPasswordErr != null){
+                    ErrorText(confirmPasswordErr)
+                }
+            },
             trailingIcon = {
-                IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
+                IconButton(onClick = onShowConfirmPassword) {
                     Icon(
-                        imageVector = if (confirmPasswordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                        imageVector = if (isShowConfirmPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                         contentDescription = null
                     )
                 }
             },
-            visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (isShowConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -144,7 +161,7 @@ fun CreateNewPasswordForm(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { onResetPasswordClick(newPassword, confirmPassword) },
+            onClick = onResetPasswordClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -153,7 +170,7 @@ fun CreateNewPasswordForm(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ),
-            enabled = newPassword.isNotEmpty() && confirmPassword.isNotEmpty() && newPassword == confirmPassword
+            enabled = !isLoading
         ) {
             Text(
                 text = "Reset Password",
