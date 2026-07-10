@@ -25,7 +25,10 @@ import androidx.compose.material.icons.outlined.LockReset
 import androidx.compose.runtime.LaunchedEffect
 import androidx.glance.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.features.auth.forgot_password.components.ForgotPasswordFooter
 import com.yuika.healthtracker.ui.features.auth.forgot_password.components.ForgotPasswordForm
@@ -43,25 +46,23 @@ fun ForgotPasswordScreen(
     val scrollState = rememberScrollState()
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    LaunchedEffect(viewModel.effect) {
-        viewModel.effect.collect { effect ->
-            when (effect)
-            {
-                is ForgotPasswordUiEffect.NavigateToLogin -> onBackToLoginClick()
-                is ForgotPasswordUiEffect.NavigateToVerifyOtp -> onSendCodeClick(effect.email)
-                is ForgotPasswordUiEffect.ShowToast ->
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effect.collect { effect ->
+                when (effect)
                 {
-                    // show toast
+                    is ForgotPasswordUiEffect.NavigateToLogin -> onBackToLoginClick()
+                    is ForgotPasswordUiEffect.NavigateToVerifyOtp -> onSendCodeClick(effect.email)
+                    is ForgotPasswordUiEffect.ShowToast ->
+                    {
+                        Toast
+                            .makeText(context, effect.message, Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
             }
-        }
-
-    }
-
-    LaunchedEffect(state.value.emailError) {
-        state.value.error?.let { errorMsg ->
-            Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
         }
     }
 

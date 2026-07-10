@@ -24,7 +24,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.features.auth.login.components.LoginFooter
@@ -43,19 +46,22 @@ fun LoginScreen(
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel) {
-        viewModel.effect.collect { effect ->
-            when (effect)
-            {
-                is LoginUiEffect.NavigateToDashboard -> onNavigateToClientPage()
-                is LoginUiEffect.NavigateToRegister -> onNavigateToRegister()
-                is LoginUiEffect.NavigateToForgotPassword -> onNavigateToForgotPassword()
-                is LoginUiEffect.ShowToast ->
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewModel.effect.collect { effect ->
+                when (effect)
                 {
-                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                    is LoginUiEffect.NavigateToDashboard -> onNavigateToClientPage()
+                    is LoginUiEffect.NavigateToRegister -> onNavigateToRegister()
+                    is LoginUiEffect.NavigateToForgotPassword -> onNavigateToForgotPassword()
+                    is LoginUiEffect.ShowToast ->
+                    {
+                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

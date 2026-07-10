@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.auth.register
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,17 +22,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.unit.dp
 import androidx.glance.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.core.components.ClickableTextLink
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.features.auth.register.components.RegisterForm
 import com.yuika.healthtracker.ui.theme.LocalSpacing
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
@@ -44,18 +51,23 @@ fun RegisterScreen(
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel.effect) {
-        viewModel.effect.collect { effect ->
-            when (effect)
-            {
-                is RegisterEffect.NavigateToVerifyOtp -> onNavigateToVerifyOtp(effect.email)
-                is RegisterEffect.NavigateToLogin -> onNavigateToLogin()
-                is RegisterEffect.ShowToast ->
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effect.collect { effect ->
+                when (effect)
                 {
-                    // show toast
+                    is RegisterEffect.NavigateToVerifyOtp -> onNavigateToVerifyOtp(effect.email)
+                    is RegisterEffect.NavigateToLogin -> onNavigateToLogin()
+                    is RegisterEffect.ShowToast ->
+                    {
+                        Toast
+                            .makeText(context, effect.message, Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
             }
         }

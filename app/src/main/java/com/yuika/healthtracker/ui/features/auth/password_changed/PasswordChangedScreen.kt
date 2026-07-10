@@ -26,7 +26,10 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
@@ -39,12 +42,15 @@ fun PasswordChangedScreen(
 {
     val spacing = LocalSpacing.current
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    LaunchedEffect(viewModel.effect) {
-        viewModel.effect.collect { effect ->
-            when (effect)
-            {
-                is PasswordChangedEffect.NavigateToLogin -> onBackToLoginClick()
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewModel.effect.collect { effect ->
+                when (effect)
+                {
+                    is PasswordChangedEffect.NavigateToLogin -> onBackToLoginClick()
+                }
             }
         }
     }
