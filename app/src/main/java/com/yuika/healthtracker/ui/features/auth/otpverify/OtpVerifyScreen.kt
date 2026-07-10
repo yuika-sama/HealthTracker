@@ -45,6 +45,7 @@ fun OtpVerifyScreen(
     modifier: Modifier = Modifier,
     viewModel: OtpVerifyViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit = {},
+    onNavigateToCreateNewPassword: (String) -> Unit = {},
     onBackToLoginClick: () -> Unit = {}
 )
 {
@@ -61,6 +62,7 @@ fun OtpVerifyScreen(
                 {
                     is OtpVerifyEffect.NavigateToHome -> onNavigateToHome()
                     is OtpVerifyEffect.NavigateToLogin -> onBackToLoginClick()
+                    is OtpVerifyEffect.NavigateToCreateNewPassword -> onNavigateToCreateNewPassword(effect.email)
                     is OtpVerifyEffect.ShowToast ->
                     {
                         Toast.makeText(context, effect.message, Toast.LENGTH_SHORT)

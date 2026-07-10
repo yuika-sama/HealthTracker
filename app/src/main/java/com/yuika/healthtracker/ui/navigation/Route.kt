@@ -7,8 +7,8 @@ sealed interface Route
     @Serializable object Login: Route
     @Serializable object Register: Route
     @Serializable object ForgotPassword: Route
-    @Serializable data class OtpVerify(val email: String): Route
-    @Serializable object CreateNewPassword: Route
+    @Serializable data class OtpVerify(val email: String, val isFromRegister: Boolean): Route
+    @Serializable data class CreateNewPassword(val email: String): Route
     @Serializable object PasswordChanged: Route
 
     @Serializable object Onboarding1: Route

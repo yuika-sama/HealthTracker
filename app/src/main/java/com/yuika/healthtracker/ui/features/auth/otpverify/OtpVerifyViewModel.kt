@@ -9,14 +9,24 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
+import com.yuika.healthtracker.ui.navigation.Route
 
 @HiltViewModel
 class OtpVerifyViewModel @Inject constructor(
-    private val verifyOtpUseCase: VerifyOtpUseCase
+    private val verifyOtpUseCase: VerifyOtpUseCase,
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel<OtpVerifyUiState, OtpVerifyIntent, OtpVerifyEffect>(
     initialState = OtpVerifyUiState()
 )
 {
+    private val route = savedStateHandle.toRoute<Route.OtpVerify>()
+
+    init {
+        updateState { it.copy(email = route.email) }
+    }
+
     override fun onIntent(intent: OtpVerifyIntent)
     {
         when (intent)
@@ -94,7 +104,11 @@ class OtpVerifyViewModel @Inject constructor(
             verifyOtpUseCase(currentState.otpCode)
 
             updateState { it.copy(isLoading = false) }
-            sendEffect(OtpVerifyEffect.NavigateToHome)
+            if (route.isFromRegister) {
+                sendEffect(OtpVerifyEffect.NavigateToHome)
+            } else {
+                sendEffect(OtpVerifyEffect.NavigateToCreateNewPassword(route.email))
+            }
         }
     }
 }

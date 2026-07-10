@@ -6,5 +6,6 @@ sealed class OtpVerifyEffect : UiEffect
 {
     object NavigateToHome : OtpVerifyEffect()
     object NavigateToLogin : OtpVerifyEffect()
+    data class NavigateToCreateNewPassword(val email: String) : OtpVerifyEffect()
     data class ShowToast(val message: String) : OtpVerifyEffect()
 }

@@ -6,14 +6,19 @@ import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.PASSWORD_REGEX
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
+import com.yuika.healthtracker.ui.navigation.Route
 
 @HiltViewModel
 class CreateNewPasswordViewModel @Inject constructor(
-    private val resetPasswordUseCase: ResetPasswordUseCase
+    private val resetPasswordUseCase: ResetPasswordUseCase,
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel<CreateNewPasswordUiState, CreateNewPasswordIntent, CreateNewPasswordEffect>(
     initialState = CreateNewPasswordUiState()
 )
 {
+    private val route = savedStateHandle.toRoute<Route.CreateNewPassword>()
     override fun onIntent(intent: CreateNewPasswordIntent)
     {
         when (intent)
@@ -30,12 +35,6 @@ class CreateNewPasswordViewModel @Inject constructor(
                         errorMessage = null
                     )
                 }
-            }
-
-            is CreateNewPasswordIntent.NewPasswordStrengthChanged -> updateState {
-                it.copy(
-                    newPasswordStrength = intent.strength
-                )
             }
 
             is CreateNewPasswordIntent.ConfirmNewPasswordChanged -> updateState {
@@ -106,8 +105,7 @@ class CreateNewPasswordViewModel @Inject constructor(
                 )
             }
         ) {
-            // Todo: find user by email
-            resetPasswordUseCase(null, newPassword)
+            resetPasswordUseCase(route.email, newPassword)
 
             updateState { it.copy(isLoading = false) }
             sendEffect(CreateNewPasswordEffect.NavigateToPasswordChanged)

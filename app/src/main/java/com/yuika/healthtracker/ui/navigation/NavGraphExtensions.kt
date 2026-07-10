@@ -53,21 +53,51 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController){
                 navController.popBackStack()
             },
             onNavigateToVerifyOtp = { email ->
-                navController.navigate(Route.OtpVerify(email = email))
+                navController.navigate(Route.OtpVerify(email = email, isFromRegister = true))
             }
         )
     }
     composable<Route.ForgotPassword>{
-        ForgotPasswordScreen()
+        ForgotPasswordScreen(
+            onBackToLoginClick = { navController.popBackStack() },
+            onSendCodeClick = { email ->
+                navController.navigate(Route.OtpVerify(email = email, isFromRegister = false))
+            }
+        )
     }
     composable<Route.OtpVerify>{
-        OtpVerifyScreen()
+        OtpVerifyScreen(
+            onNavigateToHome = {
+                navController.navigate(Route.Dashboard) {
+                    popUpTo(Route.Login) { inclusive = true }
+                }
+            },
+            onNavigateToCreateNewPassword = { email ->
+                navController.navigate(Route.CreateNewPassword(email = email))
+            },
+            onBackToLoginClick = { navController.popBackStack() }
+        )
     }
     composable<Route.CreateNewPassword>{
-        CreateNewPasswordScreen()
+        CreateNewPasswordScreen(
+            onResetPasswordClick = {
+                navController.navigate(Route.PasswordChanged)
+            },
+            onBackToLoginClick = {
+                navController.navigate(Route.Login) {
+                    popUpTo(Route.Login) { inclusive = true }
+                }
+            }
+        )
     }
     composable<Route.PasswordChanged>{
-        PasswordChangedScreen()
+        PasswordChangedScreen(
+            onBackToLoginClick = {
+                navController.navigate(Route.Login) {
+                    popUpTo(Route.Login) { inclusive = true }
+                }
+            }
+        )
     }
 }
 
