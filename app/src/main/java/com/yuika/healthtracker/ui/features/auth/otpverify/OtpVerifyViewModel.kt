@@ -69,7 +69,7 @@ class OtpVerifyViewModel @Inject constructor(
     {
         val currentState = state.value
 
-        if (currentState.otpCode.length <= currentState.otpLength)
+        if (currentState.otpCode.length < currentState.otpLength)
         {
             updateState {
                 it.copy(

@@ -38,24 +38,9 @@ fun OtpInputFields(
             OutlinedTextField(
                 value = char,
                 onValueChange = { newValue ->
-                    if (newValue.length <= 1)
+                    if (newValue.isEmpty())
                     {
-                        val newOtp = buildString {
-                            for (j in 0 until otpLength)
-                            {
-                                if (j == i) append(newValue)
-                                else append(otpCode.getOrNull(j) ?: "")
-                            }
-                        }
-                        onOtpChange(newOtp)
-
-                        if (newValue.isNotEmpty() && i < otpLength - 1)
-                        {
-                            focusRequesters[i + 1].requestFocus()
-                        }
-                    }
-                    else if (newValue.isEmpty())
-                    {
+                        // Backspace
                         val newOtp = buildString {
                             for (j in 0 until otpLength)
                             {
@@ -65,9 +50,24 @@ fun OtpInputFields(
                         }
                         onOtpChange(newOtp)
 
-                        if (i > 0)
-                        {
-                            focusRequesters[i - 1].requestFocus()
+                        if (i > 0){
+                            focusRequesters[i-1].requestFocus()
+                        }
+                    }
+                    else
+                    {
+                        // add a char/replace input
+                        val charToUse = newValue.last().toString()
+                        val newOtp = buildString {
+                            for (j in 0 until otpLength){
+                                if (j == i) append(charToUse)
+                                else append(otpCode.getOrNull(j) ?: "")
+                            }
+                        }
+                        onOtpChange(newOtp)
+
+                        if (i < otpLength - 1) {
+                            focusRequesters[i+1].requestFocus()
                         }
                     }
                 },
