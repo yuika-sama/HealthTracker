@@ -100,15 +100,8 @@ fun ForgotPasswordScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     ForgotPasswordForm(
-                        email = state.value.email,
-                        emailError = state.value.emailError,
-                        isLoading = state.value.isLoading,
-                        onEmailChange = {
-                            viewModel.onIntent(ForgotPasswordUiIntent.EmailChanged(it))
-                        },
-                        onSendCodeClick = {
-                            viewModel.onIntent(ForgotPasswordUiIntent.SubmitClick)
-                        }
+                        state = state.value,
+                        onIntent = viewModel::onIntent
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))

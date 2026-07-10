@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
-import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.CheckBoxOutlineBlank
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
@@ -27,35 +26,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LabeledField
 import com.yuika.healthtracker.ui.core.components.LabeledPasswordField
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.theme.LocalSpacing
+import com.yuika.healthtracker.ui.features.auth.register.RegisterUiState
+import com.yuika.healthtracker.ui.features.auth.register.RegisterIntent
 
 @Composable
 fun RegisterForm(
     modifier: Modifier = Modifier,
-    fullName: String,
-    onFullNameChange: (String) -> Unit,
-    fullNameError: String?,
-    email: String,
-    onEmailChange: (String) -> Unit,
-    emailError: String?,
-    password: String,
-    onPasswordChange: (String) -> Unit,
-    passwordError: String?,
-    passwordVisible: Boolean,
-    onPasswordVisibleChange: () -> Unit,
-    confirmPassword: String,
-    onConfirmPasswordChange: (String) -> Unit,
-    confirmPasswordError: String?,
-    confirmPasswordVisible: Boolean,
-    onConfirmPasswordVisibleChange: () -> Unit,
-    agreedToTerms: Boolean,
-    onAgreedToTermsChange: () -> Unit,
-    isLoading: Boolean,
-    onRegisterClick: () -> Unit
+    state: RegisterUiState,
+    onIntent: (RegisterIntent) -> Unit
 )
 {
     val spacing = LocalSpacing.current
@@ -73,46 +55,46 @@ fun RegisterForm(
         ) {
             LabeledField(
                 label = "Full Name",
-                value = fullName,
-                onValueChange = onFullNameChange,
+                value = state.fullName,
+                onValueChange = { onIntent(RegisterIntent.FullNameChanged(it)) },
                 placeholder = "John Doe",
-                supportingText = fullNameError,
+                supportingText = state.fullNameError,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Person,
                         contentDescription = null
                     )
                 },
-                enabled = !isLoading
+                enabled = !state.isLoading
             )
 
             Spacer(modifier = Modifier.height(spacing.large))
 
             LabeledField(
                 label =  "Email Address",
-                value = email,
-                onValueChange = onEmailChange,
+                value = state.email,
+                onValueChange = { onIntent(RegisterIntent.EmailChanged(it)) },
                 placeholder = "name@example.com",
-                supportingText = emailError,
+                supportingText = state.emailError,
                 leadingIcon =  {
                     Icon(
                         imageVector = Icons.Outlined.Email,
                         contentDescription = null
                     )
                 },
-                enabled = !isLoading
+                enabled = !state.isLoading
             )
             Spacer(modifier = Modifier.height(spacing.large))
 
             LabeledPasswordField(
                 label = "Password",
-                value = password,
-                onValueChange = onPasswordChange,
+                value = state.password,
+                onValueChange = { onIntent(RegisterIntent.PasswordChanged(it)) },
                 placeholder = "••••••••",
-                visible = passwordVisible,
-                onToggleVisible = onPasswordVisibleChange,
-                supportingText = passwordError,
-                enabled = !isLoading,
+                visible = state.showPassword,
+                onToggleVisible = { onIntent(RegisterIntent.ShowPasswordChanged) },
+                supportingText = state.passwordError,
+                enabled = !state.isLoading,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Lock,
@@ -125,13 +107,13 @@ fun RegisterForm(
 
             LabeledPasswordField(
                 label = "Confirm password",
-                value = confirmPassword,
-                onValueChange = onConfirmPasswordChange,
+                value = state.confirmPassword,
+                onValueChange = { onIntent(RegisterIntent.ConfirmPasswordChanged(it)) },
                 placeholder = "••••••••",
-                visible = confirmPasswordVisible,
-                onToggleVisible = onConfirmPasswordVisibleChange,
-                supportingText = confirmPasswordError,
-                enabled = !isLoading,
+                visible = state.showConfirmPassword,
+                onToggleVisible = { onIntent(RegisterIntent.ShowConfirmPasswordChanged) },
+                supportingText = state.confirmPasswordError,
+                enabled = !state.isLoading,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.CheckBoxOutlineBlank,
@@ -146,9 +128,9 @@ fun RegisterForm(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = agreedToTerms,
-                    onCheckedChange = {onAgreedToTermsChange()},
-                    enabled = !isLoading
+                    checked = state.agreedToTerms,
+                    onCheckedChange = { onIntent(RegisterIntent.AgreedToTermsChanged) },
+                    enabled = !state.isLoading
                 )
                 Spacer(modifier = Modifier.width(spacing.small))
                 Text(
@@ -161,8 +143,8 @@ fun RegisterForm(
             Spacer(modifier= Modifier.height(spacing.large))
 
             Button(
-                onClick = onRegisterClick,
-                enabled = agreedToTerms && !isLoading,
+                onClick = { onIntent(RegisterIntent.Submit) },
+                enabled = state.agreedToTerms && !state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -174,7 +156,7 @@ fun RegisterForm(
                     disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
                 )
             ) {
-                if (!isLoading){
+                if (!state.isLoading){
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {

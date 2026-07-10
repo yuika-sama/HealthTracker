@@ -17,10 +17,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -28,23 +24,16 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yuika.healthtracker.ui.core.components.ErrorText
+import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.theme.LocalSpacing
+import com.yuika.healthtracker.ui.features.auth.create_new_password.CreateNewPasswordUiState
+import com.yuika.healthtracker.ui.features.auth.create_new_password.CreateNewPasswordIntent
 
 @Composable
 fun CreateNewPasswordForm(
     modifier: Modifier = Modifier,
-    newPassword: String,
-    newPasswordErr: String? = null,
-    isShowNewPassword: Boolean = false,
-    confirmPassword: String,
-    confirmPasswordErr: String? = null,
-    isShowConfirmPassword: Boolean = false,
-    onNewPasswordChange: (String) -> Unit,
-    onConfirmPasswordChange: (String) -> Unit,
-    onShowNewPassword: () -> Unit,
-    onShowConfirmPassword: () -> Unit,
-    onResetPasswordClick: () -> Unit,
-    isLoading: Boolean = false,
+    state: CreateNewPasswordUiState,
+    onIntent: (CreateNewPasswordIntent) -> Unit
 )
 {
     val spacing = LocalSpacing.current
@@ -62,10 +51,11 @@ fun CreateNewPasswordForm(
         Spacer(modifier = Modifier.height(spacing.small))
 
         OutlinedTextField(
-            value = newPassword,
-            onValueChange = onNewPasswordChange,
+            value = state.newPassword,
+            onValueChange = { onIntent(CreateNewPasswordIntent.NewPasswordChanged(it)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            enabled = !state.isLoading,
             shape = MaterialTheme.shapes.medium,
             placeholder = { Text("Enter new password") },
             leadingIcon = {
@@ -75,20 +65,20 @@ fun CreateNewPasswordForm(
                 )
             },
             supportingText = {
-                if (newPasswordErr != null)
+                if (state.newPasswordError != null)
                 {
-                    ErrorText(newPasswordErr)
+                    ErrorText(state.newPasswordError)
                 }
             },
             trailingIcon = {
-                IconButton(onClick = onShowNewPassword) {
+                IconButton(onClick = { onIntent(CreateNewPasswordIntent.ShowNewPassword) }, enabled = !state.isLoading) {
                     Icon(
-                        imageVector = if (isShowNewPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                        imageVector = if (state.isShowNewPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                         contentDescription = null
                     )
                 }
             },
-            visualTransformation = if (isShowNewPassword) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (state.isShowNewPassword) VisualTransformation.None else PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -100,17 +90,8 @@ fun CreateNewPasswordForm(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        val strength = when
-        {
-            newPassword.isEmpty() -> 0
-            newPassword.length < 6 -> 1
-            newPassword.length < 8 -> 2
-            newPassword.length < 10 -> 3
-            else -> 4
-        }
-
         PasswordStrengthIndicator(
-            strength = strength
+            strength = state.newPasswordStrength
         )
 
         Spacer(modifier = Modifier.height(spacing.large))
@@ -126,10 +107,11 @@ fun CreateNewPasswordForm(
         Spacer(modifier = Modifier.height(spacing.small))
 
         OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = onConfirmPasswordChange,
+            value = state.confirmNewPassword,
+            onValueChange = { onIntent(CreateNewPasswordIntent.ConfirmNewPasswordChanged(it)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            enabled = !state.isLoading,
             shape = MaterialTheme.shapes.medium,
             placeholder = { Text("Confirm new password") },
             leadingIcon = {
@@ -139,20 +121,20 @@ fun CreateNewPasswordForm(
                 )
             },
             supportingText = {
-                if (confirmPasswordErr != null)
+                if (state.confirmNewPasswordError != null)
                 {
-                    ErrorText(confirmPasswordErr)
+                    ErrorText(state.confirmNewPasswordError)
                 }
             },
             trailingIcon = {
-                IconButton(onClick = onShowConfirmPassword) {
+                IconButton(onClick = { onIntent(CreateNewPasswordIntent.ShowConfirmNewPassword) }, enabled = !state.isLoading) {
                     Icon(
-                        imageVector = if (isShowConfirmPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                        imageVector = if (state.isShowConfirmNewPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                         contentDescription = null
                     )
                 }
             },
-            visualTransformation = if (isShowConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (state.isShowConfirmNewPassword) VisualTransformation.None else PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -165,7 +147,7 @@ fun CreateNewPasswordForm(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = onResetPasswordClick,
+            onClick = { onIntent(CreateNewPasswordIntent.ResetPasswordClick) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -174,13 +156,17 @@ fun CreateNewPasswordForm(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ),
-            enabled = !isLoading
+            enabled = !state.isLoading
         ) {
-            Text(
-                text = "Reset Password",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
-            )
+            if (state.isLoading) {
+                LoadingIndicator()
+            } else {
+                Text(
+                    text = "Reset Password",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
     }
 }

@@ -91,19 +91,8 @@ fun LoginScreen(
             }
 
             LoginForm(
-                email = uiState.email,
-                onEmailChange = { viewModel.onIntent(LoginUiIntent.EmailChanged(it)) },
-                emailError = uiState.emailErrorMessage,
-                password = uiState.password,
-                onPasswordChange = { viewModel.onIntent(LoginUiIntent.PasswordChanged(it)) },
-                passwordError = uiState.passwordErrorMessage,
-                rememberMe = uiState.isRememberAccount,
-                onRememberMeChange = { viewModel.onIntent(LoginUiIntent.RememberAccountClick) },
-                passwordVisible = uiState.isShowPassword,
-                onPasswordVisibleChange = { viewModel.onIntent(LoginUiIntent.ShowPasswordClick) },
-                isLoading = uiState.isLoading,
-                onLoginClick = { viewModel.onIntent(LoginUiIntent.LoginClick) },
-                onForgotPasswordClick = { viewModel.onIntent(LoginUiIntent.ForgotPasswordClick) }
+                state = uiState,
+                onIntent = viewModel::onIntent
             )
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))

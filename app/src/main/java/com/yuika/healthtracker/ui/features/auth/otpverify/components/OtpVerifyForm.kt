@@ -15,10 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -32,12 +28,8 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun OtpVerifyForm(
     modifier: Modifier = Modifier,
-    otpCode: String = "",
-    otpLength: Int = 8,
-    onOtpChange: (String) -> Unit = {},
-    isLoading: Boolean = false,
-    onResendOtp: () -> Unit = {},
-    onVerify: () -> Unit = {},
+    state: OtpVerifyUiState,
+    onIntent: (OtpVerifyIntent) -> Unit
 )
 {
     val spacing = LocalSpacing.current
@@ -47,9 +39,9 @@ fun OtpVerifyForm(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OtpInputFields(
-            otpCode = otpCode,
-            otpLength = otpLength,
-            onOtpChange = { onOtpChange(it) },
+            otpCode = state.otpCode,
+            otpLength = state.otpLength,
+            onOtpChange = { onIntent(OtpVerifyIntent.OtpCodeChanged(it)) },
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -67,8 +59,8 @@ fun OtpVerifyForm(
                 text = "Resend Code",
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable(enabled = !isLoading) {
-                    onResendOtp()
+                modifier = Modifier.clickable(enabled = !state.isLoading) {
+                    onIntent(OtpVerifyIntent.ResendOtp)
                 }
             )
             Spacer(modifier = Modifier.width(4.dp))
@@ -83,7 +75,7 @@ fun OtpVerifyForm(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { onVerify() },
+            onClick = { onIntent(OtpVerifyIntent.Submit) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -92,9 +84,9 @@ fun OtpVerifyForm(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ),
-            enabled = otpCode.length == otpLength && !isLoading
+            enabled = state.otpCode.length == state.otpLength && !state.isLoading
         ) {
-            if (isLoading)
+            if (state.isLoading)
             {
                 LoadingIndicator()
             }

@@ -33,24 +33,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.features.auth.login.LoginUiIntent
+import com.yuika.healthtracker.ui.features.auth.login.LoginUiState
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
 fun LoginForm(
     modifier: Modifier = Modifier,
-    email: String,
-    onEmailChange: (String) -> Unit,
-    emailError: String?,
-    password: String,
-    onPasswordChange: (String) -> Unit,
-    passwordError: String?,
-    rememberMe: Boolean,
-    onRememberMeChange: (Boolean) -> Unit,
-    passwordVisible: Boolean,
-    onPasswordVisibleChange: () -> Unit,
-    isLoading: Boolean,
-    onLoginClick: () -> Unit,
-    onForgotPasswordClick: () -> Unit
+    state: LoginUiState,
+    onIntent: (LoginUiIntent) -> Unit
 ) {
     val spacing = LocalSpacing.current
 
@@ -76,15 +67,15 @@ fun LoginForm(
             Spacer(modifier = Modifier.height(spacing.small))
 
             OutlinedTextField(
-                value = email,
-                onValueChange = onEmailChange,
+                value = state.email,
+                onValueChange = { onIntent(LoginUiIntent.EmailChanged(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                enabled = !isLoading,
+                enabled = !state.isLoading,
                 shape = MaterialTheme.shapes.medium,
                 placeholder = { Text("name@example.com") },
-                isError = emailError != null,
-                supportingText = emailError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
+                isError = state.emailErrorMessage != null,
+                supportingText = state.emailErrorMessage?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Email,
@@ -113,7 +104,8 @@ fun LoginForm(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    modifier = Modifier.clickable(enabled = !isLoading) { onForgotPasswordClick() },
+                    modifier = Modifier.clickable(enabled = !state.isLoading) { onIntent(
+                        LoginUiIntent.ForgotPasswordClick) },
                     text = "Forgot Password?",
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary
@@ -123,15 +115,15 @@ fun LoginForm(
             Spacer(modifier = Modifier.height(spacing.small))
 
             OutlinedTextField(
-                value = password,
-                onValueChange = onPasswordChange,
+                value = state.password,
+                onValueChange = {onIntent(LoginUiIntent.PasswordChanged(it))},
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                enabled = !isLoading,
+                enabled = !state.isLoading,
                 shape = MaterialTheme.shapes.medium,
                 placeholder = { Text("••••••••") },
-                isError = passwordError != null,
-                supportingText = passwordError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
+                isError = state.passwordErrorMessage != null,
+                supportingText = state.passwordErrorMessage?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Lock,
@@ -140,11 +132,11 @@ fun LoginForm(
                 },
                 trailingIcon = {
                     IconButton(
-                        onClick = onPasswordVisibleChange,
-                        enabled = !isLoading
+                        onClick = { onIntent(LoginUiIntent.ShowPasswordClick) },
+                        enabled = !state.isLoading
                     ) {
                         Icon(
-                            imageVector = if (passwordVisible) {
+                            imageVector = if (state.isShowPassword) {
                                 Icons.Outlined.VisibilityOff
                             } else {
                                 Icons.Outlined.Visibility
@@ -153,7 +145,7 @@ fun LoginForm(
                         )
                     }
                 },
-                visualTransformation = if (passwordVisible) {
+                visualTransformation = if (state.isShowPassword) {
                     VisualTransformation.None
                 } else {
                     PasswordVisualTransformation()
@@ -173,9 +165,9 @@ fun LoginForm(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = rememberMe,
-                    onCheckedChange = onRememberMeChange,
-                    enabled = !isLoading
+                    checked = state.isRememberAccount,
+                    onCheckedChange = {onIntent(LoginUiIntent.RememberAccountClick)},
+                    enabled = !state.isLoading
                 )
                 Spacer(modifier = Modifier.width(spacing.small))
                 Text(
@@ -188,8 +180,8 @@ fun LoginForm(
             Spacer(modifier = Modifier.height(spacing.large))
 
             Button(
-                onClick = onLoginClick,
-                enabled = !isLoading,
+                onClick = { onIntent(LoginUiIntent.LoginClick) },
+                enabled = !state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -199,7 +191,7 @@ fun LoginForm(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                if (isLoading) {
+                if (state.isLoading) {
                     LoadingIndicator()
                 } else {
                     Row(

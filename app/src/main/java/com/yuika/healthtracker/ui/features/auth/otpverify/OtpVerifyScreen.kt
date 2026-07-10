@@ -51,11 +51,7 @@ fun OtpVerifyScreen(
 {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
-    val uiState by viewModel.state?.collectAsStateWithLifecycle() ?: rememberSaveable {
-        mutableStateOf(
-            OtpVerifyUiState()
-        )
-    }
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     LaunchedEffect(viewModel.effect) {
@@ -125,12 +121,8 @@ fun OtpVerifyScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     OtpVerifyForm(
-                        otpCode = uiState.otpCode,
-                        otpLength = uiState.otpLength,
-                        onOtpChange = { viewModel?.onIntent(OtpVerifyIntent.OtpCodeChanged(it)) },
-                        isLoading = uiState.isLoading,
-                        onResendOtp = { viewModel?.onIntent(OtpVerifyIntent.ResendOtp) },
-                        onVerify = { viewModel?.onIntent(OtpVerifyIntent.Submit) },
+                        state = uiState,
+                        onIntent = viewModel::onIntent
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))

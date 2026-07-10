@@ -94,30 +94,8 @@ fun CreateNewPasswordScreen(
 
                 Box(modifier = Modifier.padding(top = 32.dp)) {
                     CreateNewPasswordForm(
-                        newPassword = state.value.newPassword,
-                        newPasswordErr = state.value.newPasswordError,
-                        isShowNewPassword = state.value.isShowNewPassword,
-                        confirmPassword = state.value.confirmNewPassword,
-                        confirmPasswordErr = state.value.confirmNewPasswordError,
-                        isShowConfirmPassword = state.value.isShowConfirmNewPassword,
-                        onNewPasswordChange = {
-                            viewModel.onIntent(
-                                CreateNewPasswordIntent.NewPasswordChanged(
-                                    it
-                                )
-                            )
-                        },
-                        onConfirmPasswordChange = {
-                            viewModel.onIntent(
-                                CreateNewPasswordIntent.ConfirmNewPasswordChanged(
-                                    it
-                                )
-                            )
-                        },
-                        onShowNewPassword = { viewModel.onIntent(CreateNewPasswordIntent.ShowNewPassword) },
-                        onShowConfirmPassword = { viewModel.onIntent(CreateNewPasswordIntent.ShowConfirmNewPassword) },
-                        onResetPasswordClick = { viewModel.onIntent(CreateNewPasswordIntent.ResetPasswordClick) },
-                        isLoading = state.value.isLoading,
+                        state = state.value,
+                        onIntent = viewModel::onIntent
                     )
                 }
             }

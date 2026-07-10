@@ -91,34 +91,8 @@ fun RegisterScreen(
             }
 
             RegisterForm(
-                fullName = uiState.fullName,
-                onFullNameChange = {
-                    viewModel.onIntent(RegisterIntent.FullNameChanged(it))
-                },
-                fullNameError = uiState.fullNameError,
-                email = uiState.email,
-                onEmailChange = { viewModel.onIntent(RegisterIntent.EmailChanged(it)) },
-                emailError = uiState.emailError,
-                password = uiState.password,
-                onPasswordChange = { viewModel.onIntent(RegisterIntent.PasswordChanged(it)) },
-                passwordError = uiState.passwordError,
-                passwordVisible = uiState.showPassword,
-                onPasswordVisibleChange = { viewModel.onIntent(RegisterIntent.ShowPasswordChanged) },
-                confirmPassword = uiState.confirmPassword,
-                onConfirmPasswordChange = {
-                    viewModel.onIntent(
-                        RegisterIntent.ConfirmPasswordChanged(
-                            it
-                        )
-                    )
-                },
-                confirmPasswordError = uiState.confirmPasswordError,
-                confirmPasswordVisible = uiState.showConfirmPassword,
-                onConfirmPasswordVisibleChange = { viewModel.onIntent(RegisterIntent.ShowConfirmPasswordChanged) },
-                agreedToTerms = uiState.agreedToTerms,
-                onAgreedToTermsChange = { viewModel.onIntent(RegisterIntent.AgreedToTermsChanged) },
-                onRegisterClick = { viewModel.onIntent(RegisterIntent.Submit) },
-                isLoading = uiState.isLoading
+                state = uiState,
+                onIntent = viewModel::onIntent
             )
 
             Spacer(modifier = Modifier.height(spacing.extraLarge))

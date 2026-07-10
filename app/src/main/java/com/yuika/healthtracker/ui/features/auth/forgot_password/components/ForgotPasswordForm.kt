@@ -24,15 +24,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.theme.LocalSpacing
+import com.yuika.healthtracker.ui.features.auth.forgot_password.ForgotPasswordUiState
+import com.yuika.healthtracker.ui.features.auth.forgot_password.ForgotPasswordUiIntent
+import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 
 @Composable
 fun ForgotPasswordForm(
     modifier: Modifier = Modifier,
-    email: String,
-    emailError: String?,
-    isLoading: Boolean,
-    onEmailChange: (String) -> Unit,
-    onSendCodeClick: () -> Unit
+    state: ForgotPasswordUiState,
+    onIntent: (ForgotPasswordUiIntent) -> Unit
 )
 {
     val spacing = LocalSpacing.current
@@ -50,15 +50,16 @@ fun ForgotPasswordForm(
         Spacer(modifier = Modifier.height(spacing.small))
 
         OutlinedTextField(
-            value = email,
-            onValueChange = onEmailChange,
+            value = state.email,
+            onValueChange = { onIntent(ForgotPasswordUiIntent.EmailChanged(it)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            isError = emailError != null,
+            isError = state.emailError != null,
+            enabled = !state.isLoading,
             supportingText = {
-                if (emailError != null)
+                if (state.emailError != null)
                 {
-                    ErrorText(emailError)
+                    ErrorText(state.emailError)
                 }
             },
             shape = MaterialTheme.shapes.medium,
@@ -81,7 +82,8 @@ fun ForgotPasswordForm(
         Spacer(modifier = Modifier.height(spacing.large))
 
         Button(
-            onClick = onSendCodeClick,
+            onClick = { onIntent(ForgotPasswordUiIntent.SubmitClick) },
+            enabled = !state.isLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -91,19 +93,23 @@ fun ForgotPasswordForm(
                 contentColor = MaterialTheme.colorScheme.onPrimary
             )
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Send Code",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                Spacer(modifier = Modifier.width(spacing.small))
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
-                    contentDescription = null
-                )
+            if (state.isLoading) {
+                LoadingIndicator()
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Send Code",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.width(spacing.small))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                        contentDescription = null
+                    )
+                }
             }
         }
     }
