@@ -28,21 +28,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.glance.LocalContext
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
-import com.yuika.healthtracker.ui.features.auth.login.LoginUiIntent
 import com.yuika.healthtracker.ui.features.auth.otpverify.components.OtpVerifyFooter
 import com.yuika.healthtracker.ui.features.auth.otpverify.components.OtpVerifyForm
-import com.yuika.healthtracker.ui.features.auth.register.RegisterUiState
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
