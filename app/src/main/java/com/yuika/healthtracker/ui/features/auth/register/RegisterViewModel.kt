@@ -1,17 +1,10 @@
 package com.yuika.healthtracker.ui.features.auth.register
 
 import android.util.Patterns
-import com.yuika.healthtracker.domain.repository.UserRepository
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.RegisterUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
-import com.yuika.healthtracker.ui.features.auth.login.LoginUiEffect
-import com.yuika.healthtracker.ui.features.auth.login.LoginUiIntent
-import com.yuika.healthtracker.ui.features.auth.login.LoginUiState
-import com.yuika.healthtracker.utils.MOCK_ERROR_LOGIN_EMAIL
-import com.yuika.healthtracker.utils.NETWORK_DELAY
 import com.yuika.healthtracker.utils.PASSWORD_REGEX
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel

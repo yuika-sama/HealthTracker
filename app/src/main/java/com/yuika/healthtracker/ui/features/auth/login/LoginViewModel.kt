@@ -108,8 +108,9 @@ class LoginViewModel @Inject constructor(
                 }
             }
         ) {
-
             loginUseCase(email, password)
+            // TODO: handle save session token into datastore
+            // if(state.value.isRememberAccount) -> save into datastore
             updateState { it.copy(isLoading = false) }
             sendEffect(LoginUiEffect.NavigateToDashboard)
         }

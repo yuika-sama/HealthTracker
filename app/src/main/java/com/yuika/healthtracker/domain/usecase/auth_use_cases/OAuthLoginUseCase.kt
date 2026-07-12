@@ -23,7 +23,7 @@ class OAuthLoginUseCase @Inject constructor(
             val dummyUser = UserEntity(
                 email = oauthEmail,
                 password = "oauth_dummy_password",
-                name = "${provider} User",
+                name = "$provider User",
                 dob = "2000-01-01",
                 gender = "Male",
                 height = 170.0,

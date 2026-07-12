@@ -57,6 +57,7 @@ class ForgotPasswordViewModel @Inject constructor(
                         error = throwable.message ?: "An unexpected error occurred"
                     )
                 }
+                sendEffect(ForgotPasswordUiEffect.ShowToast(state.value.error ?: "An unexpected error occurred"))
             }
         ) {
             val exists = checkEmailExistsUseCase(email)
@@ -68,6 +69,7 @@ class ForgotPasswordViewModel @Inject constructor(
             else
             {
                 updateState { it.copy(error = "Account with this email does not exist") }
+                sendEffect(ForgotPasswordUiEffect.ShowToast(state.value.error ?: "An unexpected error occurred"))
             }
         }
     }
