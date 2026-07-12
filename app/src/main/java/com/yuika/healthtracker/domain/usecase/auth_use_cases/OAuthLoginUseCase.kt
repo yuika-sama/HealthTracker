@@ -24,7 +24,7 @@ class OAuthLoginUseCase @Inject constructor(
                 email = oauthEmail,
                 password = "oauth_dummy_password",
                 name = "$provider User",
-                dob = "2000-01-01",
+                age = 25,
                 gender = "Male",
                 height = 170.0,
                 weight = 65.0,

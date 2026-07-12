@@ -122,13 +122,12 @@ fun OnboardingPage1Screen(
         Spacer(modifier = Modifier.height(16.dp))
 
         OnboardingField(
-            icon = Icons.Outlined.CalendarToday,
-            label = "Date of Birth"
+            icon = Icons.Outlined.Person,
+            label = "Age"
         ) {
-            // Simply use BasicInputField for dob for now, or you can implement a DatePicker
             BasicInputField(
-                value = state.dob,
-                onValueChange = { viewModel.onIntent(OnboardingPage1Intent.DobChanged(it)) },
+                value = state.age,
+                onValueChange = { viewModel.onIntent(OnboardingPage1Intent.AgeChanged(it)) },
             )
         }
         

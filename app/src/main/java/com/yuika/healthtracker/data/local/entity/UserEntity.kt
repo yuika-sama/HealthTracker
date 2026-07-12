@@ -9,7 +9,7 @@ data class UserEntity(
     val email: String,
     val password: String,
     val name: String,
-    val dob: String,
+    val age: Int,
     val gender: String,
     val height: Double,
     val weight: Double,

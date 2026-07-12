@@ -45,7 +45,7 @@ fun UpdateProfileForm(
     modifier: Modifier = Modifier
 ) {
     var name by remember { mutableStateOf("Yuika") }
-    var dob by remember { mutableStateOf("02/02/2004") }
+    var age by remember { mutableStateOf("25") }
     var gender by remember { mutableStateOf("Male") }
     var weight by remember { mutableStateOf("65") }
     var height by remember { mutableStateOf("170") }
@@ -74,14 +74,12 @@ fun UpdateProfileForm(
         )
 
         OutlinedTextField(
-            value = dob,
-            onValueChange = { dob = it },
-            label = { Text("Dob") },
+            value = age,
+            onValueChange = { age = it },
+            label = { Text("Age") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            trailingIcon = {
-                Icon(imageVector = Icons.Outlined.CalendarToday, contentDescription = "Select Date")
-            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = textFieldColors()
         )
 

@@ -34,6 +34,14 @@ class RegisterViewModel @Inject constructor(
                 )
             }
 
+            is RegisterIntent.AgeChanged -> updateState {
+                it.copy(
+                    age = intent.age,
+                    ageError = null,
+                    errorMessage = null
+                )
+            }
+
             is RegisterIntent.PasswordChanged -> updateState {
                 it.copy(
                     password = intent.password,
@@ -69,6 +77,7 @@ class RegisterViewModel @Inject constructor(
         var hasError = false
         var fullNameErr: String? = null
         var emailErr: String? = null
+        var ageErr: String? = null
         var passwordErr: String? = null
         var confirmPasswordErr: String? = null
 
@@ -86,6 +95,15 @@ class RegisterViewModel @Inject constructor(
         else if (!Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches())
         {
             emailErr = "Email format is invalid"
+            hasError = true
+        }
+
+        val ageInt = currentState.age.toIntOrNull()
+        if (currentState.age.isBlank()) {
+            ageErr = "Age would not be blank"
+            hasError = true
+        } else if (ageInt == null || ageInt < 10 || ageInt > 120) {
+            ageErr = "Please enter a valid age (10-120)"
             hasError = true
         }
 
@@ -123,6 +141,7 @@ class RegisterViewModel @Inject constructor(
                 it.copy(
                     fullNameError = fullNameErr,
                     emailError = emailErr,
+                    ageError = ageErr,
                     passwordError = passwordErr,
                     confirmPasswordError = confirmPasswordErr
                 )

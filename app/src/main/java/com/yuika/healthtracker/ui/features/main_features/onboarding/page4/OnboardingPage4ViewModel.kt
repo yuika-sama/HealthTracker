@@ -35,7 +35,7 @@ class OnboardingPage4ViewModel @Inject constructor(
                 // Calculation logic
                 val weight = user.weight
                 val height = user.height
-                val age = 25 // Default age if dob is not parsable
+                val age = user.age
                 
                 var bmr = (10 * weight) + (6.25 * height) - (5 * age)
                 bmr += if (user.gender == "Male") 5.0 else -161.0

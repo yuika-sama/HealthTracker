@@ -16,7 +16,7 @@ class OnboardingPage1ViewModel @Inject constructor(
     override fun onIntent(intent: OnboardingPage1Intent) {
         when (intent) {
             is OnboardingPage1Intent.NameChanged -> updateState { it.copy(name = intent.name, errorMessage = null) }
-            is OnboardingPage1Intent.DobChanged -> updateState { it.copy(dob = intent.dob, errorMessage = null) }
+            is OnboardingPage1Intent.AgeChanged -> updateState { it.copy(age = intent.age, errorMessage = null) }
             is OnboardingPage1Intent.GenderChanged -> updateState { it.copy(gender = intent.gender, errorMessage = null) }
             is OnboardingPage1Intent.WeightChanged -> updateState { it.copy(weight = intent.weight, errorMessage = null) }
             is OnboardingPage1Intent.HeightChanged -> updateState { it.copy(height = intent.height, errorMessage = null) }
@@ -26,7 +26,7 @@ class OnboardingPage1ViewModel @Inject constructor(
 
     private fun validateAndSave() {
         val currentState = state.value
-        if (currentState.name.isBlank() || currentState.weight.isBlank() || currentState.height.isBlank()) {
+        if (currentState.name.isBlank() || currentState.age.isBlank() || currentState.weight.isBlank() || currentState.height.isBlank()) {
             updateState { it.copy(errorMessage = "Please let me know your infomation.") }
             sendEffect(OnboardingPage1Effect.ShowError("Please let me know your infomation"))
             return
@@ -52,7 +52,7 @@ class OnboardingPage1ViewModel @Inject constructor(
             if (user != null) {
                 val updatedUser = user.copy(
                     name = currentState.name,
-                    dob = currentState.dob,
+                    age = currentState.age.toIntOrNull() ?: 25,
                     gender = currentState.gender,
                     weight = weightValue,
                     height = heightValue
@@ -63,7 +63,7 @@ class OnboardingPage1ViewModel @Inject constructor(
                     email = "dummy@example.com",
                     password = "dummy",
                     name = currentState.name,
-                    dob = currentState.dob,
+                    age = currentState.age.toIntOrNull() ?: 25,
                     gender = currentState.gender,
                     weight = weightValue,
                     height = heightValue,
