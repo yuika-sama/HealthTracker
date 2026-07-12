@@ -35,7 +35,6 @@ import com.yuika.healthtracker.ui.features.main_features.diary.components.DateSe
 import com.yuika.healthtracker.ui.features.main_features.diary.components.MealCard
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 import androidx.compose.ui.platform.LocalLocale
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner

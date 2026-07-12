@@ -99,10 +99,10 @@ class DiaryViewModel @Inject constructor(
             val weight = user.weight
             val height = user.height
             val age = user.age
-            
+
             var bmr = (10 * weight) + (6.25 * height) - (5 * age)
             bmr += if (user.gender == "Male") 5.0 else -161.0
-            
+
             val activityMultiplier = when (user.activityLevel) {
                 "sedentary" -> 1.2
                 "lightly_active" -> 1.375
@@ -111,9 +111,9 @@ class DiaryViewModel @Inject constructor(
                 "extra_active" -> 1.9
                 else -> 1.55
             }
-            
+
             var tdee = bmr * activityMultiplier
-            
+
             when (user.goal) {
                 "lose_weight" -> tdee -= 500
                 "gain_weight" -> tdee += 500
@@ -127,7 +127,7 @@ class DiaryViewModel @Inject constructor(
                     proteinGrams = 0,
                     fatGrams = 0,
                     carbsGrams = 0,
-                    
+
                     breakfastFoods = breakfastEntries.toUiModels(),
                     lunchFoods = lunchEntries.toUiModels(),
                     dinnerFoods = dinnerEntries.toUiModels(),
