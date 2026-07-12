@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,24 +47,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.ui.features.main_features.add_meal.AddMealIntent
+import com.yuika.healthtracker.ui.features.main_features.add_meal.AddMealUiState
 import com.yuika.healthtracker.ui.theme.Emerald
+import com.yuika.healthtracker.ui.theme.ErrorRed
 
 @Composable
 fun AddFoodFormCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    state: AddMealUiState,
+    onFoodNameChange: (String) -> Unit,
+    onQuantityChange: (String) -> Unit,
+    onUnitChange: (String) -> Unit,
+    onCaloriesChange: (String) -> Unit,
+    onMealTypeChange: (String) -> Unit
 ) {
-    var foodName by remember { mutableStateOf("Cơm rang dưa bò") }
-    var quantity by remember { mutableStateOf("1") }
-    
-    var unitExpanded by remember { mutableStateOf(false) }
-    var selectedUnit by remember { mutableStateOf("Plate (Medium)") }
+    var unitExpanded by rememberSaveable() { mutableStateOf(false) }
     val units = listOf("Plate (Med)", "Bowl (Smol)", "Serving", "Gram")
-    
-    var isManual by remember { mutableStateOf(false) }
-    var calories by remember { mutableStateOf("450") }
-    
-    var selectedMeal by remember { mutableStateOf("Lunch") }
-    val mealTypes = listOf("Breakfast", "Lunch", "Dinner")
+
+    var isManual by rememberSaveable() { mutableStateOf(false) }
+    val mealTypes = listOf("Breakfast", "Lunch", "Dinner", "Snack")
 
     Column(
         modifier = modifier
@@ -82,17 +86,17 @@ fun AddFoodFormCard(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             OutlinedTextField(
-                value = foodName,
-                onValueChange = { foodName = it },
+                value = state.foodName,
+                onValueChange = onFoodNameChange,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 trailingIcon = {
-                    if (foodName.isNotEmpty()) {
-                        IconButton(onClick = { foodName = "" }) {
+                    if (state.foodName.isNotEmpty()) {
+                        IconButton(onClick = { onFoodNameChange("") }) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
                                 contentDescription = "Clear",
-                                tint = Color(0xFFD32F2F)
+                                tint = ErrorRed
                             )
                         }
                     }
@@ -113,8 +117,8 @@ fun AddFoodFormCard(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedTextField(
-                    value = quantity,
-                    onValueChange = { quantity = it },
+                    value = state.quantity,
+                    onValueChange = onQuantityChange,
                     modifier = Modifier.weight(0.35f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
@@ -123,7 +127,7 @@ fun AddFoodFormCard(
 
                 Box(modifier = Modifier.weight(0.65f)) {
                     OutlinedTextField(
-                        value = selectedUnit,
+                        value = state.unit,
                         onValueChange = {},
                         readOnly = true,
                         modifier = Modifier.fillMaxWidth(),
@@ -146,7 +150,7 @@ fun AddFoodFormCard(
                             DropdownMenuItem(
                                 text = { Text(option) },
                                 onClick = {
-                                    selectedUnit = option
+                                    onUnitChange(option)
                                     unitExpanded = false
                                 }
                             )
@@ -226,7 +230,6 @@ fun AddFoodFormCard(
             }
         }
 
-        // Hàm lượng & Segmented Control
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -243,14 +246,14 @@ fun AddFoodFormCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Hàm lượng",
+                        text = "Nutritional content",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
                     )
                     
                     OutlinedTextField(
-                        value = calories,
-                        onValueChange = { calories = it },
+                        value = state.calories,
+                        onValueChange = onCaloriesChange,
                         modifier = Modifier.width(100.dp),
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -281,7 +284,7 @@ fun AddFoodFormCard(
                         .background(Emerald.copy(alpha = 0.05f))
                 ) {
                     mealTypes.forEach { option ->
-                        val isSelected = selectedMeal == option
+                        val isSelected = state.mealType.equals(option, ignoreCase = true)
                         Box(
                             modifier = Modifier
                                 .weight(1f)
@@ -290,13 +293,14 @@ fun AddFoodFormCard(
                                 .padding(4.dp)
                                 .clip(RoundedCornerShape(6.dp))
                                 .background(if (isSelected) Color.White else Color.Transparent)
-                                .clickable { selectedMeal = option },
+                                .clickable { onMealTypeChange(option) },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = option,
                                 fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
-                                color = if (isSelected) Emerald else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                                color = if (isSelected) Emerald else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                                fontSize = 13.sp
                             )
                         }
                     }

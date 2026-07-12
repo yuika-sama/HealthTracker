@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Coffee
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +32,8 @@ fun AddedFoodItemCard(
     modifier: Modifier = Modifier,
     foodName: String = "Cà phê chà trà sữa bún đá",
     quantityInfo: String = "1 cup(200ml)",
-    calories: String = "100 kcal"
+    calories: String = "100 kcal",
+    onRemoveClick: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -79,5 +82,15 @@ fun AddedFoodItemCard(
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground
         )
+
+        IconButton(
+            onClick = onRemoveClick
+        ) {
+            Icon(
+                imageVector = Icons.Default.DeleteOutline,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onError
+            )
+        }
     }
 }
