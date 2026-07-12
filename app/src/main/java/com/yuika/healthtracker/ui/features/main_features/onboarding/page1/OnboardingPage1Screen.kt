@@ -1,8 +1,7 @@
-package com.yuika.healthtracker.ui.features.main_features.onboarding
+package com.yuika.healthtracker.ui.features.main_features.onboarding.page1
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,18 +16,37 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yuika.healthtracker.ui.core.components.BasicInputField
 import com.yuika.healthtracker.ui.core.components.SegmentedSelector
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.OnboardingField
 import com.yuika.healthtracker.ui.theme.*
 
 @Composable
-fun OnboardingPage1Screen() {
+fun OnboardingPage1Screen(
+    viewModel: OnboardingPage1ViewModel = hiltViewModel(),
+    onNavigateBack: () -> Unit = {},
+    onNavigateNext: () -> Unit = {}
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is OnboardingPage1Effect.NavigateToPage2 -> onNavigateNext()
+                is OnboardingPage1Effect.NavigateBack -> onNavigateBack()
+                is OnboardingPage1Effect.ShowError -> {
+                    // Show error, maybe via Snackbar or Toast
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -95,8 +113,10 @@ fun OnboardingPage1Screen() {
             icon = Icons.Outlined.Person,
             label = "Full Name"
         ) {
-            var name by remember { mutableStateOf("John Doe") }
-            BasicInputField(value = name, onValueChange = { name = it })
+            BasicInputField(
+                value = state.name, 
+                onValueChange = { viewModel.onIntent(OnboardingPage1Intent.NameChanged(it)) }
+            )
         }
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -105,27 +125,11 @@ fun OnboardingPage1Screen() {
             icon = Icons.Outlined.CalendarToday,
             label = "Date of Birth"
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.secondary)
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "mm/dd/yyyy",
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
+            // Simply use BasicInputField for dob for now, or you can implement a DatePicker
+            BasicInputField(
+                value = state.dob,
+                onValueChange = { viewModel.onIntent(OnboardingPage1Intent.DobChanged(it)) },
+            )
         }
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -135,11 +139,10 @@ fun OnboardingPage1Screen() {
             label = "Gender"
         ) {
             val genders = listOf("Male", "Female", "Other")
-            var selected by remember { mutableStateOf("Male") }
             SegmentedSelector(
                 options = genders,
-                selectedOption = selected,
-                onOptionSelected = { selected = it }
+                selectedOption = state.gender,
+                onOptionSelected = { viewModel.onIntent(OnboardingPage1Intent.GenderChanged(it)) }
             )
         }
         
@@ -148,20 +151,18 @@ fun OnboardingPage1Screen() {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             Box(modifier = Modifier.weight(1f)) {
                 OnboardingField(icon = Icons.Default.MonitorWeight, label = "Weight") {
-                    var weight by remember { mutableStateOf("70") }
                     BasicInputField(
-                        value = weight,
-                        onValueChange = { weight = it },
+                        value = state.weight,
+                        onValueChange = { viewModel.onIntent(OnboardingPage1Intent.WeightChanged(it)) },
                         suffix = "kg"
                     )
                 }
             }
             Box(modifier = Modifier.weight(1f)) {
                 OnboardingField(icon = Icons.Default.Height, label = "Height") {
-                    var height by remember { mutableStateOf("175") }
                     BasicInputField(
-                        value = height,
-                        onValueChange = { height = it },
+                        value = state.height,
+                        onValueChange = { viewModel.onIntent(OnboardingPage1Intent.HeightChanged(it)) },
                         suffix = "cm"
                     )
                 }
@@ -228,24 +229,9 @@ fun OnboardingPage1Screen() {
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { viewModel.onIntent(OnboardingPage1Intent.Submit) },
                 modifier = Modifier
-                    .weight(1f)
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                    contentColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
-                ),
-                shape = RoundedCornerShape(12.dp),
-                elevation = ButtonDefaults.buttonElevation(0.dp)
-            ) {
-                Text("Back", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            }
-            
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .weight(1f)
+                    .fillMaxWidth()
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
@@ -260,11 +246,4 @@ fun OnboardingPage1Screen() {
         
         Spacer(modifier = Modifier.height(16.dp))
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun OnboardingPage1ScreenPreview() {
-    OnboardingPage1Screen()
 }

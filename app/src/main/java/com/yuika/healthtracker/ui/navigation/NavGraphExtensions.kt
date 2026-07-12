@@ -17,10 +17,10 @@ import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivit
 import com.yuika.healthtracker.ui.features.main_features.add_meal.AddMealScreen
 import com.yuika.healthtracker.ui.features.main_features.dashboard.DashboardScreen
 import com.yuika.healthtracker.ui.features.main_features.diary.DiaryScreen
-import com.yuika.healthtracker.ui.features.main_features.onboarding.OnboardingPage1Screen
-import com.yuika.healthtracker.ui.features.main_features.onboarding.OnboardingPage2Screen
-import com.yuika.healthtracker.ui.features.main_features.onboarding.OnboardingPage3Screen
-import com.yuika.healthtracker.ui.features.main_features.onboarding.OnboardingPage4Screen
+import com.yuika.healthtracker.ui.features.main_features.onboarding.page1.OnboardingPage1Screen
+import com.yuika.healthtracker.ui.features.main_features.onboarding.page2.OnboardingPage2Screen
+import com.yuika.healthtracker.ui.features.main_features.onboarding.page3.OnboardingPage3Screen
+import com.yuika.healthtracker.ui.features.main_features.onboarding.page4.OnboardingPage4Screen
 import com.yuika.healthtracker.ui.features.main_features.profile.ProfileScreen
 import com.yuika.healthtracker.ui.features.main_features.trends.TrendsScreen
 import com.yuika.healthtracker.ui.features.main_features.update_profile.UpdateProfileScreen
@@ -103,16 +103,32 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController){
 
 fun NavGraphBuilder.onboardingNavGraph(navController: NavHostController){
     composable<Route.Onboarding1>{
-        OnboardingPage1Screen()
+        OnboardingPage1Screen(
+            onNavigateNext = { navController.navigate(Route.Onboarding2) },
+            onNavigateBack = { navController.popBackStack() }
+        )
     }
     composable<Route.Onboarding2>{
-        OnboardingPage2Screen()
+        OnboardingPage2Screen(
+            onNavigateNext = { navController.navigate(Route.Onboarding3) },
+            onNavigateBack = { navController.popBackStack() }
+        )
     }
     composable<Route.Onboarding3>{
-        OnboardingPage3Screen()
+        OnboardingPage3Screen(
+            onNavigateNext = { navController.navigate(Route.Onboarding4) },
+            onNavigateBack = { navController.popBackStack() }
+        )
     }
     composable<Route.Onboarding4>{
-        OnboardingPage4Screen()
+        OnboardingPage4Screen(
+            onNavigateNext = { 
+                navController.navigate(Route.Dashboard) {
+                    popUpTo(Route.Onboarding1) { inclusive = true }
+                }
+            },
+            onNavigateBack = { navController.popBackStack() }
+        )
     }
 }
 

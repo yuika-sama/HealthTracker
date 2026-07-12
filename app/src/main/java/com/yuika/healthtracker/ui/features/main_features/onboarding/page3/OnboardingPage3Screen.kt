@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.main_features.onboarding
+package com.yuika.healthtracker.ui.features.main_features.onboarding.page3
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,6 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.GoalCard
 
@@ -56,10 +58,23 @@ val healthGoalOptions = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingPage3Screen(
-    onBackClick: () -> Unit = {},
-    onContinueClick: (String) -> Unit = {}
+    viewModel: OnboardingPage3ViewModel = hiltViewModel(),
+    onNavigateBack: () -> Unit = {},
+    onNavigateNext: () -> Unit = {}
 ) {
-    var selectedGoalId by remember { mutableStateOf("lose_weight") }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is OnboardingPage3Effect.NavigateToPage4 -> onNavigateNext()
+                is OnboardingPage3Effect.NavigateBack -> onNavigateBack()
+                is OnboardingPage3Effect.ShowError -> {
+                    // Show error
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -80,7 +95,7 @@ fun OnboardingPage3Screen(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -101,7 +116,7 @@ fun OnboardingPage3Screen(
                     .padding(24.dp)
             ) {
                 Button(
-                    onClick = { onContinueClick(selectedGoalId) },
+                    onClick = { viewModel.onIntent(OnboardingPage3Intent.Submit) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
@@ -177,8 +192,8 @@ fun OnboardingPage3Screen(
                         icon = option.icon,
                         title = option.title,
                         description = option.description,
-                        isSelected = selectedGoalId == option.id,
-                        onClick = { selectedGoalId = option.id }
+                        isSelected = state.goal == option.id,
+                        onClick = { viewModel.onIntent(OnboardingPage3Intent.GoalChanged(option.id)) }
                     )
                 }
             }
@@ -227,10 +242,4 @@ fun OnboardingPage3Screen(
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun OnboardingPage3ScreenPreview() {
-    OnboardingPage3Screen()
 }

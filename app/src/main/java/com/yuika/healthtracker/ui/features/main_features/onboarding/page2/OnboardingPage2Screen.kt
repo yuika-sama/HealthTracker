@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.main_features.onboarding
+package com.yuika.healthtracker.ui.features.main_features.onboarding.page2
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,6 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.ActivityLevelCard
 
 data class ActivityLevelOption(
@@ -65,10 +67,23 @@ val activityLevelOptions = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingPage2Screen(
-    onBackClick: () -> Unit = {},
-    onContinueClick: (String) -> Unit = {}
+    viewModel: OnboardingPage2ViewModel = hiltViewModel(),
+    onNavigateBack: () -> Unit = {},
+    onNavigateNext: () -> Unit = {}
 ) {
-    var selectedLevelId by remember { mutableStateOf("moderately_active") }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is OnboardingPage2Effect.NavigateToPage3 -> onNavigateNext()
+                is OnboardingPage2Effect.NavigateBack -> onNavigateBack()
+                is OnboardingPage2Effect.ShowError -> {
+                    // Show error, maybe via Snackbar or Toast
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -81,7 +96,7 @@ fun OnboardingPage2Screen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -98,13 +113,13 @@ fun OnboardingPage2Screen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(24.dp)
+                // Removed background here so it matches the padding correctly or handled internally
             ) {
                 Button(
-                    onClick = { onContinueClick(selectedLevelId) },
+                    onClick = { viewModel.onIntent(OnboardingPage2Intent.Submit) },
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(24.dp)
                         .height(56.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -187,8 +202,8 @@ fun OnboardingPage2Screen(
                         icon = option.icon,
                         title = option.title,
                         description = option.description,
-                        isSelected = selectedLevelId == option.id,
-                        onClick = { selectedLevelId = option.id }
+                        isSelected = state.activityLevel == option.id,
+                        onClick = { viewModel.onIntent(OnboardingPage2Intent.ActivityLevelChanged(option.id)) }
                     )
                 }
             }
@@ -196,10 +211,4 @@ fun OnboardingPage2Screen(
             Spacer(modifier = Modifier.height(48.dp))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun OnboardingPage2ScreenPreview() {
-    OnboardingPage2Screen()
 }
