@@ -15,15 +15,17 @@ class OAuthLoginUseCase @Inject constructor(
     suspend operator fun invoke(provider: String): UserEntity
     {
         delay(NETWORK_DELAY.toLong().milliseconds)
-        var oauthUser = userRepository.getUserById(MOCK_OAUTH_ACCOUNT_ID)
+
+        val oauthEmail = "oauth.user@healthtracker.com"
+        var oauthUser = userRepository.getUserByEmail(oauthEmail)
+
         if (oauthUser == null) {
             val dummyUser = UserEntity(
-                id = 0,
-                email = "oauth.user@healthtracker.com",
+                email = oauthEmail,
                 password = "oauth_dummy_password",
-                name = "OAuth User 1",
+                name = "${provider} User",
                 dob = "2000-01-01",
-                gender = "Other",
+                gender = "Male",
                 height = 170.0,
                 weight = 65.0,
                 activityLevel = "Moderate",
@@ -31,8 +33,8 @@ class OAuthLoginUseCase @Inject constructor(
                 avatarPath = null
             )
             userRepository.insertUser(dummyUser)
-            oauthUser = dummyUser
+            oauthUser = userRepository.getUserByEmail(oauthEmail)
         }
-        return oauthUser
+        return oauthUser!!
     }
 }
