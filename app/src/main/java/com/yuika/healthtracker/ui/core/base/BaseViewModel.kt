@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.core.base
 
+import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -54,6 +55,6 @@ abstract class BaseViewModel<State: UiState, Intent: UiIntent, Effect: UiEffect>
     protected fun handleGlobalError(throwable: Throwable)
     {
         throwable.printStackTrace()
-        // TODO: sendEffect: toast display error
+        // todo: show toast
     }
 }

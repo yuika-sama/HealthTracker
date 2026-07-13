@@ -1,10 +1,14 @@
 package com.yuika.healthtracker.ui.features.main_features.activity
 
+import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -16,11 +20,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.glance.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
+import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityItemData
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityListCard
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivitySummaryCard
@@ -29,32 +44,44 @@ import com.yuika.healthtracker.ui.features.main_features.dashboard.components.Da
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.LocalSpacing
+import com.yuika.healthtracker.utils.DATE_FORMATTER
 
 @Composable
 fun ActivityScreen(
     modifier: Modifier = Modifier,
+    viewModel: ActivityViewModel,
     onAddActivityClick: () -> Unit = {},
     onTabClick: (String) -> Unit = {}
-) {
+)
+{
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    val activities = listOf(
-        ActivityItemData(
-            title = "Đi bộ buổi sáng",
-            intensity = IntensityLevel.LOW,
-            durationMins = 30,
-            kcal = 120,
-            iconType = IntensityLevel.LOW
-        ),
-        ActivityItemData(
-            title = "Chạy bộ công viên",
-            intensity = IntensityLevel.HIGH,
-            durationMins = 45,
-            kcal = 330,
-            iconType = IntensityLevel.HIGH
-        )
-    )
+    LaunchedEffect(Unit) {
+        viewModel.onIntent(ActivityIntent.LoadActivityData())
+    }
+
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effect.collect { effect ->
+                when (effect)
+                {
+                    is ActivityEffect.ShowError ->
+                    {
+                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                    }
+
+                    is ActivityEffect.NavigateToAddActivity ->
+                    {
+                        onAddActivityClick()
+                    }
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -65,7 +92,7 @@ fun ActivityScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onAddActivityClick,
+                onClick = { viewModel.onIntent(ActivityIntent.OnAddActivityClick) },
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.background
@@ -83,41 +110,54 @@ fun ActivityScreen(
                 .verticalScroll(scrollState)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Text(
                 text = "Today's Activity",
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground
             )
-            
+
             Spacer(modifier = Modifier.height(4.dp))
-            
+
             Text(
-                text = "Thursday, Oct 26",
+                text = state.selectedDate.format(DATE_FORMATTER),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
-            
+
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             ActivitySummaryCard(
-                burnedKcal = 450,
-                goalKcal = 600
+                burnedKcal = state.burnedKcal,
+                goalKcal = state.goalKcal
             )
-            
+
             Spacer(modifier = Modifier.height(24.dp))
-            
-            ActivityListCard(
-                activities = activities
-            )
-            
+
+            if (state.isLoading)
+            {
+                LoadingIndicator()
+            }
+            else
+            {
+                if (state.activities.isNotEmpty())
+                {
+                    ActivityListCard(activities = state.activities)
+                }
+                else
+                {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "No activity today", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ActivityScreenPreview() {
-    ActivityScreen()
 }

@@ -69,6 +69,7 @@ fun AddMealScreen(
     val scrollState = rememberScrollState()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(
@@ -79,8 +80,6 @@ fun AddMealScreen(
             )
         )
     }
-
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     LaunchedEffect(Unit) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
@@ -250,11 +249,4 @@ fun AddMealScreen(
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AddMealScreenPreview()
-{
-    AddMealScreen()
 }
