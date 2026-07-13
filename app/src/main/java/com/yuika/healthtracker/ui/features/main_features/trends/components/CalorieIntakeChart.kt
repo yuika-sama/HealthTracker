@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,14 +19,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.ui.features.main_features.trends.ChartDataPoint
 
 @Composable
 fun CalorieIntakeChart(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    dataPoints: List<ChartDataPoint>,
+    periodLabel: String
 ) {
     Column(
         modifier = modifier
@@ -53,7 +56,7 @@ fun CalorieIntakeChart(
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Text(
-                    text = "This Week",
+                    text = periodLabel,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
@@ -62,29 +65,61 @@ fun CalorieIntakeChart(
         
         Spacer(modifier = Modifier.height(24.dp))
 
-        Column(
+        val maxIntake = dataPoints.maxOfOrNull { it.value }?.coerceAtLeast(100f) ?: 100f
+
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+                .height(120.dp)
         ) {
-            repeat(4) {
-                Divider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
+            // Background grid lines
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                repeat(4) {
+                    Divider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
+                }
+            }
+            
+            // Bars
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                dataPoints.forEach { point ->
+                    val heightFraction = (point.value / maxIntake).coerceIn(0f, 1f)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.6f)
+                                .fillMaxHeight(heightFraction)
+                                .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
+                                .background(MaterialTheme.colorScheme.secondary)
+                        )
+                    }
+                }
             }
         }
         
         Spacer(modifier = Modifier.height(8.dp))
 
-        val days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+        // Labels
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            days.forEach { day ->
+            dataPoints.forEach { point ->
                 Text(
-                    text = day,
+                    text = point.label,
                     fontSize = 10.sp,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                    modifier = Modifier.weight(1f),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
             }
         }

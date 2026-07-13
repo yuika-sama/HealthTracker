@@ -22,11 +22,13 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.ui.features.main_features.trends.ChartDataPoint
 import com.yuika.healthtracker.ui.theme.Emerald
 
 @Composable
 fun NetCaloriesChart(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    dataPoints: List<ChartDataPoint>
 ) {
     Column(
         modifier = modifier
@@ -52,44 +54,46 @@ fun NetCaloriesChart(
                 .background(Color.White)
         ) {
             Canvas(modifier = Modifier.fillMaxWidth().height(140.dp)) {
+                if (dataPoints.isEmpty()) return@Canvas
+                
                 val width = size.width
                 val height = size.height
                 
-                // Mock points for a smooth curve
-                val points = listOf(
-                    Offset(0f, height * 0.8f),
-                    Offset(width * 0.25f, height * 0.7f),
-                    Offset(width * 0.5f, height * 0.4f),
-                    Offset(width * 0.75f, height * 0.2f),
-                    Offset(width, height * 0.25f)
-                )
+                val maxVal = dataPoints.maxOfOrNull { it.value }?.coerceAtLeast(100f) ?: 100f
+                val minVal = dataPoints.minOfOrNull { it.value }?.coerceAtMost(0f) ?: 0f
+                val range = (maxVal - minVal).coerceAtLeast(1f)
+                
+                val points = dataPoints.mapIndexed { index, dataPoint ->
+                    val x = if (dataPoints.size > 1) {
+                        (width / (dataPoints.size - 1)) * index
+                    } else {
+                        width / 2f
+                    }
+                    val normalizedY = 1f - ((dataPoint.value - minVal) / range)
+                    val y = height * normalizedY
+                    Offset(x, y)
+                }
 
-                // Draw Gradient Fill
-                val fillPath = Path().apply {
+                // If we only have 1 point, just draw a line in the middle
+                if (points.size == 1) {
+                    val p = points.first()
+                    drawCircle(color = Emerald, radius = 6.dp.toPx(), center = p)
+                    return@Canvas
+                }
+
+                // Create smooth path using cubic bezier curves
+                val strokePath = Path().apply {
                     moveTo(points.first().x, points.first().y)
-                    
-                    // Simple cubic bezier curve mockup
-                    cubicTo(
-                        width * 0.125f, height * 0.8f,
-                        width * 0.125f, height * 0.7f,
-                        points[1].x, points[1].y
-                    )
-                    cubicTo(
-                        width * 0.375f, height * 0.7f,
-                        width * 0.375f, height * 0.4f,
-                        points[2].x, points[2].y
-                    )
-                    cubicTo(
-                        width * 0.625f, height * 0.4f,
-                        width * 0.625f, height * 0.2f,
-                        points[3].x, points[3].y
-                    )
-                    cubicTo(
-                        width * 0.875f, height * 0.2f,
-                        width * 0.875f, height * 0.25f,
-                        points[4].x, points[4].y
-                    )
+                    for (i in 0 until points.size - 1) {
+                        val p1 = points[i]
+                        val p2 = points[i + 1]
+                        val cx = (p1.x + p2.x) / 2f
+                        cubicTo(cx, p1.y, cx, p2.y, p2.x, p2.y)
+                    }
+                }
 
+                val fillPath = Path().apply {
+                    addPath(strokePath)
                     lineTo(width, height)
                     lineTo(0f, height)
                     close()
@@ -107,40 +111,14 @@ fun NetCaloriesChart(
                     )
                 )
 
-                // Draw Stroke
-                val strokePath = Path().apply {
-                    moveTo(points.first().x, points.first().y)
-                    cubicTo(
-                        width * 0.125f, height * 0.8f,
-                        width * 0.125f, height * 0.7f,
-                        points[1].x, points[1].y
-                    )
-                    cubicTo(
-                        width * 0.375f, height * 0.7f,
-                        width * 0.375f, height * 0.4f,
-                        points[2].x, points[2].y
-                    )
-                    cubicTo(
-                        width * 0.625f, height * 0.4f,
-                        width * 0.625f, height * 0.2f,
-                        points[3].x, points[3].y
-                    )
-                    cubicTo(
-                        width * 0.875f, height * 0.2f,
-                        width * 0.875f, height * 0.25f,
-                        points[4].x, points[4].y
-                    )
-                }
-
                 drawPath(
                     path = strokePath,
                     color = Emerald,
                     style = Stroke(width = 3.dp.toPx())
                 )
 
-                // Draw Dots (at specified intermediate points)
-                val dotPoints = listOf(points[1], points[2], points[3])
-                dotPoints.forEach { point ->
+                // Draw Dots on intermediate points
+                points.forEach { point ->
                     drawCircle(
                         color = Color.White,
                         radius = 6.dp.toPx(),

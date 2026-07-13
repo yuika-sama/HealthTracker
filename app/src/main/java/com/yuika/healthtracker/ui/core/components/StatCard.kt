@@ -122,7 +122,6 @@ fun StatCard(
             }
         }
     } else {
-        // Flat styling (used in Profile Screen StatItem)
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally
