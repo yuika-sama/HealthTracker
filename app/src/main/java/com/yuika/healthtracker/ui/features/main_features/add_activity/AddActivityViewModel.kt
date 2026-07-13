@@ -48,17 +48,17 @@ class AddActivityViewModel @Inject constructor(
 
         val name = currentState.activityName.trim()
         if (name.isEmpty()) {
-            sendEffect(AddActivityEffect.ShowError("Vui lòng nhập tên hoạt động"))
+            sendEffect(AddActivityEffect.ShowError("Please fill in your name"))
             return
         }
         val kcalPerHour = currentState.kcalPerHour.toIntOrNull()
         if (kcalPerHour == null || kcalPerHour <= 0) {
-            sendEffect(AddActivityEffect.ShowError("Vui lòng nhập số Kcal/giờ hợp lệ"))
+            sendEffect(AddActivityEffect.ShowError("Please fill in valid kcal/hour"))
             return
         }
         val duration = currentState.duration.toIntOrNull()
         if (duration == null || duration <= 0) {
-            sendEffect(AddActivityEffect.ShowError("Vui lòng nhập thời gian tập luyện hợp lệ"))
+            sendEffect(AddActivityEffect.ShowError("Please fill in valid practice duration"))
             return
         }
 

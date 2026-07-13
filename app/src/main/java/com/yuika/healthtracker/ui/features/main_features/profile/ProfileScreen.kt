@@ -1,7 +1,9 @@
 package com.yuika.healthtracker.ui.features.main_features.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,19 +22,28 @@ import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.features.main_features.profile.components.CurrentGoalBanner
@@ -45,12 +56,35 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel = hiltViewModel(),
     onLogoutClick: () -> Unit = {},
     onEditProfileClick: () -> Unit = {},
     onTabClick: (String) -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(Unit) {
+        viewModel.onIntent(ProfileIntent.LoadProfile)
+    }
+
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effect.collect { effect ->
+                when (effect) {
+                    is ProfileEffect.ShowError -> {
+                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                    }
+                    is ProfileEffect.NavigateToLogin -> {
+                        onLogoutClick()
+                    }
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -79,15 +113,30 @@ fun ProfileScreen(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Config your infomation & your experiences.",
+                    text = "Config your information & your experiences.",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
             }
             
-            ProfileHeaderCard()
-            
-            CurrentGoalBanner()
+            if (state.isLoading) {
+                Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                ProfileHeaderCard(
+                    name = state.name,
+                    subtitle = state.subtitle,
+                    weight = state.weight,
+                    height = state.height,
+                    bmi = state.bmi
+                )
+                
+                CurrentGoalBanner(
+                    title = state.goalTitle,
+                    description = state.goalDescription
+                )
+            }
             
             SettingsGroup(title = "ACCOUNT") {
                 SettingsItem(
@@ -106,7 +155,7 @@ fun ProfileScreen(
                     icon = Icons.Outlined.Language,
                     iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
                     iconTintColor = MaterialTheme.colorScheme.tertiary,
-                    title = "Languague",
+                    title = "Language",
                     value = "Vietnamese"
                 )
                 
@@ -129,7 +178,7 @@ fun ProfileScreen(
             }
             
             OutlinedButton(
-                onClick = onLogoutClick,
+                onClick = { viewModel.onIntent(ProfileIntent.Logout) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -160,8 +209,3 @@ fun ProfileScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ProfileScreenPreview() {
-    ProfileScreen()
-}
