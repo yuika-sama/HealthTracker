@@ -1,0 +1,22 @@
+package com.yuika.healthtracker.ui.features.main_features.update_profile
+
+import com.yuika.healthtracker.ui.core.base.UiState
+
+data class UpdateProfileUiState(
+    val id: Int = 0,
+    val email: String = "",
+    val passwordHash: String = "",
+    val name: String = "",
+    val age: String = "",
+    val gender: String = "Male",
+    val weight: String = "",
+    val height: String = "",
+    val activityLevel: Float = 3f,
+    val goal: String = "Lose weight",
+    val avatarPath: String? = null,
+    val createdAt: Long = 0L,
+    
+    val isLoading: Boolean = false,
+    val isSaving: Boolean = false,
+    val errorMessage: String? = null
+) : UiState

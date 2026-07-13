@@ -2,21 +2,13 @@ package com.yuika.healthtracker.ui.features.main_features.update_profile.compone
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -24,35 +16,22 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.core.components.SegmentedSelector
 import com.yuika.healthtracker.ui.core.components.OutlinedDropdownField
+import com.yuika.healthtracker.ui.features.main_features.update_profile.UpdateProfileUiState
+import com.yuika.healthtracker.ui.features.main_features.update_profile.UpdateProfileIntent
 
 @Composable
 fun UpdateProfileForm(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    state: UpdateProfileUiState,
+    onIntent: (UpdateProfileIntent) -> Unit
 ) {
-    var name by remember { mutableStateOf("Yuika") }
-    var age by remember { mutableStateOf("25") }
-    var gender by remember { mutableStateOf("Male") }
-    var weight by remember { mutableStateOf("65") }
-    var height by remember { mutableStateOf("170") }
-    var activityLevel by remember { mutableFloatStateOf(3f) } // 1 to 5
-    
-    var goalExpanded by remember { mutableStateOf(false) }
-    var goal by remember { mutableStateOf("Lose weight") }
     val goals = listOf("Lose weight", "Maintain weight", "Weight gain")
 
     Column(
@@ -65,8 +44,8 @@ fun UpdateProfileForm(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
+            value = state.name,
+            onValueChange = { onIntent(UpdateProfileIntent.UpdateName(it)) },
             label = { Text("Full name") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -74,8 +53,8 @@ fun UpdateProfileForm(
         )
 
         OutlinedTextField(
-            value = age,
-            onValueChange = { age = it },
+            value = state.age,
+            onValueChange = { onIntent(UpdateProfileIntent.UpdateAge(it)) },
             label = { Text("Age") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -92,8 +71,8 @@ fun UpdateProfileForm(
             )
             SegmentedSelector(
                 options = listOf("Male", "Female"),
-                selectedOption = gender,
-                onOptionSelected = { gender = it }
+                selectedOption = state.gender,
+                onOptionSelected = { onIntent(UpdateProfileIntent.UpdateGender(it)) }
             )
         }
 
@@ -102,8 +81,8 @@ fun UpdateProfileForm(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
-                value = weight,
-                onValueChange = { weight = it },
+                value = state.weight,
+                onValueChange = { onIntent(UpdateProfileIntent.UpdateWeight(it)) },
                 label = { Text("Weight") },
                 suffix = { Text("kg") },
                 modifier = Modifier.weight(1f),
@@ -113,8 +92,8 @@ fun UpdateProfileForm(
             )
             
             OutlinedTextField(
-                value = height,
-                onValueChange = { height = it },
+                value = state.height,
+                onValueChange = { onIntent(UpdateProfileIntent.UpdateHeight(it)) },
                 label = { Text("Height") },
                 suffix = { Text("cm") },
                 modifier = Modifier.weight(1f),
@@ -135,15 +114,15 @@ fun UpdateProfileForm(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
                 Text(
-                    text = "${activityLevel.toInt()}/5",
+                    text = "${state.activityLevel.toInt()}/5",
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
             
             Slider(
-                value = activityLevel,
-                onValueChange = { activityLevel = it },
+                value = state.activityLevel,
+                onValueChange = { onIntent(UpdateProfileIntent.UpdateActivityLevel(it)) },
                 valueRange = 1f..5f,
                 steps = 3, // 5 distinct values (1,2,3,4,5)
                 colors = SliderDefaults.colors(
@@ -166,9 +145,9 @@ fun UpdateProfileForm(
 
         OutlinedDropdownField(
             label = "Goal",
-            selectedOption = goal,
+            selectedOption = state.goal,
             options = goals,
-            onOptionSelected = { goal = it }
+            onOptionSelected = { onIntent(UpdateProfileIntent.UpdateGoal(it)) }
         )
     }
 }
