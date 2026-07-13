@@ -28,7 +28,6 @@ data class ActivityEntity(
     val kcalPerHour: Int,
     val durationMins: Int,
     val intensity: String,
-    val isManual: Boolean,
     val kcalBurned: Int,
     val dateText: String,
     val timestamp: Long = System.currentTimeMillis()

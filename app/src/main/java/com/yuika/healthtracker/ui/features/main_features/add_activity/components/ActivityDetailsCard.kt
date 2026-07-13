@@ -44,16 +44,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityIntent
+import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityUiState
 import com.yuika.healthtracker.ui.theme.Emerald
 
 @Composable
 fun ActivityDetailsCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    state: AddActivityUiState,
+    onIntent: (AddActivityIntent) -> Unit
 ) {
-    var isManual by remember { mutableStateOf(true) }
-    var activityName by remember { mutableStateOf("Run") }
-    var selectedIcon by remember { mutableStateOf("run") }
-    var kcalPerHour by remember { mutableStateOf("640") }
 
     Column(
         modifier = modifier
@@ -75,25 +75,6 @@ fun ActivityDetailsCard(
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
             )
-            
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = "Nhập thủ công",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Switch(
-                    checked = isManual,
-                    onCheckedChange = { isManual = it },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor =  MaterialTheme.colorScheme.background,
-                        checkedTrackColor =  MaterialTheme.colorScheme.secondary,
-                        uncheckedThumbColor =  MaterialTheme.colorScheme.secondary,
-                        uncheckedTrackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
-                    )
-                )
-            }
         }
 
         Column {
@@ -104,8 +85,8 @@ fun ActivityDetailsCard(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             OutlinedTextField(
-                value = activityName,
-                onValueChange = { activityName = it },
+                value = state.activityName,
+                onValueChange = { onIntent(AddActivityIntent.OnActivityNameChange(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = textFieldColors()
@@ -126,23 +107,23 @@ fun ActivityDetailsCard(
             ) {
                 ActivityIconItem(
                     icon = Icons.AutoMirrored.Outlined.DirectionsRun,
-                    isSelected = selectedIcon == "run",
-                    onClick = { selectedIcon = "run" }
+                    isSelected = state.selectedIcon == "run",
+                    onClick = { onIntent(AddActivityIntent.OnIconChange("run")) }
                 )
                 ActivityIconItem(
                     icon = Icons.AutoMirrored.Outlined.DirectionsWalk,
-                    isSelected = selectedIcon == "walk",
-                    onClick = { selectedIcon = "walk" }
+                    isSelected = state.selectedIcon == "walk",
+                    onClick = { onIntent(AddActivityIntent.OnIconChange("walk")) }
                 )
                 ActivityIconItem(
                     icon = Icons.AutoMirrored.Outlined.DirectionsBike,
-                    isSelected = selectedIcon == "bike",
-                    onClick = { selectedIcon = "bike" }
+                    isSelected = state.selectedIcon == "bike",
+                    onClick = { onIntent(AddActivityIntent.OnIconChange("bike")) }
                 )
                 ActivityIconItem(
                     icon = Icons.Outlined.FitnessCenter,
-                    isSelected = selectedIcon == "gym",
-                    onClick = { selectedIcon = "gym" }
+                    isSelected = state.selectedIcon == "gym",
+                    onClick = { onIntent(AddActivityIntent.OnIconChange("gym")) }
                 )
 
                 Box(
@@ -171,8 +152,8 @@ fun ActivityDetailsCard(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             OutlinedTextField(
-                value = kcalPerHour,
-                onValueChange = { kcalPerHour = it },
+                value = state.kcalPerHour,
+                onValueChange = { onIntent(AddActivityIntent.OnKcalPerHourChange(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

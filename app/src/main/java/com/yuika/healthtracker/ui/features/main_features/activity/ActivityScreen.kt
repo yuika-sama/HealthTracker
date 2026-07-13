@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.glance.LocalContext
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -49,7 +50,7 @@ import com.yuika.healthtracker.utils.DATE_FORMATTER
 @Composable
 fun ActivityScreen(
     modifier: Modifier = Modifier,
-    viewModel: ActivityViewModel,
+    viewModel: ActivityViewModel = hiltViewModel(),
     onAddActivityClick: () -> Unit = {},
     onTabClick: (String) -> Unit = {}
 )

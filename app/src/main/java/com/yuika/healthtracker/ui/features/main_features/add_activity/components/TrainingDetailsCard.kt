@@ -35,15 +35,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityIntent
+import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityUiState
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.EnergyAmber
 
 @Composable
 fun TrainingDetailsCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    state: AddActivityUiState,
+    onIntent: (AddActivityIntent) -> Unit
 ) {
-    var duration by remember { mutableStateOf("30") }
-    var selectedIntensity by remember { mutableStateOf("Medium") }
     val intensities = listOf("Light", "Medium", "Strong")
 
     Column(
@@ -63,8 +65,8 @@ fun TrainingDetailsCard(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             OutlinedTextField(
-                value = duration,
-                onValueChange = { duration = it },
+                value = state.duration,
+                onValueChange = { onIntent(AddActivityIntent.OnDurationChange(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -87,7 +89,7 @@ fun TrainingDetailsCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 intensities.forEach { intensity ->
-                    val isSelected = selectedIntensity == intensity
+                    val isSelected = state.selectedIntensity == intensity
                     val bgColor = if (isSelected) MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f) else MaterialTheme.colorScheme.background
                     val borderColor = if (isSelected) Emerald else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
                     val textColor = if (isSelected) Emerald else MaterialTheme.colorScheme.onBackground
@@ -98,7 +100,7 @@ fun TrainingDetailsCard(
                             .clip(RoundedCornerShape(8.dp))
                             .background(bgColor)
                             .border(1.dp, borderColor, RoundedCornerShape(8.dp))
-                            .clickable { selectedIntensity = intensity }
+                            .clickable { onIntent(AddActivityIntent.OnIntensityChange(intensity)) }
                             .padding(vertical = 12.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -145,7 +147,7 @@ fun TrainingDetailsCard(
                 )
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
-                        text = "320",
+                        text = state.estimatedKcalBurned.toString(),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
