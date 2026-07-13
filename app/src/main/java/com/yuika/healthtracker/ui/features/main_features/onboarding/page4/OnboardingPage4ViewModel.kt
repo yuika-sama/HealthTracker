@@ -1,6 +1,7 @@
 package com.yuika.healthtracker.ui.features.main_features.onboarding.page4
 
-import com.yuika.healthtracker.domain.repository.UserRepository
+import com.yuika.healthtracker.domain.usecase.main_use_cases.user.CalculateUserStatsUseCase
+import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
@@ -8,7 +9,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingPage4ViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val getLatestUserUseCase: GetLatestUserUseCase,
+    private val calculateUserStatsUseCase: CalculateUserStatsUseCase
 ) : BaseViewModel<OnboardingPage4UiState, OnboardingPage4Intent, OnboardingPage4Effect>(
     initialState = OnboardingPage4UiState()
 ) {
@@ -30,32 +32,20 @@ class OnboardingPage4ViewModel @Inject constructor(
                 updateState { it.copy(isLoading = false, errorMessage = throwable.message) }
             }
         ) {
-            val user = userRepository.getLatestUserFlow().firstOrNull()
+            val user = getLatestUserUseCase().firstOrNull()
             if (user != null) {
-                // Calculation logic
-                val weight = user.weight
-                val height = user.height
-                val age = user.age
+                val stats = calculateUserStatsUseCase(user)
                 
-                var bmr = (10 * weight) + (6.25 * height) - (5 * age)
-                bmr += if (user.gender == "Male") 5.0 else -161.0
-                
-                val activityText: String
-                val activityMultiplier = when (user.activityLevel) {
-                    "sedentary" -> { activityText = "1.2x Sedentary"; 1.2 }
-                    "lightly_active" -> { activityText = "1.375x Lightly Active"; 1.375 }
-                    "moderately_active" -> { activityText = "1.55x Active"; 1.55 }
-                    "very_active" -> { activityText = "1.725x Very Active"; 1.725 }
-                    "extra_active" -> { activityText = "1.9x Extra Active"; 1.9 }
-                    else -> { activityText = "1.55x Active"; 1.55 }
+                val activityText = when (user.activityLevel) {
+                    "sedentary" -> "1.2x Sedentary"
+                    "lightly_active" -> "1.375x Lightly Active"
+                    "moderately_active" -> "1.55x Active"
+                    "very_active" -> "1.725x Very Active"
+                    "extra_active" -> "1.9x Extra Active"
+                    else -> "1.55x Active"
                 }
                 
-                var tdee = bmr * activityMultiplier
-                
-                when (user.goal) {
-                    "lose_weight" -> tdee -= 500
-                    "gain_weight" -> tdee += 500
-                }
+                val tdee = stats.tdee
                 
                 // Macros
                 // Protein: 30%, Fat: 25%, Carbs: 45%
@@ -70,8 +60,8 @@ class OnboardingPage4ViewModel @Inject constructor(
                 updateState {
                     it.copy(
                         isLoading = false,
-                        bmr = bmr.toInt(),
-                        tdee = tdee.toInt(),
+                        bmr = stats.bmr.toInt(),
+                        tdee = stats.goalKcal,
                         proteinGrams = proteinGrams,
                         fatGrams = fatGrams,
                         carbsGrams = carbsGrams,

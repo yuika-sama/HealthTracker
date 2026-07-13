@@ -44,7 +44,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.features.main_features.add_meal.components.AddFoodFormCard
 import com.yuika.healthtracker.ui.features.main_features.add_meal.components.AddedFoodItemCard
@@ -60,7 +60,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun AddMealScreen(
     modifier: Modifier = Modifier,
-    viewModel: AddMealViewModel,
+    viewModel: AddMealViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onSaveClick: () -> Unit = {}
 )

@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,11 +44,12 @@ abstract class BaseViewModel<State: UiState, Intent: UiIntent, Effect: UiEffect>
     protected fun launchSafe(
         onError: ((Throwable) -> Unit)? = null,
         block: suspend () -> Unit
-    ) {
+    ): Job
+    {
         val exceptionHandler = CoroutineExceptionHandler{_, throwable ->
             onError?.invoke(throwable) ?: handleGlobalError(throwable)
         }
-        viewModelScope.launch(exceptionHandler){
+        return viewModelScope.launch(exceptionHandler){
             block()
         }
     }

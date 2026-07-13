@@ -208,8 +208,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavHostController){
     }
     composable<Route.ProfileUpdate>{
         UpdateProfileScreen(
-            onBackClick = { navController.popBackStack() },
-            onSaveClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() }
         )
     }
 }

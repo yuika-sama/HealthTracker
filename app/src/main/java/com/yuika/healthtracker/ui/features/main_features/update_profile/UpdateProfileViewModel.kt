@@ -1,15 +1,15 @@
 package com.yuika.healthtracker.ui.features.main_features.update_profile
 
-import com.yuika.healthtracker.data.local.entity.UserEntity
-import com.yuika.healthtracker.domain.repository.UserRepository
+import com.yuika.healthtracker.domain.usecase.main_use_cases.profile.GetProfileFormDataUseCase
+import com.yuika.healthtracker.domain.usecase.main_use_cases.profile.ValidateAndSaveProfileUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 @HiltViewModel
 class UpdateProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val getProfileFormDataUseCase: GetProfileFormDataUseCase,
+    private val validateAndSaveProfileUseCase: ValidateAndSaveProfileUseCase
 ) : BaseViewModel<UpdateProfileUiState, UpdateProfileIntent, UpdateProfileEffect>(
     initialState = UpdateProfileUiState()
 ) {
@@ -36,38 +36,22 @@ class UpdateProfileViewModel @Inject constructor(
                 sendEffect(UpdateProfileEffect.ShowError(throwable.message ?: "Error loading profile"))
             }
         ) {
-            val user = userRepository.getLatestUserFlow().firstOrNull()
-            if (user != null) {
-                val levelFloat = when (user.activityLevel) {
-                    "sedentary" -> 1f
-                    "lightly_active" -> 2f
-                    "moderately_active" -> 3f
-                    "very_active" -> 4f
-                    "extra_active" -> 5f
-                    else -> 3f
-                }
-                
-                val goalStr = when (user.goal) {
-                    "lose_weight" -> "Lose weight"
-                    "gain_weight" -> "Weight gain"
-                    "maintain_weight" -> "Maintain weight"
-                    else -> "Lose weight"
-                }
-
+            val formData = getProfileFormDataUseCase()
+            if (formData != null) {
                 updateState {
                     it.copy(
-                        id = user.id,
-                        email = user.email,
-                        passwordHash = user.password,
-                        name = user.name,
-                        age = user.age.toString(),
-                        gender = user.gender,
-                        weight = user.weight.toString(),
-                        height = user.height.toString(),
-                        activityLevel = levelFloat,
-                        goal = goalStr,
-                        avatarPath = user.avatarPath,
-                        createdAt = user.createdAt,
+                        id = formData.id,
+                        email = formData.email,
+                        passwordHash = formData.passwordHash,
+                        name = formData.name,
+                        age = formData.age,
+                        gender = formData.gender,
+                        weight = formData.weight,
+                        height = formData.height,
+                        activityLevel = formData.activityLevel,
+                        goal = formData.goal,
+                        avatarPath = formData.avatarPath,
+                        createdAt = formData.createdAt,
                         isLoading = false
                     )
                 }
@@ -80,21 +64,6 @@ class UpdateProfileViewModel @Inject constructor(
     private fun handleSaveProfile() {
         val currentState = state.value
         
-        if (currentState.name.isBlank() || currentState.age.isBlank() || 
-            currentState.weight.isBlank() || currentState.height.isBlank()) {
-            sendEffect(UpdateProfileEffect.ShowError("Please fill in your name"))
-            return
-        }
-
-        val ageInt = currentState.age.toIntOrNull()
-        val weightDouble = currentState.weight.toDoubleOrNull()
-        val heightDouble = currentState.height.toDoubleOrNull()
-
-        if (ageInt == null || weightDouble == null || heightDouble == null) {
-            sendEffect(UpdateProfileEffect.ShowError("Age, weight and height must be a valid number"))
-            return
-        }
-
         updateState { it.copy(isSaving = true) }
 
         launchSafe(
@@ -103,38 +72,20 @@ class UpdateProfileViewModel @Inject constructor(
                 sendEffect(UpdateProfileEffect.ShowError(throwable.message ?: "Error saving profile"))
             }
         ) {
-            val levelStr = when (currentState.activityLevel.toInt()) {
-                1 -> "sedentary"
-                2 -> "lightly_active"
-                3 -> "moderately_active"
-                4 -> "very_active"
-                5 -> "extra_active"
-                else -> "moderately_active"
-            }
-            
-            val goalDb = when (currentState.goal) {
-                "Lose weight" -> "lose_weight"
-                "Weight gain" -> "gain_weight"
-                "Maintain weight" -> "maintain_weight"
-                else -> "lose_weight"
-            }
-
-            val updatedUser = UserEntity(
+            validateAndSaveProfileUseCase(
                 id = currentState.id,
                 email = currentState.email,
-                password = currentState.passwordHash,
+                passwordHash = currentState.passwordHash,
                 name = currentState.name,
-                age = ageInt,
+                ageStr = currentState.age,
                 gender = currentState.gender,
-                weight = weightDouble,
-                height = heightDouble,
-                activityLevel = levelStr,
-                goal = goalDb,
+                weightStr = currentState.weight,
+                heightStr = currentState.height,
+                activityLevelFloat = currentState.activityLevel,
+                goalStr = currentState.goal,
                 avatarPath = currentState.avatarPath,
                 createdAt = currentState.createdAt
             )
-
-            userRepository.updateUser(updatedUser)
             
             updateState { it.copy(isSaving = false) }
             sendEffect(UpdateProfileEffect.ShowSuccess("Update successfully"))

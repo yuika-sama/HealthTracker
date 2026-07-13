@@ -1,18 +1,13 @@
 package com.yuika.healthtracker.ui.features.main_features.add_meal
 
-import com.yuika.healthtracker.data.local.entity.FoodEntryEntity
-import com.yuika.healthtracker.domain.repository.FoodEntryRepository
-import com.yuika.healthtracker.domain.repository.UserRepository
+import com.yuika.healthtracker.domain.usecase.main_use_cases.food.ValidateAndSaveMealUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddMealViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val foodEntryRepository: FoodEntryRepository
+    private val validateAndSaveMealUseCase: ValidateAndSaveMealUseCase
 ) : BaseViewModel<AddMealUiState, AddMealIntent, AddMealEffect> (
     initialState = AddMealUiState()
 )
@@ -128,40 +123,19 @@ class AddMealViewModel @Inject constructor(
         val currentState = state.value
         val currentFoods = currentState.addedFoods
 
-        if (currentFoods.isEmpty()){
-            sendEffect(AddMealEffect.ShowError("Please at least add one food in the meal"))
-            return
-        }
         updateState { it.copy(isLoading = true, errorMessage = null) }
 
         launchSafe(
             onError = {throwable ->
-                updateState { it.copy(isLoading = true, errorMessage = null) }
+                updateState { it.copy(isLoading = false, errorMessage = throwable.message) }
+                sendEffect(AddMealEffect.ShowError(throwable.message ?: "Error saving meal"))
             }
         ) {
-            val user = userRepository.getLatestUserFlow().firstOrNull()
-
-            if (user == null){
-                updateState {
-                    it.copy(isLoading = false, errorMessage = "Can't find user information")
-                }
-                sendEffect(AddMealEffect.ShowError("Can't find user information"))
-                return@launchSafe
-            }
-
-            currentFoods.forEach { tempFood ->
-                val entity = FoodEntryEntity(
-                    userId = user.id,
-                    dateText = currentState.dateText,
-                    mealType = currentState.mealType,
-                    foodName = tempFood.foodName,
-                    quantity = tempFood.quantity,
-                    unit = tempFood.unit,
-                    calories = tempFood.calories,
-                    imagePath = null
-                )
-                foodEntryRepository.insertFoodEntry(entity)
-            }
+            validateAndSaveMealUseCase(
+                currentFoods = currentFoods,
+                dateText = currentState.dateText,
+                mealType = currentState.mealType
+            )
 
             updateState {
                 it.copy(isLoading = false, addedFoods = emptyList(), totalCalories = 0)

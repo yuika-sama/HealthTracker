@@ -1,6 +1,7 @@
 package com.yuika.healthtracker.ui.features.main_features.onboarding.page2
 
-import com.yuika.healthtracker.domain.repository.UserRepository
+import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
+import com.yuika.healthtracker.domain.usecase.main_use_cases.user.UpdateUserUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
@@ -8,7 +9,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingPage2ViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val getLatestUserUseCase: GetLatestUserUseCase,
+    private val updateUserUseCase: UpdateUserUseCase
 ) : BaseViewModel<OnboardingPage2UiState, OnboardingPage2Intent, OnboardingPage2Effect>(
     initialState = OnboardingPage2UiState()
 ) {
@@ -29,10 +31,10 @@ class OnboardingPage2ViewModel @Inject constructor(
                 sendEffect(OnboardingPage2Effect.ShowError(throwable.message ?: "Error saving information"))
             }
         ) {
-            val user = userRepository.getLatestUserFlow().firstOrNull()
+            val user = getLatestUserUseCase().firstOrNull()
             if (user != null) {
                 val updatedUser = user.copy(activityLevel = currentLevel)
-                userRepository.updateUser(updatedUser)
+                updateUserUseCase(updatedUser)
                 updateState { it.copy(isLoading = false) }
                 sendEffect(OnboardingPage2Effect.NavigateToPage3)
             } else {
