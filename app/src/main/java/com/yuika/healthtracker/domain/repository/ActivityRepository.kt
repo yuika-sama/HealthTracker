@@ -14,4 +14,6 @@ interface ActivityRepository
     fun getActivitiesByDate(userId: Int, dateText: String): Flow<List<ActivityEntity>>
 
     fun getTotalBurnedCaloriesByDate(userId: Int, dateText: String): Flow<Int?>
+
+    fun getActivitiesByDateRange(userId: Int, startDate: String, endDate: String): Flow<List<ActivityEntity>>
 }

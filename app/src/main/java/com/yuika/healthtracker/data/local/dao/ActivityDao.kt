@@ -26,4 +26,7 @@ interface ActivityDao
 
     @Query("SELECT SUM(kcalBurned) FROM activities WHERE userId = :userId AND dateText = :dateText")
     fun getTotalBurnedCaloriesByDate(userId: Int, dateText: String): Flow<Int?>
+
+    @Query("SELECT * FROM activities WHERE userId = :userId AND dateText BETWEEN :startDate AND :endDate ORDER BY dateText ASC")
+    fun getActivitiesByDateRange(userId: Int, startDate: String, endDate: String): Flow<List<ActivityEntity>>
 }

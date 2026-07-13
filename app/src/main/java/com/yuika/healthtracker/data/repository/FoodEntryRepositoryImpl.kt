@@ -51,4 +51,13 @@ class FoodEntryRepositoryImpl @Inject constructor(
     {
         return foodEntryDao.getTotalCaloriesByDate(userId, dateText)
     }
+
+    override fun getFoodEntriesByDateRange(
+        userId: Int,
+        startDate: String,
+        endDate: String
+    ): Flow<List<FoodEntryEntity>>
+    {
+        return foodEntryDao.getFoodEntriesByDateRange(userId, startDate, endDate)
+    }
 }

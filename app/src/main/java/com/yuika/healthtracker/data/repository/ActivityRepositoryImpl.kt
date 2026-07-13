@@ -43,4 +43,13 @@ class ActivityRepositoryImpl @Inject constructor(
     {
         return activityDao.getTotalBurnedCaloriesByDate(userId, dateText)
     }
+
+    override fun getActivitiesByDateRange(
+        userId: Int,
+        startDate: String,
+        endDate: String
+    ): Flow<List<ActivityEntity>>
+    {
+        return activityDao.getActivitiesByDateRange(userId, startDate, endDate)
+    }
 }

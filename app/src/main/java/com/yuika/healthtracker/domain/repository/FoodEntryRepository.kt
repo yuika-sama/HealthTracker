@@ -16,4 +16,6 @@ interface FoodEntryRepository
     fun getFoodEntriesByDate(userId: Int, dateText: String): Flow<List<FoodEntryEntity>>
 
     fun getTotalCaloriesByDate(userId: Int, dateText: String): Flow<Int?>
+
+    fun getFoodEntriesByDateRange(userId: Int, startDate: String, endDate: String) : Flow<List<FoodEntryEntity>>
 }

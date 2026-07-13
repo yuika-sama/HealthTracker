@@ -29,4 +29,7 @@ interface FoodEntryDao
 
     @Query("SELECT SUM(calories) FROM food_entries WHERE userId = :userId AND dateText = :dateText")
     fun getTotalCaloriesByDate(userId: Int, dateText: String): Flow<Int?>
+
+    @Query("SELECT * FROM food_entries WHERE userId = :userId AND dateText BETWEEN :startDate AND :endDate ORDER BY dateText ASC")
+    fun getFoodEntriesByDateRange(userId: Int, startDate: String, endDate: String): Flow<List<FoodEntryEntity>>
 }
