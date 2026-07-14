@@ -1,34 +1,29 @@
 package com.yuika.healthtracker.ui.features.main_features.diary
 
-import com.yuika.healthtracker.data.local.entity.FoodEntryEntity
 import com.yuika.healthtracker.domain.usecase.main_use_cases.diary.DiaryFoodItem
 import com.yuika.healthtracker.domain.usecase.main_use_cases.diary.GetDiaryDataUseCase
+import com.yuika.healthtracker.domain.usecase.main_use_cases.diary.ValidateDiaryLogicUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.ui.features.main_features.diary.components.FoodItem
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class DiaryViewModel @Inject constructor(
-    private val getDiaryDataUseCase: GetDiaryDataUseCase
+    private val getDiaryDataUseCase: GetDiaryDataUseCase,
+    private val validateDiaryLogicUseCase: ValidateDiaryLogicUseCase
 ) : BaseViewModel<DiaryUiState, DiaryIntent, DiaryEffect>(
     initialState = DiaryUiState()
 ) {
 
     override fun onIntent(intent: DiaryIntent) {
         when(intent){
-            is DiaryIntent.LoadDiaryData -> {
-                handleFetchDiary(state.value.selectedDate)
-            }
-            is DiaryIntent.ChangeDate -> {
-                handleDateChange(intent.date)
-            }
-            is DiaryIntent.AddFoodClick -> {
-                handleAddFood(intent.mealType)
-            }
+            is DiaryIntent.LoadDiaryData -> handleFetchDiary(state.value.selectedDate)
+            is DiaryIntent.ChangeDate -> handleDateChange(intent.date)
+            is DiaryIntent.AddFoodClick -> handleAddFood(intent.mealType)
             is DiaryIntent.FoodItemClick -> {
                 // todo: open food item information dialog
             }
@@ -36,23 +31,22 @@ class DiaryViewModel @Inject constructor(
     }
 
     private fun handleAddFood(mealType: String) {
-        val validMeals = listOf("Breakfast", "Lunch", "Dinner", "Snack")
-        if (mealType !in validMeals){
-            sendEffect(DiaryEffect.ShowError("Meal type is not valid"))
-            return
+        try {
+            validateDiaryLogicUseCase.validateMealType(mealType)
+            sendEffect(DiaryEffect.NavigateToAddFood(mealType))
+        } catch (e: Exception) {
+            sendEffect(DiaryEffect.ShowError(e.message ?: "Invalid meal type"))
         }
-        sendEffect(DiaryEffect.NavigateToAddFood(mealType))
     }
 
     private fun handleDateChange(newDate: LocalDate) {
-        val today = LocalDate.now()
-        if (newDate.isAfter(today)){
-            sendEffect(DiaryEffect.ShowError("Can't write a log a day in future"))
-            return
+        try {
+            validateDiaryLogicUseCase.validateDate(newDate)
+            updateState { it.copy(selectedDate = newDate, errorMessage = null) }
+            handleFetchDiary(newDate)
+        } catch (e: Exception) {
+            sendEffect(DiaryEffect.ShowError(e.message ?: "Invalid date"))
         }
-
-        updateState { it.copy(selectedDate = newDate, errorMessage = null) }
-        handleFetchDiary(newDate)
     }
 
     private var fetchJob: Job? = null
@@ -77,11 +71,7 @@ class DiaryViewModel @Inject constructor(
                 }
 
                 fun List<DiaryFoodItem>.toUiModels() = this.map {
-                    FoodItem(
-                        name = it.name,
-                        description = it.description,
-                        kcal = it.kcal
-                    )
+                    FoodItem(name = it.name, description = it.description, kcal = it.kcal)
                 }
 
                 updateState { currentState ->
