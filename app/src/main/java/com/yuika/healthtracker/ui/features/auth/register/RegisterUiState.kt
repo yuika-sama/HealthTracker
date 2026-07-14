@@ -9,7 +9,6 @@ data class RegisterUiState(
     val emailError: String? = null,
     val age: String = "",
     val ageError: String? = null,
-    val passwordLength: Int = 8,
     val password: String = "",
     val passwordError: String? = null,
     val confirmPassword: String = "",

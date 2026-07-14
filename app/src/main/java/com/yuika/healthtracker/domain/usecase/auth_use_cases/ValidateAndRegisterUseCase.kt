@@ -16,7 +16,7 @@ class ValidateAndRegisterUseCase @Inject constructor(
 
         val ageInt = age.toIntOrNull()
         if (age.isBlank()) throw IllegalArgumentException("Age_Age would not be blank")
-        if (ageInt == null || ageInt <= 5 || ageInt > 120) throw IllegalArgumentException("Age_Please enter a valid age (10-120)")
+        if (ageInt == null || ageInt < 10 || ageInt > 120) throw IllegalArgumentException("Age_Please enter a valid age (10-120)")
 
         if (password.isBlank() || password.isEmpty()) throw IllegalArgumentException("Password_Password would not be blank")
         if (password.length < 8) throw IllegalArgumentException("Password_Password length would be longer than 8")

@@ -49,6 +49,7 @@ fun UpdateProfileForm(
             label = { Text("Full name") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            enabled = !state.isSaving,
             colors = textFieldColors()
         )
 
@@ -58,6 +59,7 @@ fun UpdateProfileForm(
             label = { Text("Age") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            enabled = !state.isSaving,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = textFieldColors()
         )
@@ -88,6 +90,7 @@ fun UpdateProfileForm(
                 modifier = Modifier.weight(1f),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
+                enabled = !state.isSaving,
                 colors = textFieldColors()
             )
             
@@ -99,6 +102,7 @@ fun UpdateProfileForm(
                 modifier = Modifier.weight(1f),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
+                enabled = !state.isSaving,
                 colors = textFieldColors()
             )
         }

@@ -78,6 +78,7 @@ fun RegisterForm(
                 onValueChange = { onIntent(RegisterIntent.EmailChanged(it)) },
                 placeholder = "name@example.com",
                 supportingText = state.emailError,
+                enabled = !state.isLoading,
                 leadingIcon =  {
                     Icon(
                         imageVector = Icons.Outlined.Email,

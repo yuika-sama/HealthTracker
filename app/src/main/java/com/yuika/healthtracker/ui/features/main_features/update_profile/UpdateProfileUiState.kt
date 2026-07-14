@@ -5,7 +5,6 @@ import com.yuika.healthtracker.ui.core.base.UiState
 data class UpdateProfileUiState(
     val id: Int = 0,
     val email: String = "",
-    val passwordHash: String = "",
     val name: String = "",
     val age: String = "",
     val gender: String = "Male",
