@@ -79,7 +79,6 @@ fun DashboardScreen(
                 when (effect) {
                     is DashboardEffect.NavigateToDiary -> onAddMealClick()
                     is DashboardEffect.NavigateToActivity -> onAddActivityClick()
-                    // todo: merge show error and show toast
                     is DashboardEffect.ShowError -> {
                         Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                     }

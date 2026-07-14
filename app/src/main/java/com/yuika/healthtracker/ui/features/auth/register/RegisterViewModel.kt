@@ -1,10 +1,7 @@
 package com.yuika.healthtracker.ui.features.auth.register
 
-import android.util.Patterns
-import com.yuika.healthtracker.domain.usecase.auth_use_cases.RegisterUseCase
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndRegisterUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
-import com.yuika.healthtracker.utils.PASSWORD_REGEX
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

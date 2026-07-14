@@ -1,10 +1,7 @@
 package com.yuika.healthtracker.ui.features.auth.otpverify
 
-import com.yuika.healthtracker.domain.repository.UserRepository
-import com.yuika.healthtracker.domain.usecase.auth_use_cases.VerifyOtpUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.NETWORK_DELAY
-import com.yuika.healthtracker.utils.TRUE_OTP
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import javax.inject.Inject
