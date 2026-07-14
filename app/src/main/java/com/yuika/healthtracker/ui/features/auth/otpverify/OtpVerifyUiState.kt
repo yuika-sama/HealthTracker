@@ -7,5 +7,6 @@ data class OtpVerifyUiState(
     val otpCode: String = "",
     val otpLength: Int = 6,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isSuccess: Boolean = false
 ) : UiState

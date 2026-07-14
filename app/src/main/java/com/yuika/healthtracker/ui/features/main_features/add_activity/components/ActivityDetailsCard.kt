@@ -84,13 +84,15 @@ fun ActivityDetailsCard(
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            OutlinedTextField(
-                value = state.activityName,
-                onValueChange = { onIntent(AddActivityIntent.OnActivityNameChange(it)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                colors = textFieldColors()
-            )
+                OutlinedTextField(
+                    value = state.activityName,
+                    onValueChange = { onIntent(AddActivityIntent.OnActivityNameChange(it)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = state.activityNameError != null,
+                    supportingText = state.activityNameError?.let { { Text(it) } },
+                    colors = textFieldColors()
+                )
         }
 
         Column {
@@ -156,6 +158,8 @@ fun ActivityDetailsCard(
                 onValueChange = { onIntent(AddActivityIntent.OnKcalPerHourChange(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                isError = state.kcalPerHourError != null,
+                supportingText = state.kcalPerHourError?.let { { Text(it) } },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 suffix = { Text("kcal/h") },
                 colors = textFieldColors()

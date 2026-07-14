@@ -17,5 +17,6 @@ data class RegisterUiState(
     val showConfirmPassword: Boolean = false,
     val agreedToTerms: Boolean = false,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isSuccess: Boolean = false
 ) : UiState

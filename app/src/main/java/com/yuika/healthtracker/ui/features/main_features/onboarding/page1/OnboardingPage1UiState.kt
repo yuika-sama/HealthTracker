@@ -9,6 +9,7 @@ data class OnboardingPage1UiState(
     val gender: String = "Male",
     val weight: String = "",
     val height: String = "",
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isSuccess: Boolean = false
 ) : UiState
 

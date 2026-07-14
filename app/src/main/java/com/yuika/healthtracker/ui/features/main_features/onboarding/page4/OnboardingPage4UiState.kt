@@ -1,4 +1,4 @@
-﻿package com.yuika.healthtracker.ui.features.main_features.onboarding.page4
+package com.yuika.healthtracker.ui.features.main_features.onboarding.page4
 
 import com.yuika.healthtracker.ui.core.base.UiState
 
@@ -10,6 +10,7 @@ data class OnboardingPage4UiState(
     val fatGrams: Int = 0,
     val carbsGrams: Int = 0,
     val activityMultiplierText: String = "",
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isSuccess: Boolean = false
 ) : UiState
 

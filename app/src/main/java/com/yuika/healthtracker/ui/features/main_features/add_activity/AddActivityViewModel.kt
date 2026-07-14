@@ -18,16 +18,16 @@ class AddActivityViewModel @Inject constructor(
                 updateState { it.copy(dateText = intent.dateText) }
             }
             is AddActivityIntent.OnActivityNameChange -> {
-                updateState { it.copy(activityName = intent.name) }
+                updateState { it.copy(activityName = intent.name, activityNameError = null) }
             }
             is AddActivityIntent.OnIconChange -> {
                 updateState { it.copy(selectedIcon = intent.iconName) }
             }
             is AddActivityIntent.OnKcalPerHourChange -> {
-                updateState { it.copy(kcalPerHour = intent.kcal) }
+                updateState { it.copy(kcalPerHour = intent.kcal, kcalPerHourError = null) }
             }
             is AddActivityIntent.OnDurationChange -> {
-                updateState { it.copy(duration = intent.duration) }
+                updateState { it.copy(duration = intent.duration, durationError = null) }
             }
             is AddActivityIntent.OnIntensityChange -> {
                 updateState { it.copy(selectedIntensity = intent.intensity) }
@@ -46,8 +46,16 @@ class AddActivityViewModel @Inject constructor(
 
         launchSafe(
             onError = {throwable ->
-                updateState { it.copy(isLoading = false, errorMessage = throwable.message) }
-                sendEffect(AddActivityEffect.ShowError(throwable.message ?: "Can't save activity"))
+                val msg = throwable.message ?: "Unknown error"
+                when {
+                    msg.startsWith("ActivityName_") -> updateState { it.copy(isLoading = false, activityNameError = msg.removePrefix("ActivityName_")) }
+                    msg.startsWith("KcalPerHour_") -> updateState { it.copy(isLoading = false, kcalPerHourError = msg.removePrefix("KcalPerHour_")) }
+                    msg.startsWith("Duration_") -> updateState { it.copy(isLoading = false, durationError = msg.removePrefix("Duration_")) }
+                    else -> {
+                        updateState { it.copy(isLoading = false, errorMessage = msg) }
+                        sendEffect(AddActivityEffect.ShowError(msg))
+                    }
+                }
             }
         ) {
             validateAndSaveActivityUseCase(
@@ -60,7 +68,8 @@ class AddActivityViewModel @Inject constructor(
                 dateText = currentState.dateText
             )
 
-            updateState { it.copy(isLoading = false) }
+            kotlinx.coroutines.delay(com.yuika.healthtracker.utils.NETWORK_DELAY.toLong())
+            updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(AddActivityEffect.NavigateToActivity)
         }
     }

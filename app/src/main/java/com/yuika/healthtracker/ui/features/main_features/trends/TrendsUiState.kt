@@ -19,5 +19,6 @@ data class TrendsUiState(
     val netCaloriesChartData: List<ChartDataPoint> = emptyList(),
 
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isSuccess: Boolean = false
 ) : UiState

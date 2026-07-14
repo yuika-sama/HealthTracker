@@ -8,15 +8,19 @@ data class AddMealUiState(
     val dateText: String = "",
 
     val foodName: String = "",
+    val foodNameError: String? = null,
     val quantity: String = "",
+    val quantityError: String? = null,
     val unit: String = "serving",
     val calories: String = "",
+    val caloriesError: String? = null,
 
     val addedFoods: List<TempFoodItem> = emptyList(),
     val totalCalories: Int = 0,
 
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isSuccess: Boolean = false
 ) : UiState
 
 data class TempFoodItem(

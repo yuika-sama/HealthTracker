@@ -23,12 +23,12 @@ class AddMealViewModel @Inject constructor(
 
             is AddMealIntent.OnFoodNameChange ->
             {
-                updateState { it.copy(foodName = intent.name) }
+                updateState { it.copy(foodName = intent.name, foodNameError = null) }
             }
 
             is AddMealIntent.OnQuantityChange ->
             {
-                updateState { it.copy(quantity = intent.quantity) }
+                updateState { it.copy(quantity = intent.quantity, quantityError = null) }
             }
 
             is AddMealIntent.OnUnitChange ->
@@ -38,7 +38,7 @@ class AddMealViewModel @Inject constructor(
 
             is AddMealIntent.OnCaloriesChange ->
             {
-                updateState { it.copy(calories = intent.calories) }
+                updateState { it.copy(calories = intent.calories, caloriesError = null) }
             }
 
             is AddMealIntent.OnMealTypeChange -> {
@@ -67,23 +67,32 @@ class AddMealViewModel @Inject constructor(
         val currentState = state.value
 
         val foodName = currentState.foodName.trim()
+        var hasError = false
+        var foodNameError: String? = null
         if (foodName.isEmpty())
         {
-            sendEffect(AddMealEffect.ShowError("Food name could not be blank"))
-            return
+            foodNameError = "Food name could not be blank"
+            hasError = true
         }
 
         val quantity = currentState.quantity.toFloatOrNull()
+        var quantityError: String? = null
         if (quantity == null || quantity <= 0)
         {
-            sendEffect(AddMealEffect.ShowError("Quantity could not be blank"))
-            return
+            quantityError = "Quantity could not be blank"
+            hasError = true
         }
 
         val calories = currentState.calories.toIntOrNull()
+        var caloriesError: String? = null
         if (calories == null || calories < 0)
         {
-            sendEffect(AddMealEffect.ShowError("Please fill in the valid calories"))
+            caloriesError = "Please fill in the valid calories"
+            hasError = true
+        }
+
+        if (hasError) {
+            updateState { it.copy(foodNameError = foodNameError, quantityError = quantityError, caloriesError = caloriesError) }
             return
         }
 
@@ -137,8 +146,9 @@ class AddMealViewModel @Inject constructor(
                 mealType = currentState.mealType
             )
 
+            kotlinx.coroutines.delay(com.yuika.healthtracker.utils.NETWORK_DELAY.toLong())
             updateState {
-                it.copy(isLoading = false, addedFoods = emptyList(), totalCalories = 0)
+                it.copy(isLoading = false, isSuccess = true, addedFoods = emptyList(), totalCalories = 0)
             }
 
             sendEffect(AddMealEffect.NavigateBackWithSuccess)

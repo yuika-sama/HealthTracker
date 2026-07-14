@@ -11,5 +11,6 @@ data class ProfileUiState(
     val goalTitle: String = "Current Goal",
     val goalDescription: String = "",
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isSuccess: Boolean = false
 ) : UiState

@@ -11,5 +11,6 @@ data class CreateNewPasswordUiState(
     val confirmNewPasswordError: String? = null,
     val isShowConfirmNewPassword: Boolean = false,
     val errorMessage: String? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isSuccess: Boolean = false
 ) : UiState

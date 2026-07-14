@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -66,7 +66,6 @@ fun AddMealScreen(
 )
 {
     val spacing = LocalSpacing.current
-    val scrollState = rememberScrollState()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -211,28 +210,29 @@ fun AddMealScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = spacing.large)
-                .verticalScroll(scrollState),
+                .padding(horizontal = spacing.large),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
 
-            AddFoodFormCard(
-                state = state,
-                onFoodNameChange = {
-                    viewModel.onIntent(AddMealIntent.OnFoodNameChange(it))
-                },
-                onQuantityChange = { viewModel.onIntent(AddMealIntent.OnQuantityChange(it)) },
-                onUnitChange = { viewModel.onIntent(AddMealIntent.OnUnitChange(it)) },
-                onCaloriesChange = { viewModel.onIntent(AddMealIntent.OnCaloriesChange(it)) },
-                onMealTypeChange = { viewModel.onIntent(AddMealIntent.OnMealTypeChange(it)) }
-            )
+                AddFoodFormCard(
+                    state = state,
+                    onFoodNameChange = {
+                        viewModel.onIntent(AddMealIntent.OnFoodNameChange(it))
+                    },
+                    onQuantityChange = { viewModel.onIntent(AddMealIntent.OnQuantityChange(it)) },
+                    onUnitChange = { viewModel.onIntent(AddMealIntent.OnUnitChange(it)) },
+                    onCaloriesChange = { viewModel.onIntent(AddMealIntent.OnCaloriesChange(it)) },
+                    onMealTypeChange = { viewModel.onIntent(AddMealIntent.OnMealTypeChange(it)) }
+                )
+            }
 
-            state.addedFoods.forEach { food ->
+            items(state.addedFoods, key = { it.id }) { food ->
                 AddedFoodItemCard(
                     foodName = food.foodName,
                     quantityInfo = "${food.quantity} ${food.unit}",
@@ -241,9 +241,10 @@ fun AddMealScreen(
                 )
             }
 
-            DashedAddButton(onClick = { viewModel.onIntent(AddMealIntent.OnAddFoodClick ) })
-
-            Spacer(modifier = Modifier.height(24.dp))
+            item {
+                DashedAddButton(onClick = { viewModel.onIntent(AddMealIntent.OnAddFoodClick ) })
+                Spacer(modifier = Modifier.height(24.dp))
+            }
         }
     }
 }

@@ -90,6 +90,8 @@ fun AddFoodFormCard(
                 onValueChange = onFoodNameChange,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                isError = state.foodNameError != null,
+                supportingText = state.foodNameError?.let { { Text(it) } },
                 trailingIcon = {
                     if (state.foodName.isNotEmpty()) {
                         IconButton(onClick = { onFoodNameChange("") }) {
@@ -122,6 +124,8 @@ fun AddFoodFormCard(
                     modifier = Modifier.weight(0.35f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
+                    isError = state.quantityError != null,
+                    supportingText = state.quantityError?.let { { Text(it) } },
                     colors = textFieldColors()
                 )
 
@@ -256,6 +260,8 @@ fun AddFoodFormCard(
                         onValueChange = onCaloriesChange,
                         modifier = Modifier.width(100.dp),
                         singleLine = true,
+                        isError = state.caloriesError != null,
+                        supportingText = state.caloriesError?.let { { Text(it) } },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         textStyle = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,

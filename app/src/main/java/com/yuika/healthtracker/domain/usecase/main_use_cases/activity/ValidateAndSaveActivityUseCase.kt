@@ -21,15 +21,15 @@ class ValidateAndSaveActivityUseCase @Inject constructor(
     ) {
         val name = activityName.trim()
         if (name.isEmpty()) {
-            throw IllegalArgumentException("Please fill in your name")
+            throw IllegalArgumentException("ActivityName_Please fill in your name")
         }
         val kcalPerHour = kcalPerHourStr.toIntOrNull()
         if (kcalPerHour == null || kcalPerHour <= 0) {
-            throw IllegalArgumentException("Please fill in valid kcal/hour")
+            throw IllegalArgumentException("KcalPerHour_Please fill in valid kcal/hour")
         }
         val duration = durationStr.toIntOrNull()
         if (duration == null || duration <= 0) {
-            throw IllegalArgumentException("Please fill in valid practice duration")
+            throw IllegalArgumentException("Duration_Please fill in valid practice duration")
         }
 
         val user = getLatestUserUseCase().firstOrNull()

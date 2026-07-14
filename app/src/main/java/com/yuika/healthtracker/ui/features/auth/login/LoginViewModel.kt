@@ -72,7 +72,7 @@ class LoginViewModel @Inject constructor(
             // TODO: handle save session token into datastore
             // if(state.value.isRememberAccount) -> save into datastore
             validateAndLoginUseCase(currentState.email.trim(), currentState.password.trim())
-            updateState { it.copy(isLoading = false) }
+            updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(LoginUiEffect.NavigateToDashboard)
         }
     }
@@ -92,7 +92,7 @@ class LoginViewModel @Inject constructor(
             }
         ) {
             oAuthLoginUseCase(provider)
-            updateState { it.copy(isLoading = false) }
+            updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(LoginUiEffect.ShowToast("$provider Login Success"))
             sendEffect(LoginUiEffect.NavigateToDashboard)
         }
@@ -100,11 +100,21 @@ class LoginViewModel @Inject constructor(
 
     private fun handleRegister()
     {
-        sendEffect(LoginUiEffect.NavigateToRegister)
+        updateState { it.copy(isLoading = true) }
+        launchSafe {
+            delay(NETWORK_DELAY.toLong())
+            updateState { it.copy(isLoading = false, isSuccess = true) }
+            sendEffect(LoginUiEffect.NavigateToRegister)
+        }
     }
 
     private fun handleForgotPassword()
     {
-        sendEffect(LoginUiEffect.NavigateToForgotPassword)
+        updateState { it.copy(isLoading = true) }
+        launchSafe {
+            delay(NETWORK_DELAY.toLong())
+            updateState { it.copy(isLoading = false, isSuccess = true) }
+            sendEffect(LoginUiEffect.NavigateToForgotPassword)
+        }
     }
 }

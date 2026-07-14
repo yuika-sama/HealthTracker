@@ -25,5 +25,6 @@ data class DiaryUiState(
     val snackTotalKcal: Int = 0,
 
     val errorMessage: String? = null
-
+,
+    val isSuccess: Boolean = false
 ) : UiState

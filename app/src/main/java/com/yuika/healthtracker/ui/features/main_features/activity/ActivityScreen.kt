@@ -8,9 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -48,7 +47,6 @@ fun ActivityScreen(
 )
 {
     val spacing = LocalSpacing.current
-    val scrollState = rememberScrollState()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -95,62 +93,65 @@ fun ActivityScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = spacing.large)
-                .verticalScroll(scrollState)
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Today's Activity",
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onBackground
-            )
+                Text(
+                    text = "Today's Activity",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
 
-            Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = state.selectedDate.format(DATE_FORMATTER),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-            )
+                Text(
+                    text = state.selectedDate.format(DATE_FORMATTER),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                )
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            ActivitySummaryCard(
-                burnedKcal = state.burnedKcal,
-                goalKcal = state.goalKcal
-            )
+                ActivitySummaryCard(
+                    burnedKcal = state.burnedKcal,
+                    goalKcal = state.goalKcal
+                )
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
+            }
 
             if (state.isLoading)
             {
-                LoadingIndicator()
+                item { LoadingIndicator() }
             }
             else
             {
                 if (state.activities.isNotEmpty())
                 {
-                    ActivityListCard(activities = state.activities)
+                    item { ActivityListCard(activities = state.activities) }
                 }
                 else
                 {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = "No activity today", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = "No activity today", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+                        }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            item { Spacer(modifier = Modifier.height(32.dp)) }
         }
     }
 }

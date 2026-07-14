@@ -71,6 +71,8 @@ fun TrainingDetailsCard(
                 onValueChange = { onIntent(AddActivityIntent.OnDurationChange(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                isError = state.durationError != null,
+                supportingText = state.durationError?.let { { Text(it) } },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 suffix = { Text("minutes") },
                 colors = textFieldColors()

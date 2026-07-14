@@ -10,5 +10,6 @@ data class ActivityUiState(
     val burnedKcal: Int = 0,
     val goalKcal: Int = 0,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isSuccess: Boolean = false
 ) : UiState

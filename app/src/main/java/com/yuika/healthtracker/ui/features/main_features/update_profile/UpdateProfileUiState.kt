@@ -17,5 +17,6 @@ data class UpdateProfileUiState(
     
     val isLoading: Boolean = false,
     val isSaving: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isSuccess: Boolean = false
 ) : UiState

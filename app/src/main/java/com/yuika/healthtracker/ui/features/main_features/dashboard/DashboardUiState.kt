@@ -11,5 +11,6 @@ data class DashboardUiState(
     val netBalance: Int = 0,
     val goalCalories: Int = 0,
     val remainingCalories: Int = 0,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isSuccess: Boolean = false
 ) : UiState
