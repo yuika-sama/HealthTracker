@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.onboarding.page4
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -25,12 +26,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.MacroCard
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.NutritionCard
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.TargetOverviewCard
+import com.yuika.healthtracker.ui.features.main_features.onboarding.page3.OnboardingPage3Effect
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.EnergyAmber
 import com.yuika.healthtracker.ui.theme.InfoBlue
@@ -51,13 +57,17 @@ fun OnboardingPage4Screen(
     onNavigateNext: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    LaunchedEffect(viewModel.effect) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is OnboardingPage4Effect.NavigateToDashboard -> onNavigateNext()
-                is OnboardingPage4Effect.ShowError -> {
-                    // Show error
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewModel.effect.collect { effect ->
+                when (effect) {
+                    is OnboardingPage4Effect.NavigateToDashboard -> onNavigateNext()
+                    is OnboardingPage4Effect.ShowError -> {
+                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
