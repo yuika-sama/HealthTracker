@@ -88,9 +88,6 @@ fun AddMealScreen(
                     is AddMealEffect.ShowError -> {
                         Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                     }
-                    is AddMealEffect.NavigateBack -> {
-                        onBackClick()
-                    }
                     is AddMealEffect.NavigateBackWithSuccess -> {
                         Toast.makeText(context, "Save success", Toast.LENGTH_SHORT).show()
                         onSaveClick()

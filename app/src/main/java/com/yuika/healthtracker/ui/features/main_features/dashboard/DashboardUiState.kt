@@ -6,7 +6,6 @@ data class DashboardUiState(
     val isLoading: Boolean = false,
     val userName: String = "",
     val currentDateText: String = "",
-    val quotesText: String = "",
     val intakeCalories: Int = 0,
     val burnedCalories: Int = 0,
     val netBalance: Int = 0,

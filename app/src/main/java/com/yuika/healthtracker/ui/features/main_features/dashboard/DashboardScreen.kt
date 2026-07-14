@@ -83,9 +83,6 @@ fun DashboardScreen(
                     is DashboardEffect.ShowError -> {
                         Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                     }
-                    is DashboardEffect.ShowToast -> {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
                 }
             }
         }
