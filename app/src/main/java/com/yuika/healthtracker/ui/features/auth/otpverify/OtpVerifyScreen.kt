@@ -64,9 +64,7 @@ fun OtpVerifyScreen(
                     is OtpVerifyEffect.NavigateToLogin -> onBackToLoginClick()
                     is OtpVerifyEffect.NavigateToCreateNewPassword -> onNavigateToCreateNewPassword(effect.email)
                     is OtpVerifyEffect.ShowToast ->
-                    {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT)
-                    }
+                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }

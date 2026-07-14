@@ -25,6 +25,6 @@ class ValidateAndRegisterUseCase @Inject constructor(
         if (confirmPassword.isBlank()) throw IllegalArgumentException("ConfirmPassword_Confirm password would not be blank")
         if (confirmPassword != password) throw IllegalArgumentException("ConfirmPassword_Confirm password do not match")
 
-        registerUseCase(email)
+        registerUseCase(fullName, email, age, password)
     }
 }

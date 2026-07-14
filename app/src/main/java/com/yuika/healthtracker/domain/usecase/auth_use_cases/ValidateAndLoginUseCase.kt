@@ -17,7 +17,7 @@ class ValidateAndLoginUseCase @Inject constructor(
 
         if (password.isEmpty()) throw IllegalArgumentException("Password_Password would not be blank")
         if (password.length < 8) throw IllegalArgumentException("Password_Password length would be longer than 8")
-        if (PASSWORD_REGEX.matches(password)) throw IllegalArgumentException("Password_Password format is invalid")
+        if (!PASSWORD_REGEX.matches(password)) throw IllegalArgumentException("Password_Password format is invalid")
 
         loginUseCase(email, password)
     }

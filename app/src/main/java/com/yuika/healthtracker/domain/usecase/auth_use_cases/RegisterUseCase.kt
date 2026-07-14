@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.auth_use_cases
 
+import com.yuika.healthtracker.data.local.entity.UserEntity
 import com.yuika.healthtracker.domain.repository.UserRepository
 import com.yuika.healthtracker.utils.MOCK_ERROR_LOGIN_EMAIL
 import com.yuika.healthtracker.utils.NETWORK_DELAY
@@ -11,7 +12,7 @@ class RegisterUseCase @Inject constructor(
     private val userRepository: UserRepository
 )
 {
-    suspend operator fun invoke(email: String) {
+    suspend operator fun invoke(fullName: String, email: String, age: String, password: String) {
         delay(NETWORK_DELAY.toLong().milliseconds)
         if (email == MOCK_ERROR_LOGIN_EMAIL) {
             throw Exception("Error connect to server")
@@ -21,6 +22,19 @@ class RegisterUseCase @Inject constructor(
             throw Exception("Email already exists")
         }
 
-        // todo: insert user
+        userRepository.insertUser(
+            UserEntity(
+                email = email,
+                password = password,
+                name = fullName,
+                age = age.toIntOrNull() ?: 18,
+                gender = "Other",
+                height = 0.0,
+                weight = 0.0,
+                activityLevel = "None",
+                goal = "None",
+                avatarPath = null
+            )
+        )
     }
 }

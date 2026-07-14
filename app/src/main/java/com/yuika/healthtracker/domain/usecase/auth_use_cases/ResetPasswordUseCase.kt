@@ -11,7 +11,11 @@ class ResetPasswordUseCase @Inject constructor(
 )
 {
     suspend operator fun invoke(email: String?, newPasswordString: String){
-        // todo: update user
         delay(NETWORK_DELAY.toLong().milliseconds)
+        if (email == null) throw Exception("Email not provided")
+        val user = userRepository.getUserByEmail(email)
+            ?: throw Exception("User not found")
+            
+        userRepository.updateUser(user.copy(password = newPasswordString))
     }
 }

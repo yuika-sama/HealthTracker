@@ -8,12 +8,14 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.ResendOtpUseCase
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndVerifyOtpUseCase
 import com.yuika.healthtracker.ui.navigation.Route
 
 @HiltViewModel
 class OtpVerifyViewModel @Inject constructor(
     private val validateAndVerifyOtpUseCase: ValidateAndVerifyOtpUseCase,
+    private val resendOtpUseCase: ResendOtpUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<OtpVerifyUiState, OtpVerifyIntent, OtpVerifyEffect>(
     initialState = OtpVerifyUiState()
@@ -66,7 +68,7 @@ class OtpVerifyViewModel @Inject constructor(
                 }
             }
         ) {
-            delay(NETWORK_DELAY.toLong().milliseconds)
+            resendOtpUseCase(state.value.email)
 
             updateState { it.copy(isLoading = false) }
             sendEffect(OtpVerifyEffect.ShowToast("OTP has been resend to ${state.value.email}"))
