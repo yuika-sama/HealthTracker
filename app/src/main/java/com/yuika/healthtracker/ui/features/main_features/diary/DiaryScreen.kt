@@ -65,7 +65,7 @@ fun DiaryScreen(
                 when (effect) {
                     is DiaryEffect.NavigateToAddFood -> onAddFoodClick(effect.mealType)
                     is DiaryEffect.ShowError -> {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT)
+                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }

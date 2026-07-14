@@ -29,34 +29,46 @@ import androidx.compose.ui.unit.sp
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.InfoBlue
 
+import com.yuika.healthtracker.ui.core.model.IntensityLevel
+
 @Composable
 fun ActivityItem(
     modifier: Modifier = Modifier,
     activity: ActivityItemData
 ) {
     val (icon, iconTint, iconBg) = when (activity.iconType) {
-        IntensityLevel.LOW -> Triple(
+        IntensityLevel.LIGHT -> Triple(
             Icons.AutoMirrored.Outlined.DirectionsWalk,
             MaterialTheme.colorScheme.tertiary,
             MaterialTheme.colorScheme.surfaceVariant
         )
-        IntensityLevel.HIGH -> Triple(
+        IntensityLevel.MEDIUM -> Triple(
             Icons.AutoMirrored.Outlined.DirectionsRun,
-            MaterialTheme.colorScheme.secondary,
-            MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f)
+            Emerald,
+            Emerald.copy(alpha = 0.15f)
+        )
+        IntensityLevel.STRONG -> Triple(
+            Icons.Outlined.LocalFireDepartment,
+            MaterialTheme.colorScheme.error,
+            MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
         )
     }
 
     val (intensityColor, intensityBg, intensityText) = when (activity.intensity) {
-        IntensityLevel.LOW -> Triple(
-            MaterialTheme.colorScheme.secondary,
-            MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f),
-            "Low Intensity"
+        IntensityLevel.LIGHT -> Triple(
+            MaterialTheme.colorScheme.tertiary,
+            MaterialTheme.colorScheme.surfaceVariant,
+            "Light"
         )
-        IntensityLevel.HIGH -> Triple(
+        IntensityLevel.MEDIUM -> Triple(
+            Emerald,
+            Emerald.copy(alpha = 0.15f),
+            "Medium"
+        )
+        IntensityLevel.STRONG -> Triple(
             MaterialTheme.colorScheme.error,
-            MaterialTheme.colorScheme.background,
-            "High Intensity"
+            MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
+            "Strong"
         )
     }
 

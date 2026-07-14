@@ -83,7 +83,7 @@ class AddMealViewModel @Inject constructor(
         val calories = currentState.calories.toIntOrNull()
         if (calories == null || calories < 0)
         {
-            sendEffect(AddMealEffect.ShowError("Vui lòng nhập lượng calo hợp lệ"))
+            sendEffect(AddMealEffect.ShowError("Please fill in the valid calories"))
             return
         }
 
@@ -96,7 +96,7 @@ class AddMealViewModel @Inject constructor(
 
         val newAddedFoods = currentState.addedFoods + newFood
 
-        updateState { it ->
+        updateState {
             it.copy(
                 addedFoods = newAddedFoods,
                 totalCalories = newAddedFoods.sumOf { item -> item.calories },

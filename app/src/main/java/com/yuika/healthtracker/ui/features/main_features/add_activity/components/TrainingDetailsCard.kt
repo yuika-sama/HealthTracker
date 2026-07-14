@@ -40,13 +40,15 @@ import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivit
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.EnergyAmber
 
+import com.yuika.healthtracker.ui.core.model.IntensityLevel
+
 @Composable
 fun TrainingDetailsCard(
     modifier: Modifier = Modifier,
     state: AddActivityUiState,
     onIntent: (AddActivityIntent) -> Unit
 ) {
-    val intensities = listOf("Light", "Medium", "Strong")
+    val intensities = IntensityLevel.entries
 
     Column(
         modifier = modifier
@@ -105,7 +107,7 @@ fun TrainingDetailsCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = intensity,
+                            text = intensity.displayName,
                             fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
                             color = textColor
                         )

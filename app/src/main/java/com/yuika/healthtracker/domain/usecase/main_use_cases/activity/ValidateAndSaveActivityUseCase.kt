@@ -2,6 +2,7 @@ package com.yuika.healthtracker.domain.usecase.main_use_cases.activity
 
 import com.yuika.healthtracker.data.local.entity.ActivityEntity
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
+import com.yuika.healthtracker.ui.core.model.IntensityLevel
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
@@ -14,7 +15,7 @@ class ValidateAndSaveActivityUseCase @Inject constructor(
         selectedIcon: String,
         kcalPerHourStr: String,
         durationStr: String,
-        selectedIntensity: String,
+        selectedIntensity: IntensityLevel,
         estimatedKcalBurned: Int,
         dateText: String
     ) {
@@ -42,7 +43,7 @@ class ValidateAndSaveActivityUseCase @Inject constructor(
             iconName = selectedIcon,
             kcalPerHour = kcalPerHour,
             durationMins = duration,
-            intensity = selectedIntensity,
+            intensity = selectedIntensity.name,
             kcalBurned = estimatedKcalBurned,
             dateText = dateText
         )

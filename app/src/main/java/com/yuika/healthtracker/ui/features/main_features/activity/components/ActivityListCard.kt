@@ -35,9 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.InfoBlue
 
-enum class IntensityLevel {
-    LOW, HIGH
-}
+import com.yuika.healthtracker.ui.core.model.IntensityLevel
 
 data class ActivityItemData(
     val title: String,

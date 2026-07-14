@@ -1,6 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.activity
 
-import com.yuika.healthtracker.ui.features.main_features.activity.components.IntensityLevel
+import com.yuika.healthtracker.ui.core.model.IntensityLevel
 import javax.inject.Inject
 
 class ParseActivityIntensityUseCase @Inject constructor() {
@@ -8,7 +8,8 @@ class ParseActivityIntensityUseCase @Inject constructor() {
         return try {
             IntensityLevel.valueOf(intensityString.uppercase())
         } catch (e: Exception) {
-            IntensityLevel.LOW
+            IntensityLevel.entries.firstOrNull { it.displayName.equals(intensityString, ignoreCase = true) }
+                ?: IntensityLevel.LIGHT
         }
     }
 }

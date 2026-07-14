@@ -1,6 +1,7 @@
 package com.yuika.healthtracker.ui.features.main_features.add_activity
 
 import com.yuika.healthtracker.ui.core.base.UiState
+import com.yuika.healthtracker.ui.core.model.IntensityLevel
 import java.time.LocalDate
 
 data class AddActivityUiState(
@@ -8,7 +9,7 @@ data class AddActivityUiState(
     val selectedIcon: String = "run",
     val kcalPerHour: String = "",
     val duration: String = "",
-    val selectedIntensity: String = "Medium",
+    val selectedIntensity: IntensityLevel = IntensityLevel.MEDIUM,
     val dateText: String = LocalDate.now().toString(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null
