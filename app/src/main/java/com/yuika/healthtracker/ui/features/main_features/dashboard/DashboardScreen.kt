@@ -70,6 +70,10 @@ fun DashboardScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
+        viewModel.onIntent(DashboardIntent.LoadDashboardData)
+    }
+
+    LaunchedEffect(Unit) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
             viewModel.effect.collect { effect ->
                 when (effect) {
@@ -188,7 +192,7 @@ fun DashboardScreen(
             
             OutlinedButton(
                 onClick = {
-                    viewModel.onIntent(DashboardIntent.AddMealClick)
+                    viewModel.onIntent(DashboardIntent.AddActivityClick)
                 },
                 modifier = Modifier
                     .fillMaxWidth()

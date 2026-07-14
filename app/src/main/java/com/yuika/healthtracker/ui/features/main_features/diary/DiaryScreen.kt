@@ -56,6 +56,10 @@ fun DiaryScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
+        viewModel.onIntent(DiaryIntent.LoadDiaryData)
+    }
+
+    LaunchedEffect(Unit) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
             viewModel.effect.collect { effect ->
                 when (effect) {
