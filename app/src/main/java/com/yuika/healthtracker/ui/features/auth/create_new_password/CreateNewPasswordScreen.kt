@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.outlined.LockReset
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -42,7 +43,7 @@ fun CreateNewPasswordScreen(
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
 
-    val state = viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
@@ -94,7 +95,7 @@ fun CreateNewPasswordScreen(
 
                 Box(modifier = Modifier.padding(top = 32.dp)) {
                     CreateNewPasswordForm(
-                        state = state.value,
+                        state = state,
                         onIntent = viewModel::onIntent
                     )
                 }
