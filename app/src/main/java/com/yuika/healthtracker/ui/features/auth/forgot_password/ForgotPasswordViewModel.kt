@@ -3,13 +3,14 @@ package com.yuika.healthtracker.ui.features.auth.forgot_password
 import android.util.Patterns
 import com.yuika.healthtracker.domain.repository.UserRepository
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.CheckEmailExistsUseCase
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndCheckEmailUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ForgotPasswordViewModel @Inject constructor(
-    private val checkEmailExistsUseCase: CheckEmailExistsUseCase
+    private val validateAndCheckEmailUseCase: ValidateAndCheckEmailUseCase
 ) : BaseViewModel<ForgotPasswordUiState, ForgotPasswordUiIntent, ForgotPasswordUiEffect>(
     initialState = ForgotPasswordUiState()
 )
@@ -35,32 +36,20 @@ class ForgotPasswordViewModel @Inject constructor(
     {
         val email = state.value.email.trim()
 
-        if (email.isEmpty() || email.isBlank())
-        {
-            updateState { it.copy(emailError = "Email is required") }
-            return
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
-        {
-            updateState { it.copy(emailError = "Invalid email format") }
-            return
-        }
-
         updateState { it.copy(isLoading = true, error = null, emailError = null) }
 
         launchSafe(
             onError = { throwable ->
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        error = throwable.message ?: "An unexpected error occurred"
-                    )
+                val msg = throwable.message ?: "An unexpected error occurred"
+                if (msg.startsWith("Email_")) {
+                    updateState { it.copy(isLoading = false, emailError = msg.removePrefix("Email_")) }
+                } else {
+                    updateState { it.copy(isLoading = false, error = msg) }
+                    sendEffect(ForgotPasswordUiEffect.ShowToast(msg))
                 }
-                sendEffect(ForgotPasswordUiEffect.ShowToast(state.value.error ?: "An unexpected error occurred"))
             }
         ) {
-            val exists = checkEmailExistsUseCase(email)
+            val exists = validateAndCheckEmailUseCase(email)
             updateState { it.copy(isLoading = false) }
             if (exists)
             {

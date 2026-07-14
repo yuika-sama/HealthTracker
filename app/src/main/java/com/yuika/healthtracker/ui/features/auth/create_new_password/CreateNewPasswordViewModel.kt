@@ -8,11 +8,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndCheckEmailUseCase
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndResetPasswordUseCase
 import com.yuika.healthtracker.ui.navigation.Route
 
 @HiltViewModel
 class CreateNewPasswordViewModel @Inject constructor(
-    private val resetPasswordUseCase: ResetPasswordUseCase,
+    private val validateAndResetPasswordUseCase: ValidateAndResetPasswordUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<CreateNewPasswordUiState, CreateNewPasswordIntent, CreateNewPasswordEffect>(
     initialState = CreateNewPasswordUiState()
@@ -60,52 +62,22 @@ class CreateNewPasswordViewModel @Inject constructor(
         val newPassword = state.value.newPassword
         val confirmPassword = state.value.confirmNewPassword
 
-        if (newPassword.isBlank() || newPassword.isEmpty())
-        {
-            updateState { it.copy(newPasswordError = "Password cannot be empty") }
-            return
-        }
-        if (newPassword.length < 8)
-        {
-            updateState { it.copy(newPasswordError = "Password must be at least 8 characters") }
-            return
-        }
-        if (!PASSWORD_REGEX.matches(newPassword))
-        {
-            updateState { it.copy(newPasswordError = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character") }
-            return
-        }
-
-        if (confirmPassword.isBlank() || confirmPassword.isEmpty())
-        {
-            updateState { it.copy(confirmNewPasswordError = "Password cannot be empty") }
-            return
-        }
-
-        if (confirmPassword != newPassword)
-        {
-            updateState { it.copy(confirmNewPasswordError = "Password do not match") }
-            return
-        }
-
         updateState { it.copy(isLoading = true, errorMessage = null) }
 
         launchSafe(
             onError = { throwable ->
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = throwable.message ?: "An unexpected error occurred"
-                    )
+                val msg = throwable.message ?: "An unexpected error occurred"
+                when {
+                    msg.startsWith("NewPassword_") -> updateState { it.copy(isLoading = false, newPasswordError = msg.removePrefix("NewPassword_")) }
+                    msg.startsWith("ConfirmPassword_") -> updateState { it.copy(isLoading = false, confirmNewPasswordError = msg.removePrefix("ConfirmPassword_")) }
+                    else -> {
+                        updateState { it.copy(isLoading = false, errorMessage = msg) }
+                        sendEffect(CreateNewPasswordEffect.ShowToast(msg))
+                    }
                 }
-                sendEffect(
-                    CreateNewPasswordEffect.ShowToast(
-                        throwable.message ?: "An unexpected error occurred"
-                    )
-                )
             }
         ) {
-            resetPasswordUseCase(route.email, newPassword)
+            validateAndResetPasswordUseCase(route.email, newPassword, confirmPassword)
 
             updateState { it.copy(isLoading = false) }
             sendEffect(CreateNewPasswordEffect.NavigateToPasswordChanged)

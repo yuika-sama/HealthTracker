@@ -2,6 +2,7 @@ package com.yuika.healthtracker.ui.features.auth.register
 
 import android.util.Patterns
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.RegisterUseCase
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndRegisterUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.PASSWORD_REGEX
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val registerUseCase: RegisterUseCase
+    private val validateAndRegisterUseCase: ValidateAndRegisterUseCase
 ) : BaseViewModel<RegisterUiState, RegisterIntent, RegisterEffect>(
     initialState = RegisterUiState()
 )
@@ -74,99 +75,38 @@ class RegisterViewModel @Inject constructor(
     {
         val currentState = state.value
 
-        var hasError = false
-        var fullNameErr: String? = null
-        var emailErr: String? = null
-        var ageErr: String? = null
-        var passwordErr: String? = null
-        var confirmPasswordErr: String? = null
-
-        if (currentState.fullName.isEmpty() || currentState.fullName.isBlank())
-        {
-            fullNameErr = "Name would not be blank"
-            hasError = true
-        }
-
-        if (currentState.email.isBlank() || currentState.email.isEmpty())
-        {
-            emailErr = "Email would not be blank"
-            hasError = true
-        }
-        else if (!Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches())
-        {
-            emailErr = "Email format is invalid"
-            hasError = true
-        }
-
-        val ageInt = currentState.age.toIntOrNull()
-        if (currentState.age.isBlank()) {
-            ageErr = "Age would not be blank"
-            hasError = true
-        } else if (ageInt == null || ageInt < 10 || ageInt > 120) {
-            ageErr = "Please enter a valid age (10-120)"
-            hasError = true
-        }
-
-        if (currentState.password.isBlank() || currentState.password.isEmpty())
-        {
-            passwordErr = "Password would not be blank"
-            hasError = true
-        }
-        else if (currentState.password.length < currentState.passwordLength)
-        {
-            passwordErr = "Password length would be longer than ${currentState.passwordLength}"
-            hasError = true
-        }
-        else if (!PASSWORD_REGEX.matches(currentState.password))
-        {
-            passwordErr =
-                "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
-            hasError = true
-        }
-
-        if (currentState.confirmPassword.isBlank())
-        {
-            confirmPasswordErr = "Confirm password would not be blank"
-            hasError = true
-        }
-        else if (currentState.confirmPassword != currentState.password)
-        {
-            confirmPasswordErr = "Confirm password do not match"
-            hasError = true
-        }
-
-        if (hasError)
-        {
-            updateState {
-                it.copy(
-                    fullNameError = fullNameErr,
-                    emailError = emailErr,
-                    ageError = ageErr,
-                    passwordError = passwordErr,
-                    confirmPasswordError = confirmPasswordErr
-                )
-            }
-            return
-        }
-
         updateState {
             it.copy(
                 isLoading = true,
-                errorMessage = null
+                errorMessage = null,
+                emailError = null,
+                fullNameError = null,
+                ageError = null,
+                passwordError = null,
+                confirmPasswordError = null
             )
         }
 
         launchSafe(
             onError = { throwable ->
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = throwable.message ?: "Unknown error occurred"
-                    )
+                val  msg = throwable.message ?: "Unknown error occurred"
+                when {
+                    msg.startsWith("FullName_") -> updateState { it.copy(isLoading = false, fullNameError = msg.removePrefix("FullName_")) }
+                    msg.startsWith("Email_") -> updateState { it.copy(isLoading = false, emailError = msg.removePrefix("Email_")) }
+                    msg.startsWith("Age_") -> updateState { it.copy(isLoading = false, ageError = msg.removePrefix("Age_")) }
+                    msg.startsWith("Password_") -> updateState { it.copy(isLoading = false, passwordError = msg.removePrefix("Password_")) }
+                    msg.startsWith("ConfirmPassword_") -> updateState { it.copy(isLoading = false, confirmPasswordError = msg.removePrefix("ConfirmPassword_")) }
+                    else -> updateState { it.copy(isLoading = false, errorMessage = msg) }
                 }
             }
         ) {
-            registerUseCase(currentState.email)
+            validateAndRegisterUseCase(
+                fullName = currentState.fullName,
+                email = currentState.email,
+                age =  currentState.age,
+                password = currentState.password,
+                confirmPassword = currentState.confirmPassword
+            )
             updateState { it.copy(isLoading = false) }
             sendEffect(RegisterEffect.NavigateToVerifyOtp(currentState.email))
         }

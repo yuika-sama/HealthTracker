@@ -11,11 +11,12 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndVerifyOtpUseCase
 import com.yuika.healthtracker.ui.navigation.Route
 
 @HiltViewModel
 class OtpVerifyViewModel @Inject constructor(
-    private val verifyOtpUseCase: VerifyOtpUseCase,
+    private val validateAndVerifyOtpUseCase: ValidateAndVerifyOtpUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<OtpVerifyUiState, OtpVerifyIntent, OtpVerifyEffect>(
     initialState = OtpVerifyUiState()
@@ -79,16 +80,6 @@ class OtpVerifyViewModel @Inject constructor(
     {
         val currentState = state.value
 
-        if (currentState.otpCode.length < currentState.otpLength)
-        {
-            updateState {
-                it.copy(
-                    errorMessage = "Please enter the full OTP code"
-                )
-            }
-            return
-        }
-
         updateState { it.copy(isLoading = true, errorMessage = null) }
 
         launchSafe(
@@ -101,7 +92,7 @@ class OtpVerifyViewModel @Inject constructor(
                 }
             }
         ) {
-            verifyOtpUseCase(currentState.otpCode)
+            validateAndVerifyOtpUseCase(currentState.otpCode, currentState.otpLength)
 
             updateState { it.copy(isLoading = false) }
             if (route.isFromRegister) {

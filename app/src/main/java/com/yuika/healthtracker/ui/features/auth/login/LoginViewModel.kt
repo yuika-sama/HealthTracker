@@ -5,6 +5,7 @@ import com.yuika.healthtracker.data.local.entity.UserEntity
 import com.yuika.healthtracker.domain.repository.UserRepository
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.LoginUseCase
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.OAuthLoginUseCase
+import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndLoginUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.MOCK_ERROR_LOGIN_EMAIL
 import com.yuika.healthtracker.utils.MOCK_OAUTH_ACCOUNT_ID
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase,
+    private val validateAndLoginUseCase: ValidateAndLoginUseCase,
     private val oAuthLoginUseCase: OAuthLoginUseCase
 ) : BaseViewModel<LoginUiState, LoginUiIntent, LoginUiEffect>(
     initialState = LoginUiState()
@@ -53,64 +54,24 @@ class LoginViewModel @Inject constructor(
 
     private fun handleLogin()
     {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
-
-        val email = state.value.email.trim()
-        val password = state.value.password.trim()
-
-        var hasError = false
-        var emailErr: String? = null
-        var passwordErr: String? = null
-
-        // Validate Input
-        if (email.isEmpty())
-        {
-            emailErr = "Email would not be blank"
-            hasError = true
-        }
-        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
-        {
-            emailErr = "Email format is invalid"
-            hasError = true
-        }
-
-        if (password.isEmpty())
-        {
-            passwordErr = "Password would not be blank"
-            hasError = true
-        }
-        else if (password.length < state.value.passwordLength)
-        {
-            passwordErr = "Password length would be longer than ${state.value.passwordLength}"
-            hasError = true
-        }
-
-        if (hasError)
-        {
-            updateState {
-                it.copy(
-                    emailErrorMessage = emailErr,
-                    passwordErrorMessage = passwordErr
-                )
-            }
-            return
-        }
-
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        val currentState = state.value
+        updateState { it.copy(isLoading = true, errorMessage = null, emailErrorMessage = null, passwordErrorMessage = null) }
 
         launchSafe(
             onError = { throwable ->
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = throwable.message ?: "Unknown error occurred"
-                    )
+                val msg = throwable.message ?: "Unknown error occurred"
+                if (msg.startsWith("Email_")){
+                    updateState { it.copy(isLoading = false, emailErrorMessage = msg.removePrefix("Email_")) }
+                } else if (msg.startsWith("Password_")){
+                    updateState { it.copy(isLoading = false, passwordErrorMessage = msg.removePrefix("Password_")) }
+                } else {
+                    updateState { it.copy(isLoading = false, errorMessage = msg) }
                 }
             }
         ) {
-            loginUseCase(email, password)
             // TODO: handle save session token into datastore
             // if(state.value.isRememberAccount) -> save into datastore
+            validateAndLoginUseCase(currentState.email.trim(), currentState.password.trim())
             updateState { it.copy(isLoading = false) }
             sendEffect(LoginUiEffect.NavigateToDashboard)
         }
