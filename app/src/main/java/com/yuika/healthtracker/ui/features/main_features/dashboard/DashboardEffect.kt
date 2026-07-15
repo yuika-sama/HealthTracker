@@ -6,5 +6,4 @@ sealed class DashboardEffect : UiEffect
 {
     object NavigateToDiary: DashboardEffect()
     object NavigateToActivity: DashboardEffect()
-    data class ShowError(val message: String): DashboardEffect()
 }

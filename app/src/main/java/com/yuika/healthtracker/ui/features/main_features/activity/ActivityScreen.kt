@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityListCard
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivitySummaryCard
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
@@ -62,11 +63,6 @@ fun ActivityScreen(
             viewModel.effect.collect { effect ->
                 when (effect)
                 {
-                    is ActivityEffect.ShowError ->
-                    {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
-
                     is ActivityEffect.NavigateToAddActivity ->
                     {
                         onAddActivityClick()
@@ -123,6 +119,11 @@ fun ActivityScreen(
                 if (state.errorMessage != null)
                 {
                     ErrorText(msg = state.errorMessage!!)
+                }
+
+                if (state.isSuccess && !state.isLoading && state.errorMessage == null)
+                {
+                    SuccessText(msg = "Activity loaded")
                 }
 
                 ActivitySummaryCard(

@@ -1,6 +1,5 @@
 package com.yuika.healthtracker.ui.navigation
 
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import com.yuika.healthtracker.utils.UI_LOADING_DELAY_MS
@@ -30,7 +29,6 @@ class AppNavigator(
     fun popBackStack(){
         if (job?.isActive == true) return
         job = scope.launch {
-            setLoading(true)
             setLoading(true)
             delay(UI_LOADING_DELAY_MS)
             navController.popBackStack()

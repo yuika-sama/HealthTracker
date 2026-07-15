@@ -46,6 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.features.main_features.profile.components.CurrentGoalBanner
@@ -78,9 +79,6 @@ fun ProfileScreen(
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is ProfileEffect.ShowError -> {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
                     is ProfileEffect.NavigateToLogin -> {
                         onLogoutClick()
                     }
@@ -127,6 +125,10 @@ fun ProfileScreen(
 
             if (state.errorMessage != null){
                 ErrorText(state.errorMessage!!)
+            }
+
+            if (state.isSuccess && !state.isLoading && state.errorMessage == null) {
+                SuccessText("Profile loaded")
             }
             
             if (state.isLoading) {

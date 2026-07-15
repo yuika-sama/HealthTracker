@@ -38,7 +38,6 @@ class DiaryViewModel @Inject constructor(
                 onError = {throwable ->
                     val message = throwable.message ?: "Unknown error occurred."
                     updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
-                    sendEffect(DiaryEffect.ShowError(message))
                 }
             ) {
                 delay(NETWORK_DELAY.toLong())
@@ -46,7 +45,7 @@ class DiaryViewModel @Inject constructor(
                 sendEffect(DiaryEffect.NavigateToAddFood(mealType))
             }
         } catch (e: Exception) {
-            sendEffect(DiaryEffect.ShowError(e.message ?: "Invalid meal type"))
+            updateState { it.copy(errorMessage = e.message ?: "Invalid meal type", isSuccess = false) }
         }
     }
 
@@ -56,7 +55,7 @@ class DiaryViewModel @Inject constructor(
             updateState { it.copy(selectedDate = newDate, errorMessage = null) }
             handleFetchDiary(newDate)
         } catch (e: Exception) {
-            sendEffect(DiaryEffect.ShowError(e.message ?: "Invalid date"))
+            updateState { it.copy(errorMessage = e.message ?: "Invalid date", isSuccess = false) }
         }
     }
 
@@ -70,7 +69,6 @@ class DiaryViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "Can't get diary data"
                 updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
-                sendEffect(DiaryEffect.ShowError(message))
             }
         ) {
             val dateText = selectedDate.toString()
@@ -78,7 +76,6 @@ class DiaryViewModel @Inject constructor(
             getDiaryDataUseCase(dateText).collectLatest { diaryData ->
                 if (diaryData == null) {
                     updateState { it.copy(isLoading = false, errorMessage = "Can't find user information.") }
-                    sendEffect(DiaryEffect.ShowError("Can't get user data"))
                     return@collectLatest
                 }
 

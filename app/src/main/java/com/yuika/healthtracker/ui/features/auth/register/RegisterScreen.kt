@@ -29,6 +29,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.core.components.ClickableTextLink
 import com.yuika.healthtracker.ui.core.components.ErrorText
+import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.auth.register.components.RegisterForm
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
@@ -92,6 +93,10 @@ fun RegisterScreen(
 
             uiState.errorMessage?.let { msg ->
                 ErrorText(msg = msg)
+            }
+
+            if (uiState.isSuccess && !uiState.isLoading && uiState.errorMessage == null) {
+                SuccessText(msg = "Account created successfully")
             }
 
             RegisterForm(

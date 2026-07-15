@@ -76,7 +76,6 @@ class CreateNewPasswordViewModel @Inject constructor(
                         isSuccess = false
                     )
                 }
-                sendEffect(CreateNewPasswordEffect.ShowToast(message))
             }
         ) {
             validateAndResetPasswordUseCase(

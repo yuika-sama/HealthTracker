@@ -1,7 +1,6 @@
 package com.yuika.healthtracker.ui.navigation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,6 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -24,6 +25,11 @@ fun AppNavHost(
     modifier: Modifier = Modifier,
 ){
     var isNavigationLoading by rememberSaveable { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val appNavigator = remember(navController, scope) {
+        AppNavigator(navController, scope) { isNavigationLoading = it }
+    }
+
     Box(modifier.fillMaxSize()){
         Scaffold(
             modifier = modifier
@@ -33,9 +39,9 @@ fun AppNavHost(
                 startDestination = Route.Login,
                 modifier = Modifier.padding(innerPadding)
             ){
-                authNavGraph(navController = navController)
-                onboardingNavGraph(navController = navController)
-                mainNavGraph(navController = navController)
+                authNavGraph(appNavigator = appNavigator)
+                onboardingNavGraph(appNavigator = appNavigator)
+                mainNavGraph(appNavigator = appNavigator)
             }
         }
 

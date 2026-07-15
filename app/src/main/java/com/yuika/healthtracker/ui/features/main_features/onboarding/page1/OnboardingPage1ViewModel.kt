@@ -33,7 +33,6 @@ class OnboardingPage1ViewModel @Inject constructor(
             onError = { throwable ->
                 val errorMsg = throwable.message ?: "Error saving information"
                 updateState { it.copy(isLoading = false, errorMessage = errorMsg) }
-                sendEffect(OnboardingPage1Effect.ShowError(errorMsg))
             }
         ) {
             validateAndSaveOnboardingUseCase(

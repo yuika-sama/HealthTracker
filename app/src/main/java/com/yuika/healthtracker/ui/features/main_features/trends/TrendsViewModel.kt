@@ -45,7 +45,6 @@ class TrendsViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "Can't get data"
                 updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
-                sendEffect(TrendsEffect.ShowError(message))
             }
         ) {
             getTrendsDataUseCase(period).collectLatest { trendsData ->
@@ -58,7 +57,6 @@ class TrendsViewModel @Inject constructor(
                             isSuccess = false
                         )
                     }
-                    sendEffect(TrendsEffect.ShowError("Can't find user information"))
                     return@collectLatest
                 }
 

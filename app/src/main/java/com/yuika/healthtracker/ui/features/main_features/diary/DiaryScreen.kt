@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.utils.DATE_FORMATTER
 
 @Composable
@@ -65,9 +66,6 @@ fun DiaryScreen(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is DiaryEffect.NavigateToAddFood -> onAddFoodClick(effect.mealType)
-                    is DiaryEffect.ShowError -> {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
                 }
             }
         }
@@ -127,6 +125,10 @@ fun DiaryScreen(
 
             if (state.errorMessage != null){
                 item { ErrorText(msg = state.errorMessage!!) }
+            }
+
+            if (state.isSuccess && !state.isLoading && state.errorMessage == null) {
+                item { SuccessText(msg = "Diary loaded") }
             }
             
             if (state.isLoading){

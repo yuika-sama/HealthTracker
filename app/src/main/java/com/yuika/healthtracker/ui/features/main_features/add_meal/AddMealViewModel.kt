@@ -146,7 +146,6 @@ class AddMealViewModel @Inject constructor(
         if (currentFoods.isEmpty())
         {
             updateState { it.copy(errorMessage = "Please at least add one food in the meal") }
-            sendEffect(AddMealEffect.ShowError("Please at least add one food in the meal"))
             return
         }
 
@@ -162,7 +161,6 @@ class AddMealViewModel @Inject constructor(
                         isSuccess = false
                     )
                 }
-                sendEffect(AddMealEffect.ShowError(message))
             }
         ) {
             validateAndSaveMealUseCase(

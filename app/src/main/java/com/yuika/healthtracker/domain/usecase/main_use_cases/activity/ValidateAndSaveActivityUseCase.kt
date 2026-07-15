@@ -1,6 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.activity
 
-import com.yuika.healthtracker.data.local.entity.ActivityEntity
+import com.yuika.healthtracker.domain.model.Activity
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
 import com.yuika.healthtracker.ui.core.model.IntensityLevel
 import kotlinx.coroutines.flow.firstOrNull
@@ -32,7 +32,7 @@ class ValidateAndSaveActivityUseCase @Inject constructor(
             throw IllegalStateException("Can't find user information")
         }
 
-        val activityEntity = ActivityEntity(
+        val activity = Activity(
             userId = user.id,
             name = validInput.name,
             iconName = selectedIcon,
@@ -43,6 +43,6 @@ class ValidateAndSaveActivityUseCase @Inject constructor(
             dateText = dateText
         )
 
-        saveActivityUseCase(activityEntity)
+        saveActivityUseCase(activity)
     }
 }

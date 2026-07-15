@@ -1,17 +1,17 @@
 package com.yuika.healthtracker.domain.repository
 
-import com.yuika.healthtracker.data.local.entity.DiaryEntity
+import com.yuika.healthtracker.domain.model.Diary
 import kotlinx.coroutines.flow.Flow
 
 interface DiaryRepository
 {
-    suspend fun insertEntry(entry: DiaryEntity): Long
+    suspend fun insertEntry(entry: Diary): Long
 
-    suspend fun updateDiary(entry: DiaryEntity)
+    suspend fun updateDiary(entry: Diary)
 
-    suspend fun deleteDiary(entry: DiaryEntity)
+    suspend fun deleteDiary(entry: Diary)
 
-    fun getDiaryByDate(userId: Int, dateText: String): Flow<DiaryEntity?>
+    fun getDiaryByDate(userId: Int, dateText: String): Flow<Diary?>
 
-    fun getWeightHistory(userId: Int): Flow<List<DiaryEntity>>
+    fun getWeightHistory(userId: Int): Flow<List<Diary>>
 }

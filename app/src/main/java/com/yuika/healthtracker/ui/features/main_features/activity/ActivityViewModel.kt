@@ -36,7 +36,6 @@ class ActivityViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "Can't get activity data"
                 updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
-                sendEffect(ActivityEffect.ShowError(message))
             }
         ) {
             val dateText = date.toString()
@@ -44,7 +43,6 @@ class ActivityViewModel @Inject constructor(
             getActivityDataUseCase(dateText).collectLatest { activityData ->
                 if (activityData == null) {
                     updateState { it.copy(isLoading = false, errorMessage = "Can't find user data", isSuccess = false) }
-                    sendEffect(ActivityEffect.ShowError("Can't find user data"))
                     return@collectLatest
                 }
 
@@ -82,7 +80,6 @@ class ActivityViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "Can't continue"
                 updateState { it.copy(isLoading = false, errorMessage = message) }
-                sendEffect(ActivityEffect.ShowError(message))
             }
         ) {
             delay(NETWORK_DELAY.toLong())

@@ -1,21 +1,21 @@
 package com.yuika.healthtracker.domain.repository
 
-import com.yuika.healthtracker.data.local.entity.FoodEntryEntity
+import com.yuika.healthtracker.domain.model.FoodEntry
 import kotlinx.coroutines.flow.Flow
 
 interface FoodEntryRepository
 {
-    suspend fun insertFoodEntry(entry: FoodEntryEntity): Long
+    suspend fun insertFoodEntry(entry: FoodEntry): Long
 
-    suspend fun updateFoodEntry(entry: FoodEntryEntity)
+    suspend fun updateFoodEntry(entry: FoodEntry)
 
-    suspend fun deleteFoodEntry(entry: FoodEntryEntity)
+    suspend fun deleteFoodEntry(entry: FoodEntry)
 
-    fun getFoodEntriesByDateAndMealType(userId: Int, dateText: String, mealType: String): Flow<List<FoodEntryEntity>>
+    fun getFoodEntriesByDateAndMealType(userId: Int, dateText: String, mealType: String): Flow<List<FoodEntry>>
 
-    fun getFoodEntriesByDate(userId: Int, dateText: String): Flow<List<FoodEntryEntity>>
+    fun getFoodEntriesByDate(userId: Int, dateText: String): Flow<List<FoodEntry>>
 
     fun getTotalCaloriesByDate(userId: Int, dateText: String): Flow<Int?>
 
-    fun getFoodEntriesByDateRange(userId: Int, startDate: String, endDate: String) : Flow<List<FoodEntryEntity>>
+    fun getFoodEntriesByDateRange(userId: Int, startDate: String, endDate: String) : Flow<List<FoodEntry>>
 }

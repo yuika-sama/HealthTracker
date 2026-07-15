@@ -65,9 +65,6 @@ fun OnboardingPage4Screen(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is OnboardingPage4Effect.NavigateToDashboard -> onNavigateNext()
-                    is OnboardingPage4Effect.ShowError -> {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
                 }
             }
         }

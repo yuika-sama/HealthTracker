@@ -33,7 +33,6 @@ class OnboardingPage4ViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "Error calculating target"
                 updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
-                sendEffect(OnboardingPage4Effect.ShowError(message))
             }
         ) {
             val user = getLatestUserUseCase().firstOrNull()
@@ -78,7 +77,6 @@ class OnboardingPage4ViewModel @Inject constructor(
                 }
             } else {
                 updateState { it.copy(isLoading = false, errorMessage = "User not found", isSuccess = false) }
-                sendEffect(OnboardingPage4Effect.ShowError("User not found"))
             }
         }
     }
@@ -89,7 +87,6 @@ class OnboardingPage4ViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "Error completing onboarding"
                 updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
-                sendEffect(OnboardingPage4Effect.ShowError(message))
             }
         ) {
             delay(NETWORK_DELAY.toLong())

@@ -1,6 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.profile
 
-import com.yuika.healthtracker.data.local.entity.UserEntity
+import com.yuika.healthtracker.domain.model.User
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.UpdateUserUseCase
 import javax.inject.Inject
 
@@ -65,7 +65,7 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
             else -> "lose_weight"
         }
 
-        val updatedUser = UserEntity(
+        val updatedUser = User(
             id = id,
             email = email,
             password = passwordHash,

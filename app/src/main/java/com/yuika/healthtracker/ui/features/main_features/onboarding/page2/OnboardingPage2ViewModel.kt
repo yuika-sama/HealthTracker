@@ -31,7 +31,6 @@ class OnboardingPage2ViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "Error saving information"
                 updateState { it.copy(isLoading = false, errorMessage = message) }
-                sendEffect(OnboardingPage2Effect.ShowError(message))
             }
         ) {
             val user = getLatestUserUseCase().firstOrNull()
@@ -44,7 +43,6 @@ class OnboardingPage2ViewModel @Inject constructor(
             } else {
                 val message = "User not found"
                 updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
-                sendEffect(OnboardingPage2Effect.ShowError(message))
             }
         }
     }

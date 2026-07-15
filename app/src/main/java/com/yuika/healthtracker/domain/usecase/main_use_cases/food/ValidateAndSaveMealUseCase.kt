@@ -1,6 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.food
 
-import com.yuika.healthtracker.data.local.entity.FoodEntryEntity
+import com.yuika.healthtracker.domain.model.FoodEntry
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
 import com.yuika.healthtracker.ui.features.main_features.add_meal.TempFoodItem
 import kotlinx.coroutines.flow.firstOrNull
@@ -41,7 +41,7 @@ class ValidateAndSaveMealUseCase @Inject constructor(
             ?: throw IllegalStateException("Can't find user information")
 
         currentFoods.forEach { tempFood ->
-            val entity = FoodEntryEntity(
+            val entry = FoodEntry(
                 userId = user.id,
                 dateText = dateText,
                 mealType = mealType,
@@ -51,7 +51,7 @@ class ValidateAndSaveMealUseCase @Inject constructor(
                 calories = tempFood.calories,
                 imagePath = null
             )
-            saveFoodEntryUseCase(entity)
+            saveFoodEntryUseCase(entry)
         }
     }
 }

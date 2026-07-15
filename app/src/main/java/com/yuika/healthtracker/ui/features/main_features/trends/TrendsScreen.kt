@@ -24,6 +24,7 @@ import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SegmentedSelector
 import com.yuika.healthtracker.ui.core.components.StatCard
+import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.features.main_features.trends.components.CalorieIntakeChart
@@ -40,25 +41,8 @@ fun TrendsScreen(
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-
     LaunchedEffect(Unit) {
         viewModel.onIntent(TrendsIntent.LoadTrendsData)
-    }
-
-    LaunchedEffect(Unit) {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.effect.collect { effect ->
-                when (effect)
-                {
-                    is TrendsEffect.ShowError ->
-                    {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
     }
 
     Scaffold(
@@ -103,6 +87,11 @@ fun TrendsScreen(
             if (state.errorMessage != null)
             {
                 ErrorText(msg = state.errorMessage!!)
+            }
+
+            if (state.isSuccess && !state.isLoading && state.errorMessage == null)
+            {
+                SuccessText(msg = "Trends loaded")
             }
 
             if (state.isLoading)

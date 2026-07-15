@@ -1,6 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.auth_use_cases
 
-import com.yuika.healthtracker.data.local.entity.UserEntity
+import com.yuika.healthtracker.domain.model.User
 import com.yuika.healthtracker.domain.repository.UserRepository
 import com.yuika.healthtracker.utils.MOCK_OAUTH_ACCOUNT_ID
 import com.yuika.healthtracker.utils.NETWORK_DELAY
@@ -12,7 +12,7 @@ class OAuthLoginUseCase @Inject constructor(
     private val userRepository: UserRepository
 )
 {
-    suspend operator fun invoke(provider: String): UserEntity
+    suspend operator fun invoke(provider: String): User
     {
         delay(NETWORK_DELAY.toLong())
 
@@ -20,7 +20,7 @@ class OAuthLoginUseCase @Inject constructor(
         var oauthUser = userRepository.getUserByEmail(oauthEmail)
 
         if (oauthUser == null) {
-            val dummyUser = UserEntity(
+            val dummyUser = User(
                 email = oauthEmail,
                 password = "oauth_dummy_password",
                 name = "$provider User",

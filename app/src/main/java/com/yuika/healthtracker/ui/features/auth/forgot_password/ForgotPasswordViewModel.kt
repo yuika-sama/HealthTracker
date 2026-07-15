@@ -51,7 +51,6 @@ class ForgotPasswordViewModel @Inject constructor(
                         isSuccess = false
                     )
                 }
-                sendEffect(ForgotPasswordUiEffect.ShowToast(message))
             }
         ) {
             val exists = validateAndCheckEmailUseCase(email)
@@ -67,7 +66,6 @@ class ForgotPasswordViewModel @Inject constructor(
                         error = message
                     )
                 }
-                sendEffect(ForgotPasswordUiEffect.ShowToast(message))
             }
         }
     }
@@ -78,7 +76,6 @@ class ForgotPasswordViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "An unexpected error occurred"
                 updateState { it.copy(isLoading = false, error = message, isSuccess = false) }
-                sendEffect(ForgotPasswordUiEffect.ShowToast(message))
             }
         ) {
             delay(NETWORK_DELAY.toLong())

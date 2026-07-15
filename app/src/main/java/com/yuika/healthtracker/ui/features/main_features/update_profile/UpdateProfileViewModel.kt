@@ -42,7 +42,6 @@ class UpdateProfileViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "Error loading profile"
                 updateState { it.copy(isLoading = false, errorMessage = message) }
-                sendEffect(UpdateProfileEffect.ShowError(message))
             }
         ) {
             val formData = getProfileFormDataUseCase()
@@ -92,7 +91,6 @@ class UpdateProfileViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "Error saving profile"
                 updateState { it.copy(isSaving = false, errorMessage = message) }
-                sendEffect(UpdateProfileEffect.ShowError(message))
             }
         ) {
             validateAndSaveProfileUseCase(

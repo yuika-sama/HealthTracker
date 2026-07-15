@@ -86,9 +86,6 @@ fun OnboardingPage2Screen(
                 when (effect) {
                     is OnboardingPage2Effect.NavigateToPage3 -> onNavigateNext()
                     is OnboardingPage2Effect.NavigateBack -> onNavigateBack()
-                    is OnboardingPage2Effect.ShowError -> {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
                 }
             }
         }

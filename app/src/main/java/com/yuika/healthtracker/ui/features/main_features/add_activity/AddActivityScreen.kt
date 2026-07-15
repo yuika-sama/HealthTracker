@@ -46,7 +46,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.add_activity.components.ActivityDetailsCard
 import com.yuika.healthtracker.ui.features.main_features.add_activity.components.TrainingDetailsCard
 import com.yuika.healthtracker.ui.theme.LocalSpacing
@@ -73,9 +75,6 @@ fun AddActivityScreen(
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
             viewModel.effect.collect { effect ->
                 when (effect){
-                    is AddActivityEffect.ShowError -> {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
                     is AddActivityEffect.NavigateToActivity -> {
                         Toast.makeText(context, "Saved activity", Toast.LENGTH_SHORT).show()
                         onSaveClick()
@@ -175,6 +174,12 @@ fun AddActivityScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Spacer(modifier = Modifier.height(8.dp))
+
+            state.errorMessage?.let { ErrorText(msg = it) }
+
+            if (state.isSuccess && !state.isLoading && state.errorMessage == null) {
+                SuccessText(msg = "Activity saved")
+            }
 
             ActivityDetailsCard(
                 state = state,

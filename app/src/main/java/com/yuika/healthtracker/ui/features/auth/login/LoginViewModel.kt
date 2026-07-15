@@ -68,7 +68,6 @@ class LoginViewModel @Inject constructor(
                         isSuccess = false
                     )
                 }
-                sendEffect(LoginUiEffect.ShowToast(message))
             }
         ) {
             validateAndLoginUseCase(currentState.email, currentState.password)
@@ -90,7 +89,6 @@ class LoginViewModel @Inject constructor(
                         isSuccess = false
                     )
                 }
-                sendEffect(LoginUiEffect.ShowToast(message))
             }
         ) {
             oAuthLoginUseCase(provider)
@@ -121,7 +119,6 @@ class LoginViewModel @Inject constructor(
                         isSuccess = false
                     )
                 }
-                sendEffect(LoginUiEffect.ShowToast(message))
             }
         ) {
             delay(NETWORK_DELAY.toLong())

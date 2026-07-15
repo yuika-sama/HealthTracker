@@ -1,6 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.user
 
-import com.yuika.healthtracker.data.local.entity.UserEntity
+import com.yuika.healthtracker.domain.model.User
 import javax.inject.Inject
 
 data class UserStats(
@@ -11,7 +11,7 @@ data class UserStats(
 )
 
 class CalculateUserStatsUseCase @Inject constructor() {
-    operator fun invoke(user: UserEntity): UserStats {
+    operator fun invoke(user: User): UserStats {
         val hMeter = user.height / 100.0
         val bmi = if (hMeter > 0) user.weight / (hMeter * hMeter) else 0.0
 

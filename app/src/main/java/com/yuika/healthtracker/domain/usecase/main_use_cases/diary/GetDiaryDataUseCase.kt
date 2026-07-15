@@ -1,6 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.diary
 
-import com.yuika.healthtracker.data.local.entity.FoodEntryEntity
+import com.yuika.healthtracker.domain.model.FoodEntry
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.GetFoodEntriesByDateUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.CalculateUserStatsUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
@@ -61,7 +61,7 @@ class GetDiaryDataUseCase @Inject constructor(
                     val fatGrams = ((totalConsumed * 0.25) / 9).toInt()
                     val carbsGrams = ((totalConsumed * 0.45) / 4).toInt()
 
-                    fun mapToItems(entries: List<FoodEntryEntity>) = entries.map {
+                    fun mapToItems(entries: List<FoodEntry>) = entries.map {
                         DiaryFoodItem(
                             name = it.foodName,
                             description = "${it.quantity} ${it.unit}",

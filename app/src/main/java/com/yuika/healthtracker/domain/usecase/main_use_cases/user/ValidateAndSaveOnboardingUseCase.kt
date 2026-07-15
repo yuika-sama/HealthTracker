@@ -1,6 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.user
 
-import com.yuika.healthtracker.data.local.entity.UserEntity
+import com.yuika.healthtracker.domain.model.User
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
@@ -48,7 +48,7 @@ class ValidateAndSaveOnboardingUseCase @Inject constructor(
             )
             updateUserUseCase(updatedUser)
         } else {
-            val newUser = UserEntity(
+            val newUser = User(
                 email = "dummy@example.com",
                 password = "dummy",
                 name = trimmedName,

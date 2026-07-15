@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.AuthHeader
 import com.yuika.healthtracker.ui.core.components.ErrorText
+import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.auth.login.components.LoginFooter
 import com.yuika.healthtracker.ui.features.auth.login.components.LoginForm
 import com.yuika.healthtracker.ui.theme.LocalSpacing
@@ -92,6 +93,10 @@ fun LoginScreen(
 
             uiState.errorMessage?.let { msg ->
                 ErrorText(msg = msg)
+            }
+
+            if (uiState.isSuccess && !uiState.isLoading && uiState.errorMessage == null) {
+                SuccessText(msg = "Login successfully")
             }
 
             LoginForm(

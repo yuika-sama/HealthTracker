@@ -1,19 +1,19 @@
 package com.yuika.healthtracker.domain.repository
 
-import com.yuika.healthtracker.data.local.entity.ActivityEntity
+import com.yuika.healthtracker.domain.model.Activity
 import kotlinx.coroutines.flow.Flow
 
 interface ActivityRepository
 {
-    suspend fun insertActivity(activity: ActivityEntity): Long
+    suspend fun insertActivity(activity: Activity): Long
 
-    suspend fun updateActivity(activity: ActivityEntity)
+    suspend fun updateActivity(activity: Activity)
 
-    suspend fun deleteActivity(activity: ActivityEntity)
+    suspend fun deleteActivity(activity: Activity)
 
-    fun getActivitiesByDate(userId: Int, dateText: String): Flow<List<ActivityEntity>>
+    fun getActivitiesByDate(userId: Int, dateText: String): Flow<List<Activity>>
 
     fun getTotalBurnedCaloriesByDate(userId: Int, dateText: String): Flow<Int?>
 
-    fun getActivitiesByDateRange(userId: Int, startDate: String, endDate: String): Flow<List<ActivityEntity>>
+    fun getActivitiesByDateRange(userId: Int, startDate: String, endDate: String): Flow<List<Activity>>
 }

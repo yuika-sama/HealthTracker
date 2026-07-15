@@ -77,9 +77,6 @@ fun OnboardingPage3Screen(
                 when (effect) {
                     is OnboardingPage3Effect.NavigateToPage4 -> onNavigateNext()
                     is OnboardingPage3Effect.NavigateBack -> onNavigateBack()
-                    is OnboardingPage3Effect.ShowError -> {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
                 }
             }
         }

@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -45,12 +44,12 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.add_meal.components.AddFoodFormCard
 import com.yuika.healthtracker.ui.features.main_features.add_meal.components.AddedFoodItemCard
 import com.yuika.healthtracker.ui.features.main_features.add_meal.components.DashedAddButton
-import com.yuika.healthtracker.ui.features.main_features.dashboard.DashboardEffect
-import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 import com.yuika.healthtracker.utils.getMealIntentForCurrentTime
 import java.time.LocalDate
@@ -84,9 +83,6 @@ fun AddMealScreen(
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is AddMealEffect.ShowError -> {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
                     is AddMealEffect.NavigateBackWithSuccess -> {
                         Toast.makeText(context, "Save success", Toast.LENGTH_SHORT).show()
                         onSaveClick()
@@ -219,6 +215,12 @@ fun AddMealScreen(
         ) {
             item {
                 Spacer(modifier = Modifier.height(8.dp))
+
+                state.errorMessage?.let { ErrorText(msg = it) }
+
+                if (state.isSuccess && !state.isLoading && state.errorMessage == null) {
+                    SuccessText(msg = "Meal saved")
+                }
 
                 AddFoodFormCard(
                     state = state,

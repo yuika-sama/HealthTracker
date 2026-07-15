@@ -39,7 +39,6 @@ class ProfileViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "Error loading information"
                 updateState { it.copy(isLoading = false, errorMessage = message) }
-                sendEffect(ProfileEffect.ShowError(message))
             }
         ) {
             getProfileDataUseCase().collectLatest { profileData ->
@@ -52,7 +51,6 @@ class ProfileViewModel @Inject constructor(
                             isSuccess = false
                         )
                     }
-                    sendEffect(ProfileEffect.ShowError("Can't find user information"))
                     return@collectLatest
                 }
 
@@ -88,7 +86,6 @@ class ProfileViewModel @Inject constructor(
             onError = { throwable ->
                 val message = throwable.message ?: "Can't continue"
                 updateState { it.copy(isLoading = false, errorMessage = message) }
-                sendEffect(ProfileEffect.ShowError(message))
             }
         ) {
             delay(NETWORK_DELAY.toLong())

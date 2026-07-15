@@ -49,7 +49,6 @@ class DashboardViewModel @Inject constructor(
                         isSuccess = false
                     )
                 }
-                sendEffect(DashboardEffect.ShowError(message))
             }
         ) {
             getDashboardDataUseCase(dbDateText).collectLatest { dashboardData ->
@@ -62,7 +61,6 @@ class DashboardViewModel @Inject constructor(
                             isSuccess = false
                         )
                     }
-                    sendEffect(DashboardEffect.ShowError("Unknown user"))
                     return@collectLatest
                 }
                 delay(NETWORK_DELAY.toLong())
@@ -97,7 +95,6 @@ class DashboardViewModel @Inject constructor(
                         isSuccess = false
                     )
                 }
-                sendEffect(DashboardEffect.ShowError(message))
             }
         ) {
             delay(NETWORK_DELAY.toLong())

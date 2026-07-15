@@ -1,6 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.auth_use_cases
 
-import com.yuika.healthtracker.data.local.entity.UserEntity
+import com.yuika.healthtracker.domain.model.User
 import com.yuika.healthtracker.domain.repository.UserRepository
 import com.yuika.healthtracker.utils.MOCK_ERROR_LOGIN_EMAIL
 import com.yuika.healthtracker.utils.NETWORK_DELAY
@@ -23,7 +23,7 @@ class RegisterUseCase @Inject constructor(
         }
 
         userRepository.insertUser(
-            UserEntity(
+            User(
                 email = email,
                 password = password,
                 name = fullName,

@@ -1,21 +1,21 @@
 package com.yuika.healthtracker.domain.repository
 
-import com.yuika.healthtracker.data.local.entity.UserEntity
+import com.yuika.healthtracker.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository
 {
-    suspend fun insertUser(user: UserEntity): Long
+    suspend fun insertUser(user: User): Long
 
-    suspend fun updateUser(user: UserEntity)
+    suspend fun updateUser(user: User)
 
-    suspend fun deleteUser(user: UserEntity)
+    suspend fun deleteUser(user: User)
 
-    suspend fun getUserById(userId: Int): UserEntity?
+    suspend fun getUserById(userId: Int): User?
 
-    suspend fun getUserByEmail(email: String): UserEntity?
+    suspend fun getUserByEmail(email: String): User?
 
-    fun getUserByEmailFlow(email: String): Flow<UserEntity?>
+    fun getUserByEmailFlow(email: String): Flow<User?>
 
-    fun getLatestUserFlow(): Flow<UserEntity?>
+    fun getLatestUserFlow(): Flow<User?>
 }

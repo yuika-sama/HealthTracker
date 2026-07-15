@@ -50,7 +50,6 @@ class AddActivityViewModel @Inject constructor(
             onError = {throwable ->
                 val message = throwable.message ?: "Unknown error"
                 updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
-                sendEffect(AddActivityEffect.ShowError(message))
             }
         ) {
             validateAndSaveActivityUseCase(

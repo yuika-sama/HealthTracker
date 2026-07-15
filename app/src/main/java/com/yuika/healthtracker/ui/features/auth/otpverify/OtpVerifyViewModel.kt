@@ -61,7 +61,6 @@ class OtpVerifyViewModel @Inject constructor(
                         errorMessage = message
                     )
                 }
-                sendEffect(OtpVerifyEffect.ShowToast(message))
             }
         ) {
             resendOtpUseCase(state.value.email)
@@ -81,7 +80,6 @@ class OtpVerifyViewModel @Inject constructor(
                     isSuccess = false
                 )
             }
-            sendEffect(OtpVerifyEffect.ShowToast(message))
             return
         }
 
@@ -97,7 +95,6 @@ class OtpVerifyViewModel @Inject constructor(
                         errorMessage = message
                     )
                 }
-                sendEffect(OtpVerifyEffect.ShowToast(message))
             }
         ) {
             validateAndVerifyOtpUseCase(currentState.otpCode, currentState.otpLength)

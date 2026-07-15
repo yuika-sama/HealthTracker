@@ -46,6 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DailySummaryCard
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
@@ -84,10 +85,6 @@ fun DashboardScreen(
                 {
                     is DashboardEffect.NavigateToDiary -> onAddMealClick()
                     is DashboardEffect.NavigateToActivity -> onAddActivityClick()
-                    is DashboardEffect.ShowError ->
-                    {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
                 }
             }
         }
@@ -122,6 +119,11 @@ fun DashboardScreen(
             if (state.errorMessage != null)
             {
                 ErrorText(state.errorMessage!!)
+            }
+
+            if (state.isSuccess && !state.isLoading && state.errorMessage == null)
+            {
+                SuccessText("Dashboard loaded")
             }
 
             if (state.isLoading)

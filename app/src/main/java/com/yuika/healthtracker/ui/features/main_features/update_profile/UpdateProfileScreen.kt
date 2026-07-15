@@ -38,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.update_profile.components.AvatarEditor
 import com.yuika.healthtracker.ui.features.main_features.update_profile.components.UpdateProfileForm
 import com.yuika.healthtracker.ui.theme.LocalSpacing
@@ -64,9 +65,6 @@ fun UpdateProfileScreen(
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is UpdateProfileEffect.ShowError -> {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                    }
                     is UpdateProfileEffect.ShowSuccess -> {
                         Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                     }
@@ -118,6 +116,10 @@ fun UpdateProfileScreen(
             if (state.errorMessage != null){
                 ErrorText(state.errorMessage!!)
                 Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            if (state.isSuccess && !state.isLoading && !state.isSaving && state.errorMessage == null) {
+                SuccessText("Profile updated")
             }
 
             if (state.isLoading) {

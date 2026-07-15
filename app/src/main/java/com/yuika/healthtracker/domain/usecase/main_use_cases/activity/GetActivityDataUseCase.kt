@@ -1,6 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.activity
 
-import com.yuika.healthtracker.data.local.entity.ActivityEntity
+import com.yuika.healthtracker.domain.model.Activity
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.CalculateUserStatsUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 data class ActivityData(
-    val activities: List<ActivityEntity>,
+    val activities: List<Activity>,
     val burnedKcal: Int,
     val goalKcal: Int
 )
