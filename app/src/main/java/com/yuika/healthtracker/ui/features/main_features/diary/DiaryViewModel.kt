@@ -26,9 +26,7 @@ class DiaryViewModel @Inject constructor(
             is DiaryIntent.LoadDiaryData -> handleFetchDiary(state.value.selectedDate)
             is DiaryIntent.ChangeDate -> handleDateChange(intent.date)
             is DiaryIntent.AddFoodClick -> handleAddFood(intent.mealType)
-            is DiaryIntent.FoodItemClick -> {
-                // todo: open food item information dialog
-            }
+            is DiaryIntent.FoodItemClick -> Unit
         }
     }
 

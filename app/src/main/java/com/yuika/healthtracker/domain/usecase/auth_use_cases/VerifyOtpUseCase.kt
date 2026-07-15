@@ -10,7 +10,6 @@ class VerifyOtpUseCase @Inject constructor()
 {
     suspend operator fun invoke(otpCode: String) {
         delay(NETWORK_DELAY.toLong().milliseconds)
-        // todo: OTP cases for errors
         if (otpCode != TRUE_OTP) {
             throw Exception("Invalid OTP")
         }

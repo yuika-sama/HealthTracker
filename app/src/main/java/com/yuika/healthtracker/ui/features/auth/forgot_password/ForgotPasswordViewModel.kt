@@ -1,6 +1,5 @@
 package com.yuika.healthtracker.ui.features.auth.forgot_password
 
-import android.util.Patterns
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndCheckEmailUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.NETWORK_DELAY
@@ -32,19 +31,6 @@ class ForgotPasswordViewModel @Inject constructor(
 
     private fun handleSubmit() {
         val email = state.value.email.trim()
-        val emailError = validateEmail(email)
-
-        if (emailError != null) {
-            updateState {
-                it.copy(
-                    isLoading = false,
-                    emailError = emailError,
-                    error = null,
-                    isSuccess = false
-                )
-            }
-            return
-        }
 
         updateState {
             it.copy(
@@ -68,7 +54,6 @@ class ForgotPasswordViewModel @Inject constructor(
                 sendEffect(ForgotPasswordUiEffect.ShowToast(message))
             }
         ) {
-            delay(NETWORK_DELAY.toLong())
             val exists = validateAndCheckEmailUseCase(email)
             if (exists) {
                 updateState { it.copy(isLoading = false, isSuccess = true) }
@@ -84,14 +69,6 @@ class ForgotPasswordViewModel @Inject constructor(
                 }
                 sendEffect(ForgotPasswordUiEffect.ShowToast(message))
             }
-        }
-    }
-
-    private fun validateEmail(email: String): String? {
-        return when {
-            email.isBlank() -> "Email is required"
-            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Invalid email format"
-            else -> null
         }
     }
 

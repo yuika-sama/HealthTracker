@@ -63,13 +63,6 @@ fun OtpVerifyForm(
                     onIntent(OtpVerifyIntent.ResendOtp)
                 }
             )
-            Spacer(modifier = Modifier.width(4.dp))
-            // TODO: Countdown timer
-            Text(
-                text = "(00:57)",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
 
         Spacer(modifier = Modifier.height(32.dp))

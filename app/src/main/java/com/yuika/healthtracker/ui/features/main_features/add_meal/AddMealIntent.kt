@@ -1,6 +1,5 @@
 package com.yuika.healthtracker.ui.features.main_features.add_meal
 
-import android.health.connect.datatypes.MealType
 import com.yuika.healthtracker.ui.core.base.UiIntent
 
 sealed class AddMealIntent : UiIntent

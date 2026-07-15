@@ -55,6 +55,5 @@ abstract class BaseViewModel<State: UiState, Intent: UiIntent, Effect: UiEffect>
     protected fun handleGlobalError(throwable: Throwable)
     {
         throwable.printStackTrace()
-        // todo: show toast
     }
 }

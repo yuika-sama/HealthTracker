@@ -92,7 +92,6 @@ class ProfileViewModel @Inject constructor(
             }
         ) {
             delay(NETWORK_DELAY.toLong())
-            // todo: clear session/token, delete datastore then navigate if logout
             updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(effect)
         }

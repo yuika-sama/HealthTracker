@@ -8,6 +8,5 @@ import kotlin.time.Duration.Companion.milliseconds
 class ResendOtpUseCase @Inject constructor() {
     suspend operator fun invoke(email: String) {
         delay(NETWORK_DELAY.toLong().milliseconds)
-        // todo: resend logic for count down text
     }
 }

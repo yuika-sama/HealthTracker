@@ -25,8 +25,6 @@ import com.yuika.healthtracker.ui.features.main_features.profile.ProfileScreen
 import com.yuika.healthtracker.ui.features.main_features.trends.TrendsScreen
 import com.yuika.healthtracker.ui.features.main_features.update_profile.UpdateProfileScreen
 
-// TODO: Viewmodel for Screens
-
 fun NavGraphBuilder.authNavGraph(navController: NavHostController){
     composable<Route.Login>{
         val viewModel: LoginViewModel = hiltViewModel()
@@ -34,7 +32,6 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController){
         LoginScreen(
             viewModel = viewModel,
             onNavigateToClientPage = {
-                // todo: onNavigate to dashboard or onboarding screen
                 navController.navigate(Route.Dashboard){
                     popUpTo(Route.Login){inclusive = true}
                 }

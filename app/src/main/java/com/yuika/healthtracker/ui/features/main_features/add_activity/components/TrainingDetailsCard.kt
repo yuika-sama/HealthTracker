@@ -1,6 +1,5 @@
 package com.yuika.healthtracker.ui.features.main_features.add_activity.components
 
-import android.health.connect.datatypes.units.Energy
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
