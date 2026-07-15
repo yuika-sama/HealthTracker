@@ -54,23 +54,27 @@ class OtpVerifyViewModel @Inject constructor(
         updateState {
             it.copy(
                 isLoading = true,
-                errorMessage = null
+                errorMessage = null,
+                isSuccess = false,
             )
         }
 
         launchSafe(
             onError = { throwable ->
+                val message = throwable.message ?: "Failed to resend OTP"
                 updateState {
                     it.copy(
                         isLoading = false,
-                        errorMessage = throwable.message ?: "Failed to resend OTP"
+                        isSuccess = false,
+                        errorMessage = message
                     )
                 }
+                sendEffect(OtpVerifyEffect.ShowToast(message))
             }
         ) {
             resendOtpUseCase(state.value.email)
 
-            updateState { it.copy(isLoading = false) }
+            updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(OtpVerifyEffect.ShowToast("OTP has been resend to ${state.value.email}"))
         }
     }
@@ -83,17 +87,20 @@ class OtpVerifyViewModel @Inject constructor(
 
         launchSafe(
             onError = { throwable ->
+                val message = throwable.message ?: "Unknown error occurred"
                 updateState {
                     it.copy(
                         isLoading = false,
-                        errorMessage = throwable.message ?: "Unknown error occurred"
+                        isSuccess = false,
+                        errorMessage = message
                     )
                 }
+                sendEffect(OtpVerifyEffect.ShowToast(message))
             }
         ) {
             validateAndVerifyOtpUseCase(currentState.otpCode, currentState.otpLength)
 
-            updateState { it.copy(isLoading = false) }
+            updateState { it.copy(isLoading = false, isSuccess = true, errorMessage = null) }
             if (route.isFromRegister) {
                 sendEffect(OtpVerifyEffect.NavigateToHome)
             } else {

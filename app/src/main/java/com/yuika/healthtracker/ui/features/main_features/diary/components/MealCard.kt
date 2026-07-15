@@ -30,8 +30,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.yuika.healthtracker.ui.theme.Emerald
-import com.yuika.healthtracker.ui.theme.InfoBlue
 
 data class FoodItem(
     val name: String,
@@ -48,12 +46,17 @@ fun MealCard(
     icon: ImageVector,
     foods: List<FoodItem> = emptyList(),
     onAddFoodClick: () -> Unit = {}
-) {
+)
+{
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
+            .border(
+                1.dp,
+                MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                RoundedCornerShape(16.dp)
+            )
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
@@ -76,9 +79,9 @@ fun MealCard(
                     modifier = Modifier.size(24.dp)
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(12.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -91,7 +94,7 @@ fun MealCard(
                     color = MaterialTheme.colorScheme.tertiary
                 )
             }
-            
+
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = totalKcal.toString(),
@@ -107,11 +110,12 @@ fun MealCard(
                 )
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Food List
-        if (foods.isEmpty()) {
+        if (foods.isEmpty())
+        {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -132,8 +136,10 @@ fun MealCard(
                     textAlign = TextAlign.Center
                 )
             }
-        } else {
-            Column(
+        }
+        else
+        {
+            Column (
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -154,7 +160,7 @@ fun MealCard(
                                 color = MaterialTheme.colorScheme.tertiary
                             )
                         }
-                        
+
                         Text(
                             text = "${food.kcal} kcal",
                             style = MaterialTheme.typography.bodyMedium,
@@ -164,7 +170,7 @@ fun MealCard(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Box(

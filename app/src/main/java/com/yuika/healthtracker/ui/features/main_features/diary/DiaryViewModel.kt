@@ -5,8 +5,10 @@ import com.yuika.healthtracker.domain.usecase.main_use_cases.diary.GetDiaryDataU
 import com.yuika.healthtracker.domain.usecase.main_use_cases.diary.ValidateDiaryLogicUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.ui.features.main_features.diary.components.FoodItem
+import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import javax.inject.Inject
@@ -33,7 +35,18 @@ class DiaryViewModel @Inject constructor(
     private fun handleAddFood(mealType: String) {
         try {
             validateDiaryLogicUseCase.validateMealType(mealType)
-            sendEffect(DiaryEffect.NavigateToAddFood(mealType))
+            updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
+            launchSafe(
+                onError = {throwable ->
+                    val message = throwable.message ?: "Unknown error occurred."
+                    updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+                    sendEffect(DiaryEffect.ShowError(message))
+                }
+            ) {
+                delay(NETWORK_DELAY.toLong())
+                updateState { it.copy(isLoading = false, isSuccess = true, errorMessage = null) }
+                sendEffect(DiaryEffect.NavigateToAddFood(mealType))
+            }
         } catch (e: Exception) {
             sendEffect(DiaryEffect.ShowError(e.message ?: "Invalid meal type"))
         }
@@ -52,13 +65,14 @@ class DiaryViewModel @Inject constructor(
     private var fetchJob: Job? = null
 
     private fun handleFetchDiary(selectedDate: LocalDate) {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
 
         fetchJob?.cancel()
         fetchJob = launchSafe(
             onError = { throwable ->
-                updateState { it.copy(isLoading = false, errorMessage = throwable.message) }
-                sendEffect(DiaryEffect.ShowError(throwable.message ?: "Can't get diary data"))
+                val message = throwable.message ?: "Can't get diary data"
+                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+                sendEffect(DiaryEffect.ShowError(message))
             }
         ) {
             val dateText = selectedDate.toString()
@@ -74,9 +88,12 @@ class DiaryViewModel @Inject constructor(
                     FoodItem(name = it.name, description = it.description, kcal = it.kcal)
                 }
 
+                delay(NETWORK_DELAY.toLong())
+
                 updateState { currentState ->
                     currentState.copy(
                         isLoading = false,
+                        isSuccess = true,
                         totalKcalGoal = diaryData.totalKcalGoal,
                         totalKcalConsumed = diaryData.totalKcalConsumed,
                         proteinGrams = diaryData.proteinGrams,

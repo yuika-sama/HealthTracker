@@ -3,7 +3,9 @@ package com.yuika.healthtracker.ui.features.main_features.onboarding.page3
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.UpdateUserUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
+import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
@@ -22,23 +24,25 @@ class OnboardingPage3ViewModel @Inject constructor(
     }
 
     private fun saveAndNavigate() {
-        updateState { it.copy(isLoading = true) }
+        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
         val currentGoal = state.value.goal
 
         launchSafe(
             onError = { throwable ->
-                updateState { it.copy(isLoading = false, errorMessage = throwable.message) }
-                sendEffect(OnboardingPage3Effect.ShowError(throwable.message ?: "Error saving information"))
+                val message = throwable.message ?: "Error saving information"
+                updateState { it.copy(isLoading = false, errorMessage = message) }
+                sendEffect(OnboardingPage3Effect.ShowError(message))
             }
         ) {
             val user = getLatestUserUseCase().firstOrNull()
             if (user != null) {
                 val updatedUser = user.copy(goal = currentGoal)
                 updateUserUseCase(updatedUser)
-                updateState { it.copy(isLoading = false) }
+                delay(NETWORK_DELAY.toLong())
+                updateState { it.copy(isLoading = false, isSuccess = true) }
                 sendEffect(OnboardingPage3Effect.NavigateToPage4)
             } else {
-                updateState { it.copy(isLoading = false, errorMessage = "User not found") }
+                updateState { it.copy(isLoading = false, errorMessage = "User not found", isSuccess = false) }
                 sendEffect(OnboardingPage3Effect.ShowError("User not found"))
             }
         }

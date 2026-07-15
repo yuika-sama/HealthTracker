@@ -44,6 +44,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
@@ -51,6 +52,7 @@ import com.yuika.healthtracker.ui.features.main_features.profile.components.Curr
 import com.yuika.healthtracker.ui.features.main_features.profile.components.ProfileHeaderCard
 import com.yuika.healthtracker.ui.features.main_features.profile.components.SettingsGroup
 import com.yuika.healthtracker.ui.features.main_features.profile.components.SettingsItem
+import com.yuika.healthtracker.ui.theme.ErrorRed
 import com.yuika.healthtracker.ui.theme.InfoBlue
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
@@ -81,6 +83,9 @@ fun ProfileScreen(
                     }
                     is ProfileEffect.NavigateToLogin -> {
                         onLogoutClick()
+                    }
+                    is ProfileEffect.NavigateToEditProfile -> {
+                        onEditProfileClick()
                     }
                 }
             }
@@ -119,10 +124,16 @@ fun ProfileScreen(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
             }
+
+            if (state.errorMessage != null){
+                ErrorText(state.errorMessage!!)
+            }
             
             if (state.isLoading) {
                 Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                    LoadingIndicator()
+                    Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center){
+                        LoadingIndicator()
+                    }
                 }
             } else {
                 ProfileHeaderCard(
@@ -147,7 +158,7 @@ fun ProfileScreen(
                     title = "Edit Profile",
                     subtitle = "Name, Weight, Height, Activities, Goals",
                     showDivider = false,
-                    onClick = onEditProfileClick
+                    onClick = { viewModel.onIntent(ProfileIntent.EditProfile) }
                 )
             }
             
@@ -184,9 +195,9 @@ fun ProfileScreen(
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = MaterialTheme.shapes.medium,
-                border = BorderStroke(1.dp, Color(0xFFE53935)), // Red
+                border = BorderStroke(1.dp, ErrorRed),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = Color(0xFFE53935), // Red
+                    contentColor = ErrorRed,
                     containerColor = Color.Transparent
                 )
             ) {

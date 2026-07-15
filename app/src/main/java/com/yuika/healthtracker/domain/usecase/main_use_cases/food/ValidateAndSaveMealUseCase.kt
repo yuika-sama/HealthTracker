@@ -18,11 +18,27 @@ class ValidateAndSaveMealUseCase @Inject constructor(
         if (currentFoods.isEmpty()) {
             throw IllegalArgumentException("Please at least add one food in the meal")
         }
+        val validMealTypes = setOf("Breakfast", "Lunch", "Dinner", "Snack")
+        if (mealType !in validMealTypes) {
+            throw IllegalArgumentException("Meal type is not valid")
+        }
+        currentFoods.forEach { tempFood ->
+            if (tempFood.foodName.isBlank()) {
+                throw IllegalArgumentException("Food name could not be blank")
+            }
+            if (tempFood.quantity <= 0f) {
+                throw IllegalArgumentException("Quantity must be greater than 0")
+            }
+            if (tempFood.unit.isBlank()) {
+                throw IllegalArgumentException("Please select food unit")
+            }
+            if (tempFood.calories < 0) {
+                throw IllegalArgumentException("Please fill in the valid calories")
+            }
+        }
 
         val user = getLatestUserUseCase().firstOrNull()
-        if (user == null) {
-            throw IllegalStateException("Can't find user information")
-        }
+            ?: throw IllegalStateException("Can't find user information")
 
         currentFoods.forEach { tempFood ->
             val entity = FoodEntryEntity(

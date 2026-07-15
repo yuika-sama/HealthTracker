@@ -2,7 +2,9 @@ package com.yuika.healthtracker.ui.features.auth.register
 
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndRegisterUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
+import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -104,7 +106,8 @@ class RegisterViewModel @Inject constructor(
                 password = currentState.password,
                 confirmPassword = currentState.confirmPassword
             )
-            updateState { it.copy(isLoading = false) }
+            delay(NETWORK_DELAY.toLong())
+            updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(RegisterEffect.NavigateToVerifyOtp(currentState.email))
         }
     }

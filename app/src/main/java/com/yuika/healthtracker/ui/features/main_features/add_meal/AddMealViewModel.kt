@@ -2,13 +2,15 @@ package com.yuika.healthtracker.ui.features.main_features.add_meal
 
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.ValidateAndSaveMealUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
+import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
 class AddMealViewModel @Inject constructor(
     private val validateAndSaveMealUseCase: ValidateAndSaveMealUseCase
-) : BaseViewModel<AddMealUiState, AddMealIntent, AddMealEffect> (
+) : BaseViewModel<AddMealUiState, AddMealIntent, AddMealEffect>(
     initialState = AddMealUiState()
 )
 {
@@ -41,7 +43,8 @@ class AddMealViewModel @Inject constructor(
                 updateState { it.copy(calories = intent.calories, caloriesError = null) }
             }
 
-            is AddMealIntent.OnMealTypeChange -> {
+            is AddMealIntent.OnMealTypeChange ->
+            {
                 updateState { it.copy(mealType = intent.mealType) }
             }
 
@@ -67,41 +70,45 @@ class AddMealViewModel @Inject constructor(
         val currentState = state.value
 
         val foodName = currentState.foodName.trim()
-        var hasError = false
-        var foodNameError: String? = null
-        if (foodName.isEmpty())
-        {
-            foodNameError = "Food name could not be blank"
-            hasError = true
-        }
-
         val quantity = currentState.quantity.toFloatOrNull()
-        var quantityError: String? = null
-        if (quantity == null || quantity <= 0)
-        {
-            quantityError = "Quantity could not be blank"
-            hasError = true
-        }
-
         val calories = currentState.calories.toIntOrNull()
-        var caloriesError: String? = null
-        if (calories == null || calories < 0)
+
+        val foodNameError = if (foodName.isEmpty()) "Food name could not be blank" else null
+        val quantityError = when
         {
-            caloriesError = "Please fill in the valid calories"
-            hasError = true
+            quantity == null -> "Quantity could not be blank"
+            quantity <= 0f -> "Quantity must be greater than 0"
+            else -> null
+        }
+        val caloriesError = when
+        {
+            calories == null -> "Please fill in the valid calories"
+            calories < 0 -> "Please fill in the valid calories"
+            else -> null
         }
 
-        if (hasError) {
-            updateState { it.copy(foodNameError = foodNameError, quantityError = quantityError, caloriesError = caloriesError) }
+        val hasError = foodNameError != null || quantityError != null || caloriesError != null
+
+        if (hasError)
+        {
+            updateState {
+                it.copy(
+                    foodNameError = foodNameError,
+                    quantityError = quantityError,
+                    caloriesError = caloriesError,
+                    errorMessage = null
+                )
+            }
             return
         }
 
-        val newFood = TempFoodItem(
-            foodName = foodName,
-            quantity = quantity,
-            unit = currentState.unit,
-            calories = calories
-        )
+        val newFood =
+            TempFoodItem(
+                foodName = foodName,
+                quantity = quantity ?: return,
+                unit = currentState.unit,
+                calories = calories ?: return
+            )
 
         val newAddedFoods = currentState.addedFoods + newFood
 
@@ -111,7 +118,11 @@ class AddMealViewModel @Inject constructor(
                 totalCalories = newAddedFoods.sumOf { item -> item.calories },
                 foodName = "",
                 quantity = "",
-                calories = ""
+                calories = "",
+                foodNameError = null,
+                quantityError = null,
+                caloriesError = null,
+                errorMessage = null
             )
         }
     }
@@ -132,12 +143,26 @@ class AddMealViewModel @Inject constructor(
         val currentState = state.value
         val currentFoods = currentState.addedFoods
 
+        if (currentFoods.isEmpty())
+        {
+            updateState { it.copy(errorMessage = "Please at least add one food in the meal") }
+            sendEffect(AddMealEffect.ShowError("Please at least add one food in the meal"))
+            return
+        }
+
         updateState { it.copy(isLoading = true, errorMessage = null) }
 
         launchSafe(
-            onError = {throwable ->
-                updateState { it.copy(isLoading = false, errorMessage = throwable.message) }
-                sendEffect(AddMealEffect.ShowError(throwable.message ?: "Error saving meal"))
+            onError = { throwable ->
+                val message = throwable.message ?: "Error saving meal"
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = message,
+                        isSuccess = false
+                    )
+                }
+                sendEffect(AddMealEffect.ShowError(message))
             }
         ) {
             validateAndSaveMealUseCase(
@@ -146,9 +171,14 @@ class AddMealViewModel @Inject constructor(
                 mealType = currentState.mealType
             )
 
-            kotlinx.coroutines.delay(com.yuika.healthtracker.utils.NETWORK_DELAY.toLong())
+            delay(NETWORK_DELAY.toLong())
             updateState {
-                it.copy(isLoading = false, isSuccess = true, addedFoods = emptyList(), totalCalories = 0)
+                it.copy(
+                    isLoading = false,
+                    isSuccess = true,
+                    addedFoods = emptyList(),
+                    totalCalories = 0
+                )
             }
 
             sendEffect(AddMealEffect.NavigateBackWithSuccess)

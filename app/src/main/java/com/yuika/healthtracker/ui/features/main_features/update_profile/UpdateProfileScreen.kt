@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.features.main_features.update_profile.components.AvatarEditor
 import com.yuika.healthtracker.ui.features.main_features.update_profile.components.UpdateProfileForm
@@ -112,6 +114,11 @@ fun UpdateProfileScreen(
             AvatarEditor(onAvatarClick = onAvatarClick)
             
             Spacer(modifier = Modifier.height(32.dp))
+
+            if (state.errorMessage != null){
+                ErrorText(state.errorMessage!!)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
             if (state.isLoading) {
                 LoadingIndicator()

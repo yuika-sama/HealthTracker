@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.glance.LocalContext
@@ -30,6 +31,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityListCard
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivitySummaryCard
@@ -118,6 +120,11 @@ fun ActivityScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                if (state.errorMessage != null)
+                {
+                    ErrorText(msg = state.errorMessage!!)
+                }
+
                 ActivitySummaryCard(
                     burnedKcal = state.burnedKcal,
                     goalKcal = state.goalKcal
@@ -128,7 +135,14 @@ fun ActivityScreen(
 
             if (state.isLoading)
             {
-                item { LoadingIndicator() }
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LoadingIndicator()
+                    }
+                }
             }
             else
             {
@@ -145,7 +159,10 @@ fun ActivityScreen(
                                 .padding(32.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = "No activity today", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
+                            Text(
+                                text = "No activity today",
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                            )
                         }
                     }
                 }

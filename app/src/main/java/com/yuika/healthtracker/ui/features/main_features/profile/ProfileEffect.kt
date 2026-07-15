@@ -4,5 +4,6 @@ import com.yuika.healthtracker.ui.core.base.UiEffect
 
 sealed class ProfileEffect : UiEffect{
     object NavigateToLogin : ProfileEffect()
+    object NavigateToEditProfile : ProfileEffect()
     data class ShowError(val message: String) : ProfileEffect()
 }

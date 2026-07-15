@@ -21,7 +21,8 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
         avatarPath: String?,
         createdAt: Long
     ) {
-        if (name.isBlank() || ageStr.isBlank() || weightStr.isBlank() || heightStr.isBlank()) {
+        val trimmedName = name.trim()
+        if (trimmedName.isBlank() || ageStr.isBlank() || weightStr.isBlank() || heightStr.isBlank()) {
             throw IllegalArgumentException("Please fill in your name")
         }
 
@@ -31,6 +32,21 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
 
         if (ageInt == null || weightDouble == null || heightDouble == null) {
             throw IllegalArgumentException("Age, weight and height must be a valid number")
+        }
+        if (ageInt !in 10..120) {
+            throw IllegalArgumentException("Age must be between 10 and 120")
+        }
+        if (weightDouble !in 20.0..300.0) {
+            throw IllegalArgumentException("Weight must be between 20 and 300 kg")
+        }
+        if (heightDouble !in 80.0..250.0) {
+            throw IllegalArgumentException("Height must be between 80 and 250 cm")
+        }
+        if (gender.isBlank()) {
+            throw IllegalArgumentException("Please select your gender")
+        }
+        if (activityLevelFloat !in 1f..5f) {
+            throw IllegalArgumentException("Activity level is not valid")
         }
 
         val levelStr = when (activityLevelFloat.toInt()) {
@@ -53,7 +69,7 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
             id = id,
             email = email,
             password = passwordHash,
-            name = name,
+            name = trimmedName,
             age = ageInt,
             gender = gender,
             weight = weightDouble,

@@ -4,8 +4,10 @@ import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.GetActivit
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ParseActivityIntensityUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityItemData
+import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import javax.inject.Inject
@@ -20,27 +22,28 @@ class ActivityViewModel @Inject constructor(
     override fun onIntent(intent: ActivityIntent) {
         when (intent) {
             is ActivityIntent.LoadActivityData -> handleFetchActivity(intent.date)
-            is ActivityIntent.OnAddActivityClick -> sendEffect(ActivityEffect.NavigateToAddActivity)
+            is ActivityIntent.OnAddActivityClick -> navigateWithLoading(ActivityEffect.NavigateToAddActivity)
         }
     }
 
     private var fetchJob: Job? = null
 
     private fun handleFetchActivity(date: LocalDate) {
-        updateState { it.copy(isLoading = true, errorMessage = null, selectedDate = date) }
+        updateState { it.copy(isLoading = true, errorMessage = null, selectedDate = date, isSuccess = false) }
 
         fetchJob?.cancel()
         fetchJob = launchSafe(
             onError = { throwable ->
-                updateState { it.copy(isLoading = false, errorMessage = throwable.message) }
-                sendEffect(ActivityEffect.ShowError(throwable.message ?: "Can't get activity data"))
+                val message = throwable.message ?: "Can't get activity data"
+                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+                sendEffect(ActivityEffect.ShowError(message))
             }
         ) {
             val dateText = date.toString()
 
             getActivityDataUseCase(dateText).collectLatest { activityData ->
                 if (activityData == null) {
-                    updateState { it.copy(isLoading = false, errorMessage = "Can't find user data") }
+                    updateState { it.copy(isLoading = false, errorMessage = "Can't find user data", isSuccess = false) }
                     sendEffect(ActivityEffect.ShowError("Can't find user data"))
                     return@collectLatest
                 }
@@ -57,15 +60,34 @@ class ActivityViewModel @Inject constructor(
                     )
                 }
 
+                delay(NETWORK_DELAY.toLong())
+
                 updateState {
                     it.copy(
                         isLoading = false,
+                        isSuccess = true,
                         activities = uiActivities,
                         burnedKcal = activityData.burnedKcal,
                         goalKcal = activityData.goalKcal
                     )
                 }
             }
+        }
+    }
+
+    private fun navigateWithLoading(effect: ActivityEffect) {
+        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
+
+        launchSafe(
+            onError = { throwable ->
+                val message = throwable.message ?: "Can't continue"
+                updateState { it.copy(isLoading = false, errorMessage = message) }
+                sendEffect(ActivityEffect.ShowError(message))
+            }
+        ) {
+            delay(NETWORK_DELAY.toLong())
+            updateState { it.copy(isLoading = false, isSuccess = true) }
+            sendEffect(effect)
         }
     }
 }

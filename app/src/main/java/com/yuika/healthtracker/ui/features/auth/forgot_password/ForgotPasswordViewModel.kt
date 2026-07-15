@@ -5,7 +5,9 @@ import com.yuika.healthtracker.domain.repository.UserRepository
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.CheckEmailExistsUseCase
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndCheckEmailUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
+import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,14 +52,21 @@ class ForgotPasswordViewModel @Inject constructor(
             }
         ) {
             val exists = validateAndCheckEmailUseCase(email)
-            updateState { it.copy(isLoading = false) }
+            delay(NETWORK_DELAY.toLong())
             if (exists)
             {
+                updateState { it.copy(isLoading = false, isSuccess = true) }
                 sendEffect(ForgotPasswordUiEffect.NavigateToVerifyOtp(email))
             }
             else
             {
-                updateState { it.copy(error = "Account with this email does not exist") }
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        isSuccess = false,
+                        error = "Account with this email does not exist"
+                    )
+                }
                 sendEffect(ForgotPasswordUiEffect.ShowToast(state.value.error ?: "An unexpected error occurred"))
             }
         }
@@ -65,6 +74,17 @@ class ForgotPasswordViewModel @Inject constructor(
 
     private fun handleLogin()
     {
-        sendEffect(ForgotPasswordUiEffect.NavigateToLogin)
+        updateState { it.copy(isLoading = true, error = null, isSuccess = false) }
+        launchSafe(
+            onError = { throwable ->
+                val message = throwable.message ?: "An unexpected error occurred"
+                updateState { it.copy(isLoading = false, error = message, isSuccess = false) }
+                sendEffect(ForgotPasswordUiEffect.ShowToast(message))
+            }
+        ) {
+            delay(NETWORK_DELAY.toLong())
+            updateState { it.copy(isLoading = false, isSuccess = true) }
+            sendEffect(ForgotPasswordUiEffect.NavigateToLogin)
+        }
     }
 }

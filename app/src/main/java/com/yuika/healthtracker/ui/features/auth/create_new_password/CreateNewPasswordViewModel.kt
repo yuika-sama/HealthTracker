@@ -11,6 +11,8 @@ import androidx.navigation.toRoute
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndCheckEmailUseCase
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndResetPasswordUseCase
 import com.yuika.healthtracker.ui.navigation.Route
+import com.yuika.healthtracker.utils.NETWORK_DELAY
+import kotlinx.coroutines.delay
 
 @HiltViewModel
 class CreateNewPasswordViewModel @Inject constructor(
@@ -79,7 +81,8 @@ class CreateNewPasswordViewModel @Inject constructor(
         ) {
             validateAndResetPasswordUseCase(route.email, newPassword, confirmPassword)
 
-            updateState { it.copy(isLoading = false) }
+            delay(NETWORK_DELAY.toLong())
+            updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(CreateNewPasswordEffect.NavigateToPasswordChanged)
         }
     }

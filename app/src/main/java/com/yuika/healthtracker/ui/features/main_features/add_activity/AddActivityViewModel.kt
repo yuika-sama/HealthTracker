@@ -1,8 +1,12 @@
 package com.yuika.healthtracker.ui.features.main_features.add_activity
 
+import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ActivityValidationException
+import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ActivityValidationField
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ValidateAndSaveActivityUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
+import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,18 +46,16 @@ class AddActivityViewModel @Inject constructor(
     {
         val currentState = state.value
 
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { it.copy(isLoading = true, errorMessage = null, activityNameError = null, kcalPerHourError = null, durationError = null, isSuccess = false) }
 
         launchSafe(
             onError = {throwable ->
-                val msg = throwable.message ?: "Unknown error"
-                when {
-                    msg.startsWith("ActivityName_") -> updateState { it.copy(isLoading = false, activityNameError = msg.removePrefix("ActivityName_")) }
-                    msg.startsWith("KcalPerHour_") -> updateState { it.copy(isLoading = false, kcalPerHourError = msg.removePrefix("KcalPerHour_")) }
-                    msg.startsWith("Duration_") -> updateState { it.copy(isLoading = false, durationError = msg.removePrefix("Duration_")) }
+                when (throwable) {
+                    is ActivityValidationException -> handleValidationError(throwable)
                     else -> {
-                        updateState { it.copy(isLoading = false, errorMessage = msg) }
-                        sendEffect(AddActivityEffect.ShowError(msg))
+                        val message = throwable.message ?: "Unknown error"
+                        updateState { it.copy(isLoading = false, errorMessage = message) }
+                        sendEffect(AddActivityEffect.ShowError(message))
                     }
                 }
             }
@@ -68,9 +70,27 @@ class AddActivityViewModel @Inject constructor(
                 dateText = currentState.dateText
             )
 
-            kotlinx.coroutines.delay(com.yuika.healthtracker.utils.NETWORK_DELAY.toLong())
+            delay(NETWORK_DELAY.toLong())
             updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(AddActivityEffect.NavigateToActivity)
+        }
+    }
+
+    private fun handleValidationError(error: ActivityValidationException) {
+        updateState {
+            when (error.field) {
+                ActivityValidationField.ACTIVITY_NAME -> {
+                    it.copy(isLoading = false, activityNameError = error.message)
+                }
+
+                ActivityValidationField.KCAL_PER_HOUR -> {
+                    it.copy(isLoading = false, kcalPerHourError = error.message)
+                }
+
+                ActivityValidationField.DURATION -> {
+                    it.copy(isLoading = false, durationError = error.message)
+                }
+            }
         }
     }
 }

@@ -16,21 +16,32 @@ class ValidateAndSaveOnboardingUseCase @Inject constructor(
         weightStr: String,
         heightStr: String
     ) {
-        if (name.isBlank() || ageStr.isBlank() || weightStr.isBlank() || heightStr.isBlank()) {
+        val trimmedName = name.trim()
+        if (trimmedName.isBlank() || ageStr.isBlank() || weightStr.isBlank() || heightStr.isBlank()) {
             throw IllegalArgumentException("Please let me know your infomation.")
         }
 
+        val ageValue = ageStr.toIntOrNull()
         val weightValue = weightStr.toDoubleOrNull()
         val heightValue = heightStr.toDoubleOrNull()
-        if (weightValue == null || heightValue == null) {
-            throw IllegalArgumentException("Weight or height is not valid")
+        if (ageValue == null || ageValue !in 10..120) {
+            throw IllegalArgumentException("Age must be between 10 and 120")
+        }
+        if (weightValue == null || weightValue !in 20.0..300.0) {
+            throw IllegalArgumentException("Weight must be between 20 and 300 kg")
+        }
+        if (heightValue == null || heightValue !in 80.0..250.0) {
+            throw IllegalArgumentException("Height must be between 80 and 250 cm")
+        }
+        if (gender.isBlank()) {
+            throw IllegalArgumentException("Please select your gender")
         }
 
         val user = getLatestUserUseCase().firstOrNull()
         if (user != null) {
             val updatedUser = user.copy(
-                name = name,
-                age = ageStr.toIntOrNull() ?: 25,
+                name = trimmedName,
+                age = ageValue,
                 gender = gender,
                 weight = weightValue,
                 height = heightValue
@@ -40,8 +51,8 @@ class ValidateAndSaveOnboardingUseCase @Inject constructor(
             val newUser = UserEntity(
                 email = "dummy@example.com",
                 password = "dummy",
-                name = name,
-                age = ageStr.toIntOrNull() ?: 25,
+                name = trimmedName,
+                age = ageValue,
                 gender = gender,
                 weight = weightValue,
                 height = heightValue,

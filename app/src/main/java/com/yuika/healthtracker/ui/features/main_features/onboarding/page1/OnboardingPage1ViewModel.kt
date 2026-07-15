@@ -2,7 +2,9 @@ package com.yuika.healthtracker.ui.features.main_features.onboarding.page1
 
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.ValidateAndSaveOnboardingUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
+import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +27,7 @@ class OnboardingPage1ViewModel @Inject constructor(
     private fun validateAndSave() {
         val currentState = state.value
 
-        updateState { it.copy(isLoading = true) }
+        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
 
         launchSafe(
             onError = { throwable ->
@@ -42,7 +44,8 @@ class OnboardingPage1ViewModel @Inject constructor(
                 heightStr = currentState.height
             )
             
-            updateState { it.copy(isLoading = false) }
+            delay(NETWORK_DELAY.toLong())
+            updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(OnboardingPage1Effect.NavigateToPage2)
         }
     }

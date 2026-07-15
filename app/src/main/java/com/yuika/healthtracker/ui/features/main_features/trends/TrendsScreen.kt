@@ -20,6 +20,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SegmentedSelector
 import com.yuika.healthtracker.ui.core.components.StatCard
@@ -28,12 +29,14 @@ import com.yuika.healthtracker.ui.features.main_features.dashboard.components.Da
 import com.yuika.healthtracker.ui.features.main_features.trends.components.CalorieIntakeChart
 import com.yuika.healthtracker.ui.features.main_features.trends.components.NetCaloriesChart
 import com.yuika.healthtracker.ui.theme.LocalSpacing
+
 @Composable
 fun TrendsScreen(
     modifier: Modifier = Modifier,
     viewModel: TrendsViewModel = hiltViewModel(),
     onTabClick: (String) -> Unit = {}
-) {
+)
+{
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -45,10 +48,12 @@ fun TrendsScreen(
     }
 
     LaunchedEffect(Unit) {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
-                when (effect) {
-                    is TrendsEffect.ShowError -> {
+                when (effect)
+                {
+                    is TrendsEffect.ShowError ->
+                    {
                         Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -74,7 +79,7 @@ fun TrendsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Spacer(modifier = Modifier.height(4.dp))
-            
+
             Column {
                 Text(
                     text = "Statistics & Trends",
@@ -88,18 +93,31 @@ fun TrendsScreen(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
             }
-            
+
             SegmentedSelector(
                 options = listOf("Week", "Month"),
                 selectedOption = state.selectedPeriod,
                 onOptionSelected = { viewModel.onIntent(TrendsIntent.OnPeriodChange(it)) }
             )
-            
-            if (state.isLoading) {
-                Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+
+            if (state.errorMessage != null)
+            {
+                ErrorText(msg = state.errorMessage!!)
+            }
+
+            if (state.isLoading)
+            {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     LoadingIndicator()
                 }
-            } else {
+            }
+            else
+            {
                 StatCard(
                     title = "Avg Intake / Day",
                     value = state.avgIntake,
@@ -107,7 +125,7 @@ fun TrendsScreen(
                     unit = "kcal",
                     bgColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
                 )
-                
+
                 StatCard(
                     title = "Avg Burned / Day",
                     value = state.avgBurned,
@@ -115,7 +133,7 @@ fun TrendsScreen(
                     unit = "kcal",
                     bgColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
                 )
-                
+
                 StatCard(
                     title = "Days Meeting Goal",
                     value = state.daysMeetingGoal,
@@ -124,20 +142,22 @@ fun TrendsScreen(
                     bgColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
                 )
             }
-            
-            if (state.intakeChartData.isNotEmpty()) {
+
+            if (state.intakeChartData.isNotEmpty())
+            {
                 CalorieIntakeChart(
                     dataPoints = state.intakeChartData,
                     periodLabel = if (state.selectedPeriod == "Week") "This Week" else "This Month"
                 )
             }
-            
-            if (state.netCaloriesChartData.isNotEmpty()) {
+
+            if (state.netCaloriesChartData.isNotEmpty())
+            {
                 NetCaloriesChart(
                     dataPoints = state.netCaloriesChartData
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(32.dp))
         }
     }

@@ -3,7 +3,9 @@ package com.yuika.healthtracker.ui.features.main_features.onboarding.page4
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.CalculateUserStatsUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
+import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
@@ -26,10 +28,12 @@ class OnboardingPage4ViewModel @Inject constructor(
     }
 
     private fun calculateMetrics() {
-        updateState { it.copy(isLoading = true) }
+        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
         launchSafe(
             onError = { throwable ->
-                updateState { it.copy(isLoading = false, errorMessage = throwable.message) }
+                val message = throwable.message ?: "Error calculating target"
+                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+                sendEffect(OnboardingPage4Effect.ShowError(message))
             }
         ) {
             val user = getLatestUserUseCase().firstOrNull()
@@ -56,6 +60,8 @@ class OnboardingPage4ViewModel @Inject constructor(
                 val proteinGrams = (proteinCals / 4).toInt()
                 val fatGrams = (fatCals / 9).toInt()
                 val carbsGrams = (carbsCals / 4).toInt()
+
+                delay(NETWORK_DELAY.toLong())
                 
                 updateState {
                     it.copy(
@@ -65,16 +71,30 @@ class OnboardingPage4ViewModel @Inject constructor(
                         proteinGrams = proteinGrams,
                         fatGrams = fatGrams,
                         carbsGrams = carbsGrams,
-                        activityMultiplierText = activityText
+                        activityMultiplierText = activityText,
+                        isSuccess = true,
+                        errorMessage = null
                     )
                 }
             } else {
-                updateState { it.copy(isLoading = false, errorMessage = "User not found") }
+                updateState { it.copy(isLoading = false, errorMessage = "User not found", isSuccess = false) }
+                sendEffect(OnboardingPage4Effect.ShowError("User not found"))
             }
         }
     }
 
     private fun completeOnboarding() {
-        sendEffect(OnboardingPage4Effect.NavigateToDashboard)
+        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
+        launchSafe(
+            onError = { throwable ->
+                val message = throwable.message ?: "Error completing onboarding"
+                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+                sendEffect(OnboardingPage4Effect.ShowError(message))
+            }
+        ) {
+            delay(NETWORK_DELAY.toLong())
+            updateState { it.copy(isLoading = false, isSuccess = true) }
+            sendEffect(OnboardingPage4Effect.NavigateToDashboard)
+        }
     }
 }

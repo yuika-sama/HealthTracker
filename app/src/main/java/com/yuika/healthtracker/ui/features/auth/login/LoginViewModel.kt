@@ -55,22 +55,23 @@ class LoginViewModel @Inject constructor(
     private fun handleLogin()
     {
         val currentState = state.value
-        updateState { it.copy(isLoading = true, errorMessage = null, emailErrorMessage = null, passwordErrorMessage = null) }
+        updateState { it.copy(isLoading = true, errorMessage = null, emailErrorMessage = null, passwordErrorMessage = null, isSuccess = false) }
 
         launchSafe(
             onError = { throwable ->
                 val msg = throwable.message ?: "Unknown error occurred"
                 if (msg.startsWith("Email_")){
-                    updateState { it.copy(isLoading = false, emailErrorMessage = msg.removePrefix("Email_")) }
+                    updateState { it.copy(isLoading = false, emailErrorMessage = msg.removePrefix("Email_"), isSuccess = false) }
                 } else if (msg.startsWith("Password_")){
-                    updateState { it.copy(isLoading = false, passwordErrorMessage = msg.removePrefix("Password_")) }
+                    updateState { it.copy(isLoading = false, passwordErrorMessage = msg.removePrefix("Password_"), isSuccess = false) }
                 } else {
-                    updateState { it.copy(isLoading = false, errorMessage = msg) }
+                    updateState { it.copy(isLoading = false, errorMessage = msg, isSuccess = false) }
                 }
             }
         ) {
             // TODO: handle save session token into datastore
             // if(state.value.isRememberAccount) -> save into datastore
+            delay(NETWORK_DELAY.toLong())
             validateAndLoginUseCase(currentState.email.trim(), currentState.password.trim())
             updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(LoginUiEffect.NavigateToDashboard)
@@ -79,18 +80,20 @@ class LoginViewModel @Inject constructor(
 
     private fun handleOAuthLogin(provider: String)
     {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
 
         launchSafe(
             onError = { throwable ->
                 updateState {
                     it.copy(
                         isLoading = false,
-                        errorMessage = "OAuth Login error - $provider: ${throwable.message}"
+                        errorMessage = "OAuth Login error - $provider: ${throwable.message}",
+                        isSuccess = false
                     )
                 }
             }
         ) {
+            delay(NETWORK_DELAY.toLong())
             oAuthLoginUseCase(provider)
             updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(LoginUiEffect.ShowToast("$provider Login Success"))

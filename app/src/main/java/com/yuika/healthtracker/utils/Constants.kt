@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 const val NETWORK_DELAY = 1500
+const val UI_LOADING_DELAY_MS = NETWORK_DELAY.toLong()
 
 val PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!\\-_*])(?=\\S+$).{8,}$".toRegex()
 

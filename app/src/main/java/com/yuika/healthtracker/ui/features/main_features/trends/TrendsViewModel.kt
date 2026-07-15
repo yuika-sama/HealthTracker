@@ -3,9 +3,11 @@ package com.yuika.healthtracker.ui.features.main_features.trends
 import com.yuika.healthtracker.domain.usecase.main_use_cases.trends.GetTrendsDataUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.trends.TrendsChartDataPoint
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
+import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,21 +38,24 @@ class TrendsViewModel @Inject constructor(
 
     private fun handleFetchTrends(period: String)
     {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
 
         fetchJob?.cancel()
         fetchJob = launchSafe(
             onError = { throwable ->
-                updateState { it.copy(isLoading = false, errorMessage = throwable.message) }
-                sendEffect(TrendsEffect.ShowError(throwable.message ?: "Can't get data"))
+                val message = throwable.message ?: "Can't get data"
+                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+                sendEffect(TrendsEffect.ShowError(message))
             }
         ) {
             getTrendsDataUseCase(period).collectLatest { trendsData ->
-                if (trendsData == null) {
+                if (trendsData == null)
+                {
                     updateState {
                         it.copy(
                             isLoading = false,
-                            errorMessage = "Can't find user information"
+                            errorMessage = "Can't find user information",
+                            isSuccess = false
                         )
                     }
                     sendEffect(TrendsEffect.ShowError("Can't find user information"))
@@ -61,6 +66,8 @@ class TrendsViewModel @Inject constructor(
                     ChartDataPoint(label = it.label, value = it.value)
                 }
 
+                delay(NETWORK_DELAY.toLong())
+
                 updateState {
                     it.copy(
                         avgIntake = trendsData.avgIntakeStr,
@@ -69,7 +76,9 @@ class TrendsViewModel @Inject constructor(
                         goalDays = trendsData.goalDays,
                         intakeChartData = trendsData.intakeChartData.toUiModels(),
                         netCaloriesChartData = trendsData.netCaloriesChartData.toUiModels(),
-                        isLoading = false
+                        isLoading = false,
+                        isSuccess = true,
+                        errorMessage = null,
                     )
                 }
             }

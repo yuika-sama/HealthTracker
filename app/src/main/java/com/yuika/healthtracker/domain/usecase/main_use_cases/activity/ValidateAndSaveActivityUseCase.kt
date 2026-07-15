@@ -8,7 +8,8 @@ import javax.inject.Inject
 
 class ValidateAndSaveActivityUseCase @Inject constructor(
     private val getLatestUserUseCase: GetLatestUserUseCase,
-    private val saveActivityUseCase: SaveActivityUseCase
+    private val saveActivityUseCase: SaveActivityUseCase,
+    private val validateActivityInputUseCase: ValidateActivityInputUseCase
 ) {
     suspend operator fun invoke(
         activityName: String,
@@ -19,18 +20,12 @@ class ValidateAndSaveActivityUseCase @Inject constructor(
         estimatedKcalBurned: Int,
         dateText: String
     ) {
-        val name = activityName.trim()
-        if (name.isEmpty()) {
-            throw IllegalArgumentException("ActivityName_Please fill in your name")
-        }
-        val kcalPerHour = kcalPerHourStr.toIntOrNull()
-        if (kcalPerHour == null || kcalPerHour <= 0) {
-            throw IllegalArgumentException("KcalPerHour_Please fill in valid kcal/hour")
-        }
-        val duration = durationStr.toIntOrNull()
-        if (duration == null || duration <= 0) {
-            throw IllegalArgumentException("Duration_Please fill in valid practice duration")
-        }
+        val validInput = validateActivityInputUseCase(
+            activityName = activityName,
+            kcalPerHourStr = kcalPerHourStr,
+            durationStr = durationStr,
+            selectedIntensity = selectedIntensity
+        )
 
         val user = getLatestUserUseCase().firstOrNull()
         if (user == null){
@@ -39,11 +34,11 @@ class ValidateAndSaveActivityUseCase @Inject constructor(
 
         val activityEntity = ActivityEntity(
             userId = user.id,
-            name = name,
+            name = validInput.name,
             iconName = selectedIcon,
-            kcalPerHour = kcalPerHour,
-            durationMins = duration,
-            intensity = selectedIntensity.name,
+            kcalPerHour = validInput.kcalPerHour,
+            durationMins = validInput.durationMins,
+            intensity = validInput.selectedIntensity.name,
             kcalBurned = estimatedKcalBurned,
             dateText = dateText
         )
