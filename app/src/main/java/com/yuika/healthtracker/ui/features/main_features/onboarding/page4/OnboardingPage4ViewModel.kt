@@ -82,16 +82,6 @@ class OnboardingPage4ViewModel @Inject constructor(
     }
 
     private fun completeOnboarding() {
-        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
-        launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "Error completing onboarding"
-                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
-            }
-        ) {
-            delay(NETWORK_DELAY.toLong())
-            updateState { it.copy(isLoading = false, isSuccess = true) }
-            sendEffect(OnboardingPage4Effect.NavigateToDashboard)
-        }
+        sendEffect(OnboardingPage4Effect.NavigateToDashboard)
     }
 }

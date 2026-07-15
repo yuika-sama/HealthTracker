@@ -108,8 +108,6 @@ class UpdateProfileViewModel @Inject constructor(
                 createdAt = currentState.createdAt
             )
 
-            delay(NETWORK_DELAY.toLong())
-
             updateState { it.copy(isSaving = false, isSuccess = true) }
             sendEffect(UpdateProfileEffect.ShowSuccess("Update successfully"))
             sendEffect(UpdateProfileEffect.NavigateBack)

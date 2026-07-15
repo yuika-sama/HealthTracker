@@ -3,9 +3,7 @@ package com.yuika.healthtracker.ui.features.main_features.onboarding.page2
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.UpdateUserUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
-import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
@@ -37,7 +35,6 @@ class OnboardingPage2ViewModel @Inject constructor(
             if (user != null) {
                 val updatedUser = user.copy(activityLevel = currentLevel)
                 updateUserUseCase(updatedUser)
-                delay(NETWORK_DELAY.toLong())
                 updateState { it.copy(isLoading = false, isSuccess = true) }
                 sendEffect(OnboardingPage2Effect.NavigateToPage3)
             } else {

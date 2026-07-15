@@ -2,9 +2,7 @@ package com.yuika.healthtracker.ui.features.main_features.add_activity
 
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ValidateAndSaveActivityUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
-import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -62,7 +60,6 @@ class AddActivityViewModel @Inject constructor(
                 dateText = currentState.dateText
             )
 
-            delay(NETWORK_DELAY.toLong())
             updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(AddActivityEffect.NavigateToActivity)
         }

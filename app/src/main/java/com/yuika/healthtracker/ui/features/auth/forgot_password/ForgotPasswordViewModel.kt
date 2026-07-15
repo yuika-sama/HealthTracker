@@ -2,9 +2,7 @@ package com.yuika.healthtracker.ui.features.auth.forgot_password
 
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndCheckEmailUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
-import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +23,7 @@ class ForgotPasswordViewModel @Inject constructor(
             }
 
             is ForgotPasswordUiIntent.SubmitClick -> handleSubmit()
-            is ForgotPasswordUiIntent.LoginClick -> handleLogin()
+            is ForgotPasswordUiIntent.LoginClick -> sendEffect(ForgotPasswordUiEffect.NavigateToLogin)
         }
     }
 
@@ -70,17 +68,4 @@ class ForgotPasswordViewModel @Inject constructor(
         }
     }
 
-    private fun handleLogin() {
-        updateState { it.copy(isLoading = true, error = null, isSuccess = false) }
-        launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "An unexpected error occurred"
-                updateState { it.copy(isLoading = false, error = message, isSuccess = false) }
-            }
-        ) {
-            delay(NETWORK_DELAY.toLong())
-            updateState { it.copy(isLoading = false, isSuccess = true) }
-            sendEffect(ForgotPasswordUiEffect.NavigateToLogin)
-        }
-    }
 }

@@ -33,17 +33,8 @@ class DiaryViewModel @Inject constructor(
     private fun handleAddFood(mealType: String) {
         try {
             validateDiaryLogicUseCase.validateMealType(mealType)
-            updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
-            launchSafe(
-                onError = {throwable ->
-                    val message = throwable.message ?: "Unknown error occurred."
-                    updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
-                }
-            ) {
-                delay(NETWORK_DELAY.toLong())
-                updateState { it.copy(isLoading = false, isSuccess = true, errorMessage = null) }
-                sendEffect(DiaryEffect.NavigateToAddFood(mealType))
-            }
+            updateState { it.copy(errorMessage = null) }
+            sendEffect(DiaryEffect.NavigateToAddFood(mealType))
         } catch (e: Exception) {
             updateState { it.copy(errorMessage = e.message ?: "Invalid meal type", isSuccess = false) }
         }

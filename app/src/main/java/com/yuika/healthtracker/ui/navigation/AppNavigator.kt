@@ -19,20 +19,26 @@ class AppNavigator(
     fun navigate(route: Route, builder: NavOptionsBuilder.() -> Unit = {}){
         if (job?.isActive == true) return
         job = scope.launch {
-            setLoading(true)
-            delay(UI_LOADING_DELAY_MS)
-            navController.navigate(route){builder()}
-            setLoading(false)
+            try {
+                setLoading(true)
+                delay(UI_LOADING_DELAY_MS)
+                navController.navigate(route){builder()}
+            } finally {
+                setLoading(false)
+            }
         }
     }
 
     fun popBackStack(){
         if (job?.isActive == true) return
         job = scope.launch {
-            setLoading(true)
-            delay(UI_LOADING_DELAY_MS)
-            navController.popBackStack()
-            setLoading(false)
+            try {
+                setLoading(true)
+                delay(UI_LOADING_DELAY_MS)
+                navController.popBackStack()
+            } finally {
+                setLoading(false)
+            }
         }
     }
 }

@@ -2,9 +2,7 @@ package com.yuika.healthtracker.ui.features.main_features.onboarding.page1
 
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.ValidateAndSaveOnboardingUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
-import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,8 +40,6 @@ class OnboardingPage1ViewModel @Inject constructor(
                 weightStr = currentState.weight,
                 heightStr = currentState.height
             )
-            
-            delay(NETWORK_DELAY.toLong())
             updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(OnboardingPage1Effect.NavigateToPage2)
         }

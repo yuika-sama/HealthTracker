@@ -3,9 +3,7 @@ package com.yuika.healthtracker.ui.features.auth.login
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.OAuthLoginUseCase
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndLoginUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
-import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,8 +36,8 @@ class LoginViewModel @Inject constructor(
             is LoginUiIntent.LoginClick -> handleLogin()
             is LoginUiIntent.ShowPasswordClick -> updateState { it.copy(isShowPassword = !it.isShowPassword) }
             is LoginUiIntent.RememberAccountClick -> updateState { it.copy(isRememberAccount = !it.isRememberAccount) }
-            is LoginUiIntent.ForgotPasswordClick -> navigateWithLoading(LoginUiEffect.NavigateToForgotPassword)
-            is LoginUiIntent.RegisterClick -> navigateWithLoading(LoginUiEffect.NavigateToRegister)
+            is LoginUiIntent.ForgotPasswordClick -> sendEffect(LoginUiEffect.NavigateToForgotPassword)
+            is LoginUiIntent.RegisterClick -> sendEffect(LoginUiEffect.NavigateToRegister)
             is LoginUiIntent.GoogleClick -> handleOAuthLogin("Google")
             is LoginUiIntent.FacebookClick -> handleOAuthLogin("Facebook")
         }
@@ -98,32 +96,4 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun navigateWithLoading(effect: LoginUiEffect) {
-        updateState {
-            it.copy(
-                isLoading = true,
-                errorMessage = null,
-                emailErrorMessage = null,
-                passwordErrorMessage = null,
-                isSuccess = false
-            )
-        }
-
-        launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "Can't continue"
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = message,
-                        isSuccess = false
-                    )
-                }
-            }
-        ) {
-            delay(NETWORK_DELAY.toLong())
-            updateState { it.copy(isLoading = false, isSuccess = true) }
-            sendEffect(effect)
-        }
-    }
 }

@@ -23,8 +23,8 @@ class ProfileViewModel @Inject constructor(
         when (intent)
         {
             is ProfileIntent.LoadProfile -> handleLoadProfile()
-            is ProfileIntent.EditProfile -> navigateWithLoading(ProfileEffect.NavigateToEditProfile)
-            is ProfileIntent.Logout -> handleLogout()
+            is ProfileIntent.EditProfile -> sendEffect(ProfileEffect.NavigateToEditProfile)
+            is ProfileIntent.Logout -> sendEffect(ProfileEffect.NavigateToLogin)
         }
     }
 
@@ -74,23 +74,4 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun handleLogout()
-    {
-        navigateWithLoading(ProfileEffect.NavigateToLogin)
-    }
-
-    private fun navigateWithLoading(effect: ProfileEffect)
-    {
-        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
-        launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "Can't continue"
-                updateState { it.copy(isLoading = false, errorMessage = message) }
-            }
-        ) {
-            delay(NETWORK_DELAY.toLong())
-            updateState { it.copy(isLoading = false, isSuccess = true) }
-            sendEffect(effect)
-        }
-    }
 }

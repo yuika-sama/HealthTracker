@@ -22,7 +22,7 @@ class ActivityViewModel @Inject constructor(
     override fun onIntent(intent: ActivityIntent) {
         when (intent) {
             is ActivityIntent.LoadActivityData -> handleFetchActivity(intent.date)
-            is ActivityIntent.OnAddActivityClick -> navigateWithLoading(ActivityEffect.NavigateToAddActivity)
+            is ActivityIntent.OnAddActivityClick -> sendEffect(ActivityEffect.NavigateToAddActivity)
         }
     }
 
@@ -73,18 +73,4 @@ class ActivityViewModel @Inject constructor(
         }
     }
 
-    private fun navigateWithLoading(effect: ActivityEffect) {
-        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
-
-        launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "Can't continue"
-                updateState { it.copy(isLoading = false, errorMessage = message) }
-            }
-        ) {
-            delay(NETWORK_DELAY.toLong())
-            updateState { it.copy(isLoading = false, isSuccess = true) }
-            sendEffect(effect)
-        }
-    }
 }

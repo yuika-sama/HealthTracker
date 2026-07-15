@@ -23,8 +23,8 @@ class DashboardViewModel @Inject constructor(
         when (intent)
         {
             is DashboardIntent.LoadDashboardData -> loadDashboardData()
-            is DashboardIntent.AddMealClick -> navigateWithLoading(DashboardEffect.NavigateToDiary)
-            is DashboardIntent.AddActivityClick -> navigateWithLoading(DashboardEffect.NavigateToActivity)
+            is DashboardIntent.AddMealClick -> sendEffect(DashboardEffect.NavigateToDiary)
+            is DashboardIntent.AddActivityClick -> sendEffect(DashboardEffect.NavigateToActivity)
         }
     }
 
@@ -81,25 +81,4 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private fun navigateWithLoading(effect: DashboardEffect)
-    {
-        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
-
-        launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "Unknown error occurred"
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = message,
-                        isSuccess = false
-                    )
-                }
-            }
-        ) {
-            delay(NETWORK_DELAY.toLong())
-            updateState { it.copy(isLoading = false, isSuccess = true) }
-            sendEffect(effect)
-        }
-    }
 }

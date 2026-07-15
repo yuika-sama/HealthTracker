@@ -2,9 +2,7 @@ package com.yuika.healthtracker.ui.features.main_features.add_meal
 
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.ValidateAndSaveMealUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
-import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -169,7 +167,6 @@ class AddMealViewModel @Inject constructor(
                 mealType = currentState.mealType
             )
 
-            delay(NETWORK_DELAY.toLong())
             updateState {
                 it.copy(
                     isLoading = false,
