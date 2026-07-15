@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,7 +37,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SuccessText
-import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityListCard
+import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityItem
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivitySummaryCard
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
@@ -149,7 +152,22 @@ fun ActivityScreen(
             {
                 if (state.activities.isNotEmpty())
                 {
-                    item { ActivityListCard(activities = state.activities) }
+                    itemsIndexed(
+                        items = state.activities,
+                        key = { index, activity ->
+                            "${activity.title}-${activity.durationMins}-${activity.kcal}-$index"
+                        }
+                    ) { index, activity ->
+                        ActivityItem(activity = activity)
+                        if (index < state.activities.lastIndex)
+                        {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                thickness = DividerDefaults.Thickness,
+                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+                            )
+                        }
+                    }
                 }
                 else
                 {
