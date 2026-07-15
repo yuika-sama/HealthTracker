@@ -1,7 +1,5 @@
 package com.yuika.healthtracker.ui.features.main_features.add_activity
 
-import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ActivityValidationException
-import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ActivityValidationField
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ValidateAndSaveActivityUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.NETWORK_DELAY
@@ -50,14 +48,9 @@ class AddActivityViewModel @Inject constructor(
 
         launchSafe(
             onError = {throwable ->
-                when (throwable) {
-                    is ActivityValidationException -> handleValidationError(throwable)
-                    else -> {
-                        val message = throwable.message ?: "Unknown error"
-                        updateState { it.copy(isLoading = false, errorMessage = message) }
-                        sendEffect(AddActivityEffect.ShowError(message))
-                    }
-                }
+                val message = throwable.message ?: "Unknown error"
+                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+                sendEffect(AddActivityEffect.ShowError(message))
             }
         ) {
             validateAndSaveActivityUseCase(
@@ -73,24 +66,6 @@ class AddActivityViewModel @Inject constructor(
             delay(NETWORK_DELAY.toLong())
             updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(AddActivityEffect.NavigateToActivity)
-        }
-    }
-
-    private fun handleValidationError(error: ActivityValidationException) {
-        updateState {
-            when (error.field) {
-                ActivityValidationField.ACTIVITY_NAME -> {
-                    it.copy(isLoading = false, activityNameError = error.message)
-                }
-
-                ActivityValidationField.KCAL_PER_HOUR -> {
-                    it.copy(isLoading = false, kcalPerHourError = error.message)
-                }
-
-                ActivityValidationField.DURATION -> {
-                    it.copy(isLoading = false, durationError = error.message)
-                }
-            }
         }
     }
 }
