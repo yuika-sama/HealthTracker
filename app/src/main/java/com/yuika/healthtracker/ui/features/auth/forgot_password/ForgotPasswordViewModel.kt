@@ -1,8 +1,6 @@
 package com.yuika.healthtracker.ui.features.auth.forgot_password
 
 import android.util.Patterns
-import com.yuika.healthtracker.domain.repository.UserRepository
-import com.yuika.healthtracker.domain.usecase.auth_use_cases.CheckEmailExistsUseCase
 import com.yuika.healthtracker.domain.usecase.auth_use_cases.ValidateAndCheckEmailUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.NETWORK_DELAY
@@ -15,17 +13,15 @@ class ForgotPasswordViewModel @Inject constructor(
     private val validateAndCheckEmailUseCase: ValidateAndCheckEmailUseCase
 ) : BaseViewModel<ForgotPasswordUiState, ForgotPasswordUiIntent, ForgotPasswordUiEffect>(
     initialState = ForgotPasswordUiState()
-)
-{
-    override fun onIntent(intent: ForgotPasswordUiIntent)
-    {
-        when (intent)
-        {
+) {
+    override fun onIntent(intent: ForgotPasswordUiIntent) {
+        when (intent) {
             is ForgotPasswordUiIntent.EmailChanged -> updateState {
                 it.copy(
                     email = intent.email,
                     emailError = null,
-                    error = null
+                    error = null,
+                    isSuccess = false
                 )
             }
 
@@ -34,46 +30,72 @@ class ForgotPasswordViewModel @Inject constructor(
         }
     }
 
-    private fun handleSubmit()
-    {
+    private fun handleSubmit() {
         val email = state.value.email.trim()
+        val emailError = validateEmail(email)
 
-        updateState { it.copy(isLoading = true, error = null, emailError = null) }
+        if (emailError != null) {
+            updateState {
+                it.copy(
+                    isLoading = false,
+                    emailError = emailError,
+                    error = null,
+                    isSuccess = false
+                )
+            }
+            return
+        }
+
+        updateState {
+            it.copy(
+                isLoading = true,
+                error = null,
+                emailError = null,
+                isSuccess = false
+            )
+        }
 
         launchSafe(
             onError = { throwable ->
-                val msg = throwable.message ?: "An unexpected error occurred"
-                if (msg.startsWith("Email_")) {
-                    updateState { it.copy(isLoading = false, emailError = msg.removePrefix("Email_")) }
-                } else {
-                    updateState { it.copy(isLoading = false, error = msg) }
-                    sendEffect(ForgotPasswordUiEffect.ShowToast(msg))
+                val message = throwable.message ?: "An unexpected error occurred"
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        error = message,
+                        isSuccess = false
+                    )
                 }
+                sendEffect(ForgotPasswordUiEffect.ShowToast(message))
             }
         ) {
-            val exists = validateAndCheckEmailUseCase(email)
             delay(NETWORK_DELAY.toLong())
-            if (exists)
-            {
+            val exists = validateAndCheckEmailUseCase(email)
+            if (exists) {
                 updateState { it.copy(isLoading = false, isSuccess = true) }
                 sendEffect(ForgotPasswordUiEffect.NavigateToVerifyOtp(email))
-            }
-            else
-            {
+            } else {
+                val message = "Account with this email does not exist"
                 updateState {
                     it.copy(
                         isLoading = false,
                         isSuccess = false,
-                        error = "Account with this email does not exist"
+                        error = message
                     )
                 }
-                sendEffect(ForgotPasswordUiEffect.ShowToast(state.value.error ?: "An unexpected error occurred"))
+                sendEffect(ForgotPasswordUiEffect.ShowToast(message))
             }
         }
     }
 
-    private fun handleLogin()
-    {
+    private fun validateEmail(email: String): String? {
+        return when {
+            email.isBlank() -> "Email is required"
+            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Invalid email format"
+            else -> null
+        }
+    }
+
+    private fun handleLogin() {
         updateState { it.copy(isLoading = true, error = null, isSuccess = false) }
         launchSafe(
             onError = { throwable ->

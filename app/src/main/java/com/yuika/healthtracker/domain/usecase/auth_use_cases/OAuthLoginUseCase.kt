@@ -14,7 +14,7 @@ class OAuthLoginUseCase @Inject constructor(
 {
     suspend operator fun invoke(provider: String): UserEntity
     {
-        delay(NETWORK_DELAY.toLong().milliseconds)
+        delay(NETWORK_DELAY.toLong())
 
         val oauthEmail = "oauth.user@healthtracker.com"
         var oauthUser = userRepository.getUserByEmail(oauthEmail)

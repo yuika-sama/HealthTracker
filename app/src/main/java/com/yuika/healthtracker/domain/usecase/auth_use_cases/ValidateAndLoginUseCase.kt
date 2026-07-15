@@ -10,15 +10,24 @@ class ValidateAndLoginUseCase @Inject constructor(
 {
     suspend operator fun invoke(email: String, password: String)
     {
-        if (email.isEmpty()) throw IllegalArgumentException("Email_Email would not be blank")
-        if (!Patterns.EMAIL_ADDRESS.matcher(email)
-                .matches()
-        ) throw IllegalArgumentException("Email_Email format is invalid")
+        val trimmedEmail = email.trim()
 
-        if (password.isEmpty()) throw IllegalArgumentException("Password_Password would not be blank")
-        if (password.length < 8) throw IllegalArgumentException("Password_Password length would be longer than 8")
-        if (!PASSWORD_REGEX.matches(password)) throw IllegalArgumentException("Password_Password format is invalid")
+        if (trimmedEmail.isBlank()) {
+            throw IllegalArgumentException("Email would not be blank")
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(trimmedEmail).matches()) {
+            throw IllegalArgumentException("Email format is invalid")
+        }
+        if (password.isBlank()) {
+            throw IllegalArgumentException("Password would not be blank")
+        }
+        if (password.length < 8) {
+            throw IllegalArgumentException("Password length must be at least 8 characters")
+        }
+        if (!PASSWORD_REGEX.matches(password)) {
+            throw IllegalArgumentException("Password format is invalid")
+        }
 
-        loginUseCase(email, password)
+        loginUseCase(trimmedEmail, password)
     }
 }

@@ -1,7 +1,5 @@
 package com.yuika.healthtracker.ui.core.base
 
-import android.widget.Toast
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler

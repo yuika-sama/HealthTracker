@@ -7,10 +7,17 @@ class ValidateAndCheckEmailUseCase @Inject constructor(
     private val checkEmailExistsUseCase: CheckEmailExistsUseCase
 )
 {
-    suspend operator fun invoke(email: String): Boolean {
-        if (email.isEmpty() || email.isBlank()) throw IllegalArgumentException("Email_Email is required")
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) throw IllegalArgumentException("Email_Invalid email format")
+    suspend operator fun invoke(email: String): Boolean
+    {
+        val trimmedEmail = email.trim()
 
-        return checkEmailExistsUseCase(email)
+        if (trimmedEmail.isBlank()) {
+            throw IllegalArgumentException("Email is required")
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(trimmedEmail).matches()) {
+            throw IllegalArgumentException("Invalid email format")
+        }
+
+        return checkEmailExistsUseCase(trimmedEmail)
     }
 }
