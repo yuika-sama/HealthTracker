@@ -143,7 +143,7 @@ fun OnboardingPage1Screen(
             icon = Icons.Default.People,
             label = "Gender"
         ) {
-            val genders = listOf("Male", "Female", "Other")
+            val genders = listOf("Male", "Female")
             SegmentedSelector(
                 options = genders,
                 selectedOption = state.gender,

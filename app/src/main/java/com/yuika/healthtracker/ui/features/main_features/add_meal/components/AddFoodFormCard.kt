@@ -60,7 +60,6 @@ fun AddFoodFormCard(
     var unitExpanded by rememberSaveable() { mutableStateOf(false) }
     val units = listOf("Plate (Med)", "Bowl (Smol)", "Serving", "Gram")
 
-    var isManual by rememberSaveable() { mutableStateOf(false) }
     val mealTypes = listOf("Breakfast", "Lunch", "Dinner", "Snack")
 
     Column(

@@ -152,7 +152,7 @@ fun AddMealScreen(
                                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                             )
                             Text(
-                                text = "${state.totalCalories} kc",
+                                text = "${state.totalCalories} kcal",
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onBackground

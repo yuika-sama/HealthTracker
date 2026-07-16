@@ -31,7 +31,7 @@ class RegisterUseCase @Inject constructor(
             password = password,
             name = fullName,
             dateOfBirth = validDateOfBirth,
-            gender = "Other",
+            gender = "Male",
             height = 0.0,
             weight = 0.0,
             activityLevel = "None",

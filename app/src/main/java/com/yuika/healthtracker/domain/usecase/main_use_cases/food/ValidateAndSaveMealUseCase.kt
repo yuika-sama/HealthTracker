@@ -2,16 +2,24 @@ package com.yuika.healthtracker.domain.usecase.main_use_cases.food
 
 import com.yuika.healthtracker.domain.model.FoodEntry
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
-import com.yuika.healthtracker.ui.features.main_features.add_meal.TempFoodItem
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
+
+data class MealFoodInput(
+    val foodName: String,
+    val quantity: Float,
+    val unit: String,
+    val calories: Int,
+    val foodCatalogId: Int? = null,
+    val caloriesPerServing: Int = calories
+)
 
 class ValidateAndSaveMealUseCase @Inject constructor(
     private val getLatestUserUseCase: GetLatestUserUseCase,
     private val saveFoodEntryUseCase: SaveFoodEntryUseCase
 ) {
     suspend operator fun invoke(
-        currentFoods: List<TempFoodItem>,
+        currentFoods: List<MealFoodInput>,
         dateText: String,
         mealType: String
     ) {

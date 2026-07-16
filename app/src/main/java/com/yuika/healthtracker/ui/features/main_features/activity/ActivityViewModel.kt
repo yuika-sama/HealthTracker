@@ -2,8 +2,8 @@ package com.yuika.healthtracker.ui.features.main_features.activity
 
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.DeleteActivityUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.GetActivityDataUseCase
-import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ParseActivityIntensityUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
+import com.yuika.healthtracker.ui.core.model.IntensityLevel
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityItemData
 import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +16,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ActivityViewModel @Inject constructor(
     private val getActivityDataUseCase: GetActivityDataUseCase,
-    private val parseActivityIntensityUseCase: ParseActivityIntensityUseCase,
     private val deleteActivityUseCase: DeleteActivityUseCase
 ) : BaseViewModel<ActivityUiState, ActivityIntent, ActivityEffect>(
     initialState = ActivityUiState()
@@ -57,7 +56,7 @@ class ActivityViewModel @Inject constructor(
                 }
 
                 val uiActivities = activityData.activities.map { entity ->
-                    val intensityLevel = parseActivityIntensityUseCase(entity.intensity)
+                    val intensityLevel = parseIntensity(entity.intensity)
 
                     ActivityItemData(
                         id = entity.id,
@@ -86,4 +85,8 @@ class ActivityViewModel @Inject constructor(
         }
     }
 
+    private fun parseIntensity(value: String): IntensityLevel =
+        runCatching { IntensityLevel.valueOf(value.uppercase()) }.getOrNull()
+            ?: IntensityLevel.entries.firstOrNull { it.displayName.equals(value, ignoreCase = true) }
+            ?: IntensityLevel.LIGHT
 }

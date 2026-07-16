@@ -14,7 +14,7 @@ class GetActivityCatalogUseCase @Inject constructor(
     private val activityCatalogRepository: ActivityCatalogRepository
 )
 {
-//    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(): Flow<List<ActivityCatalog>> =
         getLatestUserUseCase().flatMapLatest { user ->
             if (user == null) flowOf(emptyList())

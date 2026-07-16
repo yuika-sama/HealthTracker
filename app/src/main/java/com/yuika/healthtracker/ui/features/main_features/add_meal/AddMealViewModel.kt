@@ -188,7 +188,7 @@ class AddMealViewModel @Inject constructor(
         }
 
         val newFood =
-            TempFoodItem(
+            AddedFoodItem(
                 foodCatalogId = currentState.selectedFoodCatalogId,
                 foodName = foodName,
                 quantity = quantity ?: return,
@@ -252,7 +252,7 @@ class AddMealViewModel @Inject constructor(
             }
         ) {
             validateAndSaveMealUseCase(
-                currentFoods = currentFoods,
+                currentFoods = currentFoods.map { it.toMealFoodInput() },
                 dateText = currentState.dateText,
                 mealType = currentState.mealType
             )
