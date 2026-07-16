@@ -28,8 +28,8 @@ class OAuthLoginUseCase @Inject constructor(
                 gender = "Male",
                 height = 170.0,
                 weight = 65.0,
-                activityLevel = "Moderate",
-                goal = "Stay Healthy",
+                activityLevel = "moderately_active",
+                goal = "maintain_weight",
                 avatarPath = null
             )
             val userId = userRepository.insertUser(dummyUser).toInt()

@@ -22,8 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.yuika.healthtracker.ui.theme.Emerald
-import com.yuika.healthtracker.ui.theme.InfoBlue
 
 @Composable
 fun DailySummaryCard(
@@ -31,7 +29,11 @@ fun DailySummaryCard(
     remainingKcal: Int = 540,
     goalKcal: Int = 2400
 ) {
-    val progress = (goalKcal - remainingKcal) / goalKcal.toFloat()
+    val progress = if (goalKcal > 0) {
+        ((goalKcal - remainingKcal) / goalKcal.toFloat()).coerceIn(0f, 1f)
+    } else {
+        0f
+    }
 
     Column(
         modifier = modifier

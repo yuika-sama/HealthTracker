@@ -7,12 +7,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -25,8 +21,6 @@ fun OtpInputFields(
     onOtpChange: (String) -> Unit
 )
 {
-    val focusRequesters = remember { List(otpLength) { FocusRequester() } }
-
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -49,10 +43,6 @@ fun OtpInputFields(
                             }
                         }
                         onOtpChange(newOtp)
-
-                        if (i > 0){
-                            focusRequesters[i-1].requestFocus()
-                        }
                     }
                     else
                     {
@@ -65,29 +55,16 @@ fun OtpInputFields(
                             }
                         }
                         onOtpChange(newOtp)
-
-                        if (i < otpLength - 1) {
-                            focusRequesters[i+1].requestFocus()
-                        }
                     }
                 },
-                modifier = Modifier
-                    .weight(1f)
-                    .focusRequester(focusRequesters[i]),
-                textStyle = MaterialTheme.typography.titleLarge.copy(textAlign = TextAlign.Center),
+                modifier = Modifier.weight(1f),
+                textStyle = MaterialTheme.typography.titleSmall.copy(textAlign = TextAlign.Center),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = if (i == otpLength - 1) ImeAction.Done else ImeAction.Next
                 ),
                 singleLine = true
             )
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        if (focusRequesters.isNotEmpty())
-        {
-            focusRequesters[0].requestFocus()
         }
     }
 }

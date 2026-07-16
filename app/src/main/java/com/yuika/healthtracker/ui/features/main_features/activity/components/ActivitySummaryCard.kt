@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yuika.healthtracker.ui.theme.Emerald
 
 @Composable
 fun ActivitySummaryCard(
@@ -36,7 +35,11 @@ fun ActivitySummaryCard(
     burnedKcal: Int = 450,
     goalKcal: Int = 600
 ) {
-    val progress = burnedKcal.toFloat() / goalKcal.toFloat()
+    val progress = if (goalKcal > 0) {
+        (burnedKcal.toFloat() / goalKcal.toFloat()).coerceIn(0f, 1f)
+    } else {
+        0f
+    }
     val percentage = (progress * 100).toInt()
 
     Row(
