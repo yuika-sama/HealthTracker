@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 data class DiaryFoodItem(
+    val id: Int,
+    val mealType: String,
     val name: String,
     val description: String,
     val kcal: Int
@@ -65,6 +67,8 @@ class GetDiaryDataUseCase @Inject constructor(
 
                     fun mapToItems(entries: List<FoodEntry>): List<DiaryFoodItem> = entries.map {
                         DiaryFoodItem(
+                            id = it.id,
+                            mealType = it.mealType,
                             name = it.foodName,
                             description = "${it.quantity} ${it.unit}",
                             kcal = it.calories

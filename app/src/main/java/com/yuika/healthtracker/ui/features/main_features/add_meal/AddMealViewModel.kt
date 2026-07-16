@@ -1,13 +1,19 @@
 package com.yuika.healthtracker.ui.features.main_features.add_meal
 
+import com.yuika.healthtracker.domain.model.FoodCatalog
+import com.yuika.healthtracker.domain.usecase.main_use_cases.food.SearchFoodCatalogUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.ValidateAndSaveMealUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class AddMealViewModel @Inject constructor(
-    private val validateAndSaveMealUseCase: ValidateAndSaveMealUseCase
+    private val validateAndSaveMealUseCase: ValidateAndSaveMealUseCase,
+    private val searchFoodCatalogUseCase: SearchFoodCatalogUseCase
 ) : BaseViewModel<AddMealUiState, AddMealIntent, AddMealEffect>(
     initialState = AddMealUiState()
 )
@@ -23,12 +29,12 @@ class AddMealViewModel @Inject constructor(
 
             is AddMealIntent.OnFoodNameChange ->
             {
-                updateState { it.copy(foodName = intent.name, foodNameError = null) }
+                handleFoodNameChange(intent.name)
             }
 
             is AddMealIntent.OnQuantityChange ->
             {
-                updateState { it.copy(quantity = intent.quantity, quantityError = null) }
+                handleQuantityChange(intent.quantity)
             }
 
             is AddMealIntent.OnUnitChange ->
@@ -60,6 +66,87 @@ class AddMealViewModel @Inject constructor(
             {
                 handleSaveMeal()
             }
+
+            is AddMealIntent.OnManualChange ->
+            {
+                updateState {
+                    it.copy(
+                        isManual = !it.isManual,
+                        selectedFoodCatalogId = null,
+                        selectedCategoriesPerServing = 0,
+                        selectedDefaultQuantity = 1f,
+                        searchResults = emptyList()
+                    )
+                }
+            }
+
+            is AddMealIntent.OnFoodCatalogClick ->
+            {
+                handleFoodCatalogClick(intent.food)
+            }
+        }
+    }
+
+    private var searchJob: Job? = null
+
+    private fun handleFoodNameChange(name: String)
+    {
+        updateState {
+            it.copy(
+                foodName = name,
+                foodNameError = null,
+                selectedFoodCatalogId = null,
+                selectedCategoriesPerServing = 0,
+                selectedDefaultQuantity = 1f,
+                searchResults = emptyList()
+            )
+        }
+
+        searchJob?.cancel()
+        if (name.isBlank() || state.value.isManual) return
+
+        searchJob = launchSafe {
+            searchFoodCatalogUseCase(name).collectLatest { foods ->
+                updateState {
+                    it.copy(searchResults = foods.take(5))
+                }
+            }
+        }
+    }
+
+    private fun handleQuantityChange(quantity: String)
+    {
+        val q = quantity.toFloatOrNull()
+        updateState { s ->
+            val kcal = if (!s.isManual && s.selectedFoodCatalogId != null && q != null && q > 0f)
+            {
+                ((q / s.selectedDefaultQuantity.coerceAtLeast(1f)) * s.selectedCategoriesPerServing)
+                    .roundToInt()
+                    .toString()
+            }
+            else s.calories
+
+            s.copy(quantity = quantity, quantityError = null, calories = kcal, caloriesError = null)
+        }
+    }
+
+    private fun handleFoodCatalogClick(food: FoodCatalog)
+    {
+        updateState {
+            it.copy(
+                isManual = false,
+                selectedFoodCatalogId = food.id,
+                selectedCategoriesPerServing = food.caloriesPerServing,
+                selectedDefaultQuantity = food.defaultQuantity,
+                foodName = food.name,
+                quantity = food.defaultQuantity.toString().removeSuffix(".0"),
+                unit = food.unit,
+                calories = food.caloriesPerServing.toString(),
+                searchResults = emptyList(),
+                foodNameError = null,
+                quantityError = null,
+                caloriesError = null
+            )
         }
     }
 
@@ -102,10 +189,13 @@ class AddMealViewModel @Inject constructor(
 
         val newFood =
             TempFoodItem(
+                foodCatalogId = currentState.selectedFoodCatalogId,
                 foodName = foodName,
                 quantity = quantity ?: return,
                 unit = currentState.unit,
-                calories = calories ?: return
+                calories = calories ?: return,
+                caloriesPerServing = if (currentState.selectedFoodCatalogId != null) currentState.selectedCategoriesPerServing
+                else calories ?: return
             )
 
         val newAddedFoods = currentState.addedFoods + newFood

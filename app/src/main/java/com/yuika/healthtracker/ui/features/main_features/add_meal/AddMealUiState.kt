@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.add_meal
 
+import com.yuika.healthtracker.domain.model.FoodCatalog
 import com.yuika.healthtracker.ui.core.base.UiState
 import java.util.UUID
 
@@ -18,6 +19,12 @@ data class AddMealUiState(
     val addedFoods: List<TempFoodItem> = emptyList(),
     val totalCalories: Int = 0,
 
+    val isManual: Boolean = false,
+    val selectedFoodCatalogId: Int? = null,
+    val selectedCategoriesPerServing: Int = 0,
+    val selectedDefaultQuantity: Float = 1f,
+    val searchResults: List<FoodCatalog> = emptyList(),
+
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val isSuccess: Boolean = false
@@ -28,5 +35,7 @@ data class TempFoodItem(
     val foodName: String,
     val quantity: Float,
     val unit: String,
-    val calories: Int
+    val calories: Int,
+    val foodCatalogId: Int? = null,
+    val caloriesPerServing: Int = calories
 )

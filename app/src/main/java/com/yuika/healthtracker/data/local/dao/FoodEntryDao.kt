@@ -21,6 +21,9 @@ interface FoodEntryDao
     @Delete
     suspend fun deleteFoodEntry(entry: FoodEntryEntity)
 
+    @Query("DELETE FROM food_entries WHERE id = :id")
+    suspend fun deleteFoodEntryById(id: Int)
+
     @Query("SELECT * FROM food_entries WHERE userId = :userId AND dateText = :dateText AND mealType = :mealType ORDER BY timestamp ASC")
     fun getFoodEntriesByDateAndMealType(userId: Int, dateText: String, mealType: String): Flow<List<FoodEntryEntity>>
 

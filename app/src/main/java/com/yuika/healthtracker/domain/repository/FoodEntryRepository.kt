@@ -11,6 +11,8 @@ interface FoodEntryRepository
 
     suspend fun deleteFoodEntry(entry: FoodEntry)
 
+    suspend fun deleteFoodEntryById(id: Int)
+
     fun getFoodEntriesByDateAndMealType(userId: Int, dateText: String, mealType: String): Flow<List<FoodEntry>>
 
     fun getFoodEntriesByDate(userId: Int, dateText: String): Flow<List<FoodEntry>>

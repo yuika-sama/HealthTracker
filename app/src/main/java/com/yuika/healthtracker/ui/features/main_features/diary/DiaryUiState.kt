@@ -6,6 +6,7 @@ import java.time.LocalDate
 
 data class DiaryUiState(
     val isLoading: Boolean = false,
+
     val selectedDate: LocalDate = LocalDate.now(),
 
     val totalKcalGoal: Int = 0,
@@ -24,7 +25,16 @@ data class DiaryUiState(
     val dinnerTotalKcal: Int = 0,
     val snackTotalKcal: Int = 0,
 
-    val errorMessage: String? = null
-,
+    val selectedDetail: DiaryDetail? = null,
+
+    val errorMessage: String? = null,
     val isSuccess: Boolean = false
 ) : UiState
+
+
+data class DiaryDetail(
+    val title: String,
+    val foods: List<FoodItem>,
+    val totalKcal: Int,
+    val canDelete: Boolean,
+)

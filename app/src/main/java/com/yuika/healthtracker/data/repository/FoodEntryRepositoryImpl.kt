@@ -28,6 +28,11 @@ class FoodEntryRepositoryImpl @Inject constructor(
         foodEntryDao.deleteFoodEntry(entry.toEntity())
     }
 
+    override suspend fun deleteFoodEntryById(id: Int)
+    {
+        foodEntryDao.deleteFoodEntryById(id)
+    }
+
     override fun getFoodEntriesByDateAndMealType(
         userId: Int,
         dateText: String,

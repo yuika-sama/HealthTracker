@@ -3,6 +3,7 @@ package com.yuika.healthtracker.ui.features.main_features.diary
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,16 +16,20 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.WbSunny
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -47,7 +52,7 @@ import com.yuika.healthtracker.utils.DATE_FORMATTER
 fun DiaryScreen(
     modifier: Modifier = Modifier,
     viewModel: DiaryViewModel = hiltViewModel(),
-    onAddFoodClick: (String) -> Unit = {},
+    onAddFoodClick: (String, String) -> Unit = {_, _ ->},
     onTabClick: (String) -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
@@ -65,7 +70,7 @@ fun DiaryScreen(
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is DiaryEffect.NavigateToAddFood -> onAddFoodClick(effect.mealType)
+                    is DiaryEffect.NavigateToAddFood -> onAddFoodClick(effect.mealType, effect.dateText)
                 }
             }
         }
@@ -90,6 +95,38 @@ fun DiaryScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
+        state.selectedDetail?.let { detail ->
+            AlertDialog(
+                onDismissRequest = { viewModel.onIntent(DiaryIntent.DismissDetail) },
+                title = { Text(detail.title) },
+                text = {
+                    Column {
+                        detail.foods.forEach { food ->
+                            Text("${food.name} - ${food.description} - ${food.kcal} kcal")
+                        }
+                        Text("Total: ${detail.totalKcal} kcal", fontWeight = FontWeight.Bold)
+                    }
+                },
+                confirmButton = {
+                    if (detail.canDelete && detail.foods.isNotEmpty()) {
+                        TextButton(onClick = { viewModel.onIntent(DiaryIntent.DeleteFoodClick(detail.foods.first().id)) }) {
+                            Text("Delete")
+                        }
+                    } else {
+                        TextButton(onClick = { viewModel.onIntent(DiaryIntent.DismissDetail) }) {
+                            Text("OK")
+                        }
+                    }
+                },
+                dismissButton = {
+                    if (detail.canDelete) {
+                        TextButton(onClick = { viewModel.onIntent(DiaryIntent.DismissDetail) }) {
+                            Text("Cancel")
+                        }
+                    }
+                }
+            )
+        }
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
@@ -156,7 +193,9 @@ fun DiaryScreen(
                         totalKcal = state.breakfastTotalKcal,
                         icon = Icons.Outlined.WbSunny,
                         foods = state.breakfastFoods,
-                        onAddFoodClick = { viewModel.onIntent(DiaryIntent.AddFoodClick("Breakfast")) }
+                        onAddFoodClick = { viewModel.onIntent(DiaryIntent.AddFoodClick("Breakfast")) },
+                        onMealClick = {viewModel.onIntent(DiaryIntent.MealClick("Breakfast"))},
+                        onFoodClick = {viewModel.onIntent(DiaryIntent.FoodItemClick(it))}
                     )
                 }
 
@@ -167,7 +206,9 @@ fun DiaryScreen(
                         totalKcal = state.lunchTotalKcal,
                         icon = Icons.Outlined.WbSunny,
                         foods = state.lunchFoods,
-                        onAddFoodClick = { viewModel.onIntent(DiaryIntent.AddFoodClick("Lunch")) }
+                        onAddFoodClick = { viewModel.onIntent(DiaryIntent.AddFoodClick("Lunch")) },
+                        onMealClick = {viewModel.onIntent(DiaryIntent.MealClick("Lunch"))},
+                        onFoodClick = {viewModel.onIntent(DiaryIntent.FoodItemClick(it))}
                     )
                 }
 
@@ -178,7 +219,9 @@ fun DiaryScreen(
                         totalKcal = state.dinnerTotalKcal,
                         icon = Icons.Outlined.DarkMode,
                         foods = state.dinnerFoods,
-                        onAddFoodClick = { viewModel.onIntent(DiaryIntent.AddFoodClick("Dinner")) }
+                        onAddFoodClick = { viewModel.onIntent(DiaryIntent.AddFoodClick("Dinner")) },
+                        onMealClick = {viewModel.onIntent(DiaryIntent.MealClick("Dinner"))},
+                        onFoodClick = {viewModel.onIntent(DiaryIntent.FoodItemClick(it))}
                     )
                 }
 
@@ -189,7 +232,9 @@ fun DiaryScreen(
                         totalKcal = state.snackTotalKcal,
                         icon = Icons.Outlined.Coffee,
                         foods = state.snackFoods,
-                        onAddFoodClick = { viewModel.onIntent(DiaryIntent.AddFoodClick("Snack")) }
+                        onAddFoodClick = { viewModel.onIntent(DiaryIntent.AddFoodClick("Snack")) },
+                        onMealClick = {viewModel.onIntent(DiaryIntent.MealClick("Snack"))},
+                        onFoodClick = {viewModel.onIntent(DiaryIntent.FoodItemClick(it))}
                     )
                 }
             }

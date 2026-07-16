@@ -59,6 +59,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun AddMealScreen(
     modifier: Modifier = Modifier,
+    mealType: String,
+    dateText: String,
     viewModel: AddMealViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onSaveClick: () -> Unit = {}
@@ -69,14 +71,8 @@ fun AddMealScreen(
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    LaunchedEffect(Unit) {
-        viewModel.onIntent(
-            AddMealIntent.Init(
-                mealType = getMealIntentForCurrentTime(), dateText = LocalDate.now().format(
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                )
-            )
-        )
+    LaunchedEffect(mealType, dateText) {
+        viewModel.onIntent(AddMealIntent.Init(mealType, dateText = dateText))
     }
 
     LaunchedEffect(Unit) {
@@ -230,7 +226,9 @@ fun AddMealScreen(
                     onQuantityChange = { viewModel.onIntent(AddMealIntent.OnQuantityChange(it)) },
                     onUnitChange = { viewModel.onIntent(AddMealIntent.OnUnitChange(it)) },
                     onCaloriesChange = { viewModel.onIntent(AddMealIntent.OnCaloriesChange(it)) },
-                    onMealTypeChange = { viewModel.onIntent(AddMealIntent.OnMealTypeChange(it)) }
+                    onMealTypeChange = { viewModel.onIntent(AddMealIntent.OnMealTypeChange(it)) },
+                    onManualChange = {viewModel.onIntent(AddMealIntent.OnManualChange)},
+                    onFoodCatalogClick = {viewModel.onIntent(AddMealIntent.OnFoodCatalogClick(it))}
                 )
             }
 

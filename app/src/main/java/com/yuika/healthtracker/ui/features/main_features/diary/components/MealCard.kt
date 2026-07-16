@@ -32,6 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 data class FoodItem(
+    val id: Int,
+    val mealType: String,
     val name: String,
     val description: String,
     val kcal: Int
@@ -45,7 +47,9 @@ fun MealCard(
     totalKcal: Int,
     icon: ImageVector,
     foods: List<FoodItem> = emptyList(),
-    onAddFoodClick: () -> Unit = {}
+    onAddFoodClick: () -> Unit = {},
+    onMealClick: () -> Unit = {},
+    onFoodClick: (FoodItem) -> Unit = {}
 )
 {
     Column(
@@ -62,7 +66,7 @@ fun MealCard(
     ) {
         // Header
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().clickable{onMealClick()},
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -145,7 +149,7 @@ fun MealCard(
             ) {
                 foods.forEach { food ->
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().clickable{onFoodClick(food)},
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {

@@ -3,6 +3,7 @@ package com.yuika.healthtracker.ui.navigation
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.yuika.healthtracker.ui.features.auth.create_new_password.CreateNewPasswordScreen
 import com.yuika.healthtracker.ui.features.auth.forgot_password.ForgotPasswordScreen
 import com.yuika.healthtracker.ui.features.auth.login.LoginScreen
@@ -22,16 +23,19 @@ import com.yuika.healthtracker.ui.features.main_features.onboarding.page4.Onboar
 import com.yuika.healthtracker.ui.features.main_features.profile.ProfileScreen
 import com.yuika.healthtracker.ui.features.main_features.trends.TrendsScreen
 import com.yuika.healthtracker.ui.features.main_features.update_profile.UpdateProfileScreen
+import com.yuika.healthtracker.utils.getMealIntentForCurrentTime
+import java.time.LocalDate
 
-fun NavGraphBuilder.authNavGraph(appNavigator: AppNavigator){
-    composable<Route.Login>{
+fun NavGraphBuilder.authNavGraph(appNavigator: AppNavigator)
+{
+    composable<Route.Login> {
         val viewModel: LoginViewModel = hiltViewModel()
 
         LoginScreen(
             viewModel = viewModel,
             onNavigateToClientPage = {
-                appNavigator.navigate(Route.Dashboard){
-                    popUpTo(Route.Login){inclusive = true}
+                appNavigator.navigate(Route.Dashboard) {
+                    popUpTo(Route.Login) { inclusive = true }
                 }
             },
             onNavigateToRegister = {
@@ -42,7 +46,7 @@ fun NavGraphBuilder.authNavGraph(appNavigator: AppNavigator){
             }
         )
     }
-    composable<Route.Register>{
+    composable<Route.Register> {
         RegisterScreen(
             onNavigateToLogin = {
                 appNavigator.popBackStack()
@@ -52,7 +56,7 @@ fun NavGraphBuilder.authNavGraph(appNavigator: AppNavigator){
             }
         )
     }
-    composable<Route.ForgotPassword>{
+    composable<Route.ForgotPassword> {
         ForgotPasswordScreen(
             onBackToLoginClick = { appNavigator.popBackStack() },
             onSendCodeClick = { email ->
@@ -60,7 +64,7 @@ fun NavGraphBuilder.authNavGraph(appNavigator: AppNavigator){
             }
         )
     }
-    composable<Route.OtpVerify>{
+    composable<Route.OtpVerify> {
         OtpVerifyScreen(
             onNavigateToHome = {
                 appNavigator.navigate(Route.Onboarding1) {
@@ -73,7 +77,7 @@ fun NavGraphBuilder.authNavGraph(appNavigator: AppNavigator){
             onBackToLoginClick = { appNavigator.popBackStack() }
         )
     }
-    composable<Route.CreateNewPassword>{
+    composable<Route.CreateNewPassword> {
         CreateNewPasswordScreen(
             onResetPasswordClick = {
                 appNavigator.navigate(Route.PasswordChanged)
@@ -85,7 +89,7 @@ fun NavGraphBuilder.authNavGraph(appNavigator: AppNavigator){
             }
         )
     }
-    composable<Route.PasswordChanged>{
+    composable<Route.PasswordChanged> {
         PasswordChangedScreen(
             onBackToLoginClick = {
                 appNavigator.navigate(Route.Login) {
@@ -96,28 +100,29 @@ fun NavGraphBuilder.authNavGraph(appNavigator: AppNavigator){
     }
 }
 
-fun NavGraphBuilder.onboardingNavGraph(appNavigator: AppNavigator){
-    composable<Route.Onboarding1>{
+fun NavGraphBuilder.onboardingNavGraph(appNavigator: AppNavigator)
+{
+    composable<Route.Onboarding1> {
         OnboardingPage1Screen(
             onNavigateNext = { appNavigator.navigate(Route.Onboarding2) },
             onNavigateBack = { appNavigator.popBackStack() }
         )
     }
-    composable<Route.Onboarding2>{
+    composable<Route.Onboarding2> {
         OnboardingPage2Screen(
             onNavigateNext = { appNavigator.navigate(Route.Onboarding3) },
             onNavigateBack = { appNavigator.popBackStack() }
         )
     }
-    composable<Route.Onboarding3>{
+    composable<Route.Onboarding3> {
         OnboardingPage3Screen(
             onNavigateNext = { appNavigator.navigate(Route.Onboarding4) },
             onNavigateBack = { appNavigator.popBackStack() }
         )
     }
-    composable<Route.Onboarding4>{
+    composable<Route.Onboarding4> {
         OnboardingPage4Screen(
-            onNavigateNext = { 
+            onNavigateNext = {
                 appNavigator.navigate(Route.Dashboard) {
                     popUpTo(Route.Onboarding1) { inclusive = true }
                 }
@@ -127,9 +132,11 @@ fun NavGraphBuilder.onboardingNavGraph(appNavigator: AppNavigator){
     }
 }
 
-fun NavGraphBuilder.mainNavGraph(appNavigator: AppNavigator){
+fun NavGraphBuilder.mainNavGraph(appNavigator: AppNavigator)
+{
     val handleTabClick: (String) -> Unit = { tab ->
-        val targetRoute = when (tab) {
+        val targetRoute = when (tab)
+        {
             "home" -> Route.Dashboard
             "diary" -> Route.Diary
             "activity" -> Route.Activity
@@ -146,49 +153,59 @@ fun NavGraphBuilder.mainNavGraph(appNavigator: AppNavigator){
         }
     }
 
-    composable<Route.Dashboard>{
+    composable<Route.Dashboard> {
         DashboardScreen(
-            onAddMealClick = { appNavigator.navigate(Route.AddMeal) },
+            onAddMealClick = {
+                appNavigator.navigate(
+                    Route.AddMeal(
+                        getMealIntentForCurrentTime(),
+                        LocalDate.now().toString()
+                    )
+                )
+            },
             onAddActivityClick = { appNavigator.navigate(Route.AddActivity) },
             onTabClick = handleTabClick
         )
     }
 
-    composable<Route.Diary>{
+    composable<Route.Diary> {
         DiaryScreen(
-            onAddFoodClick = { mealType ->
-                appNavigator.navigate(Route.AddMeal)
+            onAddFoodClick = { mealType, dateText ->
+                appNavigator.navigate(Route.AddMeal(mealType, dateText))
             },
             onTabClick = handleTabClick
         )
     }
-    composable<Route.AddMeal>{
+    composable<Route.AddMeal> {
+        val route = it.toRoute<Route.AddMeal>()
         AddMealScreen(
+            mealType = route.mealType,
+            dateText = route.dateText,
             onBackClick = { appNavigator.popBackStack() },
             onSaveClick = { appNavigator.popBackStack() }
         )
     }
 
-    composable<Route.Activity>{
+    composable<Route.Activity> {
         ActivityScreen(
             onAddActivityClick = { appNavigator.navigate(Route.AddActivity) },
             onTabClick = handleTabClick
         )
     }
-    composable<Route.AddActivity>{
+    composable<Route.AddActivity> {
         AddActivityScreen(
             onBackClick = { appNavigator.popBackStack() },
             onSaveClick = { appNavigator.popBackStack() }
         )
     }
 
-    composable<Route.Trends>{
+    composable<Route.Trends> {
         TrendsScreen(
             onTabClick = handleTabClick
         )
     }
 
-    composable<Route.Profile>{
+    composable<Route.Profile> {
         ProfileScreen(
             onLogoutClick = {
                 appNavigator.navigate(Route.Login) {
@@ -201,7 +218,7 @@ fun NavGraphBuilder.mainNavGraph(appNavigator: AppNavigator){
             onTabClick = handleTabClick
         )
     }
-    composable<Route.ProfileUpdate>{
+    composable<Route.ProfileUpdate> {
         UpdateProfileScreen(
             onBackClick = { appNavigator.popBackStack() }
         )

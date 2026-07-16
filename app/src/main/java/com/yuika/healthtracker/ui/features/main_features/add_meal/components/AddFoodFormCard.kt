@@ -39,6 +39,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.domain.model.FoodCatalog
+import com.yuika.healthtracker.ui.features.main_features.add_meal.AddMealIntent
 import com.yuika.healthtracker.ui.features.main_features.add_meal.AddMealUiState
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.ErrorRed
@@ -51,7 +53,9 @@ fun AddFoodFormCard(
     onQuantityChange: (String) -> Unit,
     onUnitChange: (String) -> Unit,
     onCaloriesChange: (String) -> Unit,
-    onMealTypeChange: (String) -> Unit
+    onMealTypeChange: (String) -> Unit,
+    onManualChange: () -> Unit,
+    onFoodCatalogClick: (FoodCatalog) -> Unit
 ) {
     var unitExpanded by rememberSaveable() { mutableStateOf(false) }
     val units = listOf("Plate (Med)", "Bowl (Smol)", "Serving", "Gram")
@@ -159,8 +163,8 @@ fun AddFoodFormCard(
             modifier = Modifier.fillMaxWidth()
         ) {
             Checkbox(
-                checked = isManual,
-                onCheckedChange = { isManual = it },
+                checked = state.isManual,
+                onCheckedChange = {onManualChange()},
                 colors = CheckboxDefaults.colors(checkedColor = Emerald)
             )
             Text(
@@ -168,6 +172,28 @@ fun AddFoodFormCard(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
             )
+        }
+
+        if (!state.isManual && state.searchResults.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.15f), RoundedCornerShape(12.dp))
+            ) {
+                state.searchResults.forEach { food ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onFoodCatalogClick(food) }
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(food.name, fontWeight = FontWeight.Medium)
+                        Text("${food.caloriesPerServing} kcal / ${food.defaultQuantity} ${food.unit}")
+                    }
+                }
+            }
         }
 
         Box(

@@ -19,7 +19,7 @@ sealed interface Route
     @Serializable object Dashboard: Route
 
     @Serializable object Diary: Route
-    @Serializable object AddMeal: Route
+    @Serializable data class AddMeal(val mealType: String, val dateText: String): Route
 
     @Serializable object Activity: Route
     @Serializable object AddActivity: Route

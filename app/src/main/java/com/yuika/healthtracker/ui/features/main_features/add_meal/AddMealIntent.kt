@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.add_meal
 
+import com.yuika.healthtracker.domain.model.FoodCatalog
 import com.yuika.healthtracker.ui.core.base.UiIntent
 
 sealed class AddMealIntent : UiIntent
@@ -11,6 +12,9 @@ sealed class AddMealIntent : UiIntent
     data class OnCaloriesChange(val calories: String): AddMealIntent()
 
     data class OnMealTypeChange(val mealType: String) : AddMealIntent()
+
+    object OnManualChange : AddMealIntent()
+    data class OnFoodCatalogClick(val food: FoodCatalog) : AddMealIntent()
 
     object OnAddFoodClick: AddMealIntent()
     data class OnRemoveFoodClick(val id: String): AddMealIntent()

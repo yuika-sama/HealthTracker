@@ -43,13 +43,14 @@ class ValidateAndSaveMealUseCase @Inject constructor(
         currentFoods.forEach { tempFood ->
             val entry = FoodEntry(
                 userId = user.id,
+                foodCatalogId = tempFood.foodCatalogId,
                 dateText = dateText,
                 mealType = mealType,
                 foodName = tempFood.foodName,
                 quantity = tempFood.quantity,
                 unit = tempFood.unit,
                 calories = tempFood.calories,
-                caloriesPerServing = tempFood.calories,
+                caloriesPerServing = tempFood.caloriesPerServing,
                 imagePath = null
             )
             saveFoodEntryUseCase(entry)
