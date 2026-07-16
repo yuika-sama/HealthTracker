@@ -63,7 +63,7 @@ fun NavGraphBuilder.authNavGraph(appNavigator: AppNavigator){
     composable<Route.OtpVerify>{
         OtpVerifyScreen(
             onNavigateToHome = {
-                appNavigator.navigate(Route.Dashboard) {
+                appNavigator.navigate(Route.Onboarding1) {
                     popUpTo(Route.Login) { inclusive = true }
                 }
             },

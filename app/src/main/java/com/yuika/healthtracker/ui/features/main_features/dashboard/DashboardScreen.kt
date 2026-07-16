@@ -156,6 +156,25 @@ fun DashboardScreen(
                 ) {
                     StatCard(
                         modifier = Modifier.weight(1f),
+                        title = "TDEE",
+                        value = "${state.intakeCalories}",
+                        icon = Icons.Outlined.LocalFireDepartment,
+                        iconTint = EnergyAmber,
+                        iconBgColor = EnergyAmber.copy(alpha = 0.15f)
+                    )
+
+                    StatCard(
+                        modifier = Modifier.weight(1f),
+                        title = "BMI",
+                        value = "${state.bmi}",
+                        unit = state.bmiCategory.ifBlank { null },
+                        icon = Icons.Outlined.Balance,
+                        iconTint = InfoBlue,
+                        iconBgColor = InfoBlue.copy(alpha = 0.15f)
+                    )
+
+                    StatCard(
+                        modifier = Modifier.weight(1f),
                         title = "Intake",
                         value = "${state.intakeCalories}",
                         icon = Icons.Outlined.LocalDining,

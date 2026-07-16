@@ -70,7 +70,7 @@ fun UpdateProfileForm(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             SegmentedSelector(
-                options = listOf("Male", "Female"),
+                options = listOf("Male", "Female", "Other"),
                 selectedOption = state.gender,
                 onOptionSelected = { onIntent(UpdateProfileIntent.UpdateGender(it)) }
             )

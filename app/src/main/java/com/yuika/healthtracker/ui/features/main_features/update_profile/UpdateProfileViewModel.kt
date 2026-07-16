@@ -7,6 +7,7 @@ import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class UpdateProfileViewModel @Inject constructor(
@@ -29,7 +30,12 @@ class UpdateProfileViewModel @Inject constructor(
             is UpdateProfileIntent.UpdateGender -> updateState { it.copy(gender = intent.gender) }
             is UpdateProfileIntent.UpdateWeight -> updateState { it.copy(weight = intent.weight) }
             is UpdateProfileIntent.UpdateHeight -> updateState { it.copy(height = intent.height) }
-            is UpdateProfileIntent.UpdateActivityLevel -> updateState { it.copy(activityLevel = intent.level) }
+            is UpdateProfileIntent.UpdateActivityLevel -> updateState {
+                it.copy(
+                    activityLevel = intent.level.roundToInt().coerceIn(1, 5).toFloat()
+                )
+            }
+
             is UpdateProfileIntent.UpdateGoal -> updateState { it.copy(goal = intent.goal) }
             is UpdateProfileIntent.SaveProfile -> handleSaveProfile()
         }

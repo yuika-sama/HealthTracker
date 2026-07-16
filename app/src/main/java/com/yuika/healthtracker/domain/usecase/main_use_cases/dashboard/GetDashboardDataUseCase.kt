@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 data class DashboardData(
     val userName: String,
@@ -17,7 +18,10 @@ data class DashboardData(
     val burnedCalories: Int,
     val netBalance: Int,
     val goalCalories: Int,
-    val remainingCalories: Int
+    val remainingCalories: Int,
+    val tdeeCalories: Int,
+    val bmi: String,
+    val bmiCategory: String
 )
 
 class GetDashboardDataUseCase @Inject constructor(
@@ -35,7 +39,10 @@ class GetDashboardDataUseCase @Inject constructor(
                 val stats = calculateUserStatsUseCase(user)
                 val intakeFlow = getTotalIntakeCaloriesUseCase(user.id, dbDateText)
                 val burnedFlow = getTotalBurnedCaloriesUseCase(user.id, dbDateText)
-                
+                val tdeeCalories = stats.tdee.roundToInt()
+                val bmi = String().format("%.1f", stats.bmi).replace(',', '.')
+                val bmiCategory = stats.bmiCategory
+
                 combine(intakeFlow, burnedFlow) { intake: Int?, burned: Int? ->
                     val safeIntake = intake ?: 0
                     val safeBurned = burned ?: 0
@@ -48,7 +55,10 @@ class GetDashboardDataUseCase @Inject constructor(
                         burnedCalories = safeBurned,
                         netBalance = net,
                         goalCalories = stats.goalKcal,
-                        remainingCalories = remaining
+                        remainingCalories = remaining,
+                        tdeeCalories = tdeeCalories,
+                        bmi = bmi,
+                        bmiCategory = bmiCategory
                     )
                 }
             }

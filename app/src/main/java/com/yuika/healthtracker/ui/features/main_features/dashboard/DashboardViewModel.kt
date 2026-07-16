@@ -3,10 +3,8 @@ package com.yuika.healthtracker.ui.features.main_features.dashboard
 import com.yuika.healthtracker.domain.usecase.main_use_cases.dashboard.FormatDashboardDateUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.dashboard.GetDashboardDataUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
-import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
@@ -63,7 +61,6 @@ class DashboardViewModel @Inject constructor(
                     }
                     return@collectLatest
                 }
-                delay(NETWORK_DELAY.toLong())
                 updateState {
                     it.copy(
                         isLoading = false,
@@ -73,6 +70,9 @@ class DashboardViewModel @Inject constructor(
                         netBalance = dashboardData.netBalance,
                         goalCalories = dashboardData.goalCalories,
                         remainingCalories = dashboardData.remainingCalories,
+                        tdeeCalories = dashboardData.tdeeCalories,
+                        bmi = dashboardData.bmi,
+                        bmiCategory = dashboardData.bmiCategory,
                         errorMessage = null,
                         isSuccess = true
                     )
