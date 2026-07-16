@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -19,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.ui.core.components.SegmentedSelector
 import com.yuika.healthtracker.ui.core.components.OutlinedDropdownField
@@ -54,13 +52,13 @@ fun UpdateProfileForm(
         )
 
         OutlinedTextField(
-            value = state.age,
-            onValueChange = { onIntent(UpdateProfileIntent.UpdateAge(it)) },
-            label = { Text("Age") },
+            value = state.dateOfBirth,
+            onValueChange = { onIntent(UpdateProfileIntent.UpdateDateOfBirth(it)) },
+            label = { Text("Date of birth") },
+            placeholder = { Text("yyyy-MM-dd") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             enabled = !state.isSaving,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = textFieldColors()
         )
 
@@ -88,7 +86,6 @@ fun UpdateProfileForm(
                 label = { Text("Weight") },
                 suffix = { Text("kg") },
                 modifier = Modifier.weight(1f),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 enabled = !state.isSaving,
                 colors = textFieldColors()
@@ -100,7 +97,6 @@ fun UpdateProfileForm(
                 label = { Text("Height") },
                 suffix = { Text("cm") },
                 modifier = Modifier.weight(1f),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 enabled = !state.isSaving,
                 colors = textFieldColors()

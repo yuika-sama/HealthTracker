@@ -5,7 +5,7 @@ import com.yuika.healthtracker.ui.core.base.UiState
 data class OnboardingPage1UiState( 
     val isLoading: Boolean = false,
     val name: String = "",
-    val age: String = "",
+    val dateOfBirth: String = "",
     val gender: String = "Male",
     val weight: String = "",
     val height: String = "",

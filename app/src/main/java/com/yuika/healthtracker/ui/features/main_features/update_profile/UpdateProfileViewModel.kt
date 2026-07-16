@@ -25,7 +25,7 @@ class UpdateProfileViewModel @Inject constructor(
         {
             is UpdateProfileIntent.LoadProfile -> handleLoadProfile()
             is UpdateProfileIntent.UpdateName -> updateState { it.copy(name = intent.name) }
-            is UpdateProfileIntent.UpdateAge -> updateState { it.copy(age = intent.age) }
+            is UpdateProfileIntent.UpdateDateOfBirth -> updateState { it.copy(dateOfBirth = intent.dateOfBirth) }
             is UpdateProfileIntent.UpdateGender -> updateState { it.copy(gender = intent.gender) }
             is UpdateProfileIntent.UpdateWeight -> updateState { it.copy(weight = intent.weight) }
             is UpdateProfileIntent.UpdateHeight -> updateState { it.copy(height = intent.height) }
@@ -54,7 +54,7 @@ class UpdateProfileViewModel @Inject constructor(
                         id = formData.id,
                         email = formData.email,
                         name = formData.name,
-                        age = formData.age,
+                        dateOfBirth = formData.dateOfBirth,
                         gender = formData.gender,
                         weight = formData.weight,
                         height = formData.height,
@@ -98,7 +98,7 @@ class UpdateProfileViewModel @Inject constructor(
                 email = currentState.email,
                 passwordHash = currentPasswordHash,
                 name = currentState.name,
-                ageStr = currentState.age,
+                dateOfBirth = currentState.dateOfBirth,
                 gender = currentState.gender,
                 weightStr = currentState.weight,
                 heightStr = currentState.height,

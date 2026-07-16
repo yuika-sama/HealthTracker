@@ -19,21 +19,28 @@ data class ProfileData(
 class GetProfileDataUseCase @Inject constructor(
     private val getLatestUserUseCase: GetLatestUserUseCase,
     private val calculateUserStatsUseCase: CalculateUserStatsUseCase
-) {
-    operator fun invoke(): Flow<ProfileData?> {
+)
+{
+    operator fun invoke(): Flow<ProfileData?>
+    {
         return getLatestUserUseCase().map { user ->
-            if (user == null) {
+            if (user == null)
+            {
                 null
-            } else {
+            }
+            else
+            {
                 val stats = calculateUserStatsUseCase(user)
-                
-                val goalTitle = when (user.goal) {
+
+                val goalTitle = when (user.goal)
+                {
                     "lose_weight" -> "Lose weight"
                     "gain_weight" -> "Gain weight"
                     else -> "Maintain weight"
                 }
-                
-                val activityStr = when (user.activityLevel) {
+
+                val activityStr = when (user.activityLevel)
+                {
                     "sedentary" -> "Sedentary"
                     "lightly_active" -> "Lightly active"
                     "moderately_active" -> "Moderately active"
@@ -41,15 +48,19 @@ class GetProfileDataUseCase @Inject constructor(
                     "extra_active" -> "Extra active"
                     else -> "Active"
                 }
-                
-                val goalDesc = "$goalTitle. Gain goal: ${String.format("%,d", stats.goalKcal).replace(',', '.')} kcal per day."
-                
+
+                val goalDesc = "$goalTitle. Gain goal: ${
+                    String.format("%,d", stats.goalKcal).replace(',', '.')
+                } kcal per day."
+
                 ProfileData(
                     name = user.name,
                     subtitle = activityStr,
                     weight = "${user.weight} kg",
                     height = "${user.height} cm",
-                    bmi = String.format("%.1f", stats.bmi).replace(',', '.'),
+                    bmi = "${
+                        String.format("%.1f", stats.bmi).replace(',', '.')
+                    } (${stats.bmiCategory})",
                     goalTitle = "Current goal",
                     goalDescription = goalDesc
                 )

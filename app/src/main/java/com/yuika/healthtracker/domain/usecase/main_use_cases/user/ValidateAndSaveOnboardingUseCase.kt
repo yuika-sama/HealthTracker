@@ -11,22 +11,19 @@ class ValidateAndSaveOnboardingUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         name: String,
-        ageStr: String,
+        dateOfBirth: String,
         gender: String,
         weightStr: String,
         heightStr: String
     ) {
         val trimmedName = name.trim()
-        if (trimmedName.isBlank() || ageStr.isBlank() || weightStr.isBlank() || heightStr.isBlank()) {
+        if (trimmedName.isBlank() || dateOfBirth.isBlank() || weightStr.isBlank() || heightStr.isBlank()) {
             throw IllegalArgumentException("Please let me know your infomation.")
         }
 
-        val ageValue = ageStr.toIntOrNull()
+        val (validDateOfBirth, ageValue) = validateDateOfBirth(dateOfBirth)
         val weightValue = weightStr.toDoubleOrNull()
         val heightValue = heightStr.toDoubleOrNull()
-        if (ageValue == null || ageValue !in 10..120) {
-            throw IllegalArgumentException("Age must be between 10 and 120")
-        }
         if (weightValue == null || weightValue !in 20.0..300.0) {
             throw IllegalArgumentException("Weight must be between 20 and 300 kg")
         }
@@ -41,6 +38,7 @@ class ValidateAndSaveOnboardingUseCase @Inject constructor(
         if (user != null) {
             val updatedUser = user.copy(
                 name = trimmedName,
+                dateOfBirth = validDateOfBirth,
                 age = ageValue,
                 gender = gender,
                 weight = weightValue,
@@ -52,6 +50,7 @@ class ValidateAndSaveOnboardingUseCase @Inject constructor(
                 email = "dummy@example.com",
                 password = "dummy",
                 name = trimmedName,
+                dateOfBirth = validDateOfBirth,
                 age = ageValue,
                 gender = gender,
                 weight = weightValue,

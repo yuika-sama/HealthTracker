@@ -14,7 +14,7 @@ class OnboardingPage1ViewModel @Inject constructor(
     override fun onIntent(intent: OnboardingPage1Intent) {
         when (intent) {
             is OnboardingPage1Intent.NameChanged -> updateState { it.copy(name = intent.name, errorMessage = null) }
-            is OnboardingPage1Intent.AgeChanged -> updateState { it.copy(age = intent.age, errorMessage = null) }
+            is OnboardingPage1Intent.DateOfBirthChanged -> updateState { it.copy(dateOfBirth = intent.dateOfBirth, errorMessage = null) }
             is OnboardingPage1Intent.GenderChanged -> updateState { it.copy(gender = intent.gender, errorMessage = null) }
             is OnboardingPage1Intent.WeightChanged -> updateState { it.copy(weight = intent.weight, errorMessage = null) }
             is OnboardingPage1Intent.HeightChanged -> updateState { it.copy(height = intent.height, errorMessage = null) }
@@ -35,7 +35,7 @@ class OnboardingPage1ViewModel @Inject constructor(
         ) {
             validateAndSaveOnboardingUseCase(
                 name = currentState.name,
-                ageStr = currentState.age,
+                dateOfBirth = currentState.dateOfBirth,
                 gender = currentState.gender,
                 weightStr = currentState.weight,
                 heightStr = currentState.height

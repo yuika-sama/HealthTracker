@@ -6,7 +6,7 @@ data class UpdateProfileUiState(
     val id: Int = 0,
     val email: String = "",
     val name: String = "",
-    val age: String = "",
+    val dateOfBirth: String = "",
     val gender: String = "Male",
     val weight: String = "",
     val height: String = "",

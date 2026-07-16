@@ -21,8 +21,8 @@ class RegisterViewModel @Inject constructor(
                 it.copy(email = intent.email, emailError = null, errorMessage = null, isSuccess = false)
             }
 
-            is RegisterIntent.AgeChanged -> updateState {
-                it.copy(age = intent.age, ageError = null, errorMessage = null, isSuccess = false)
+            is RegisterIntent.DateOfBirthChanged -> updateState {
+                it.copy(dateOfBirth = intent.dateOfBirth, dateOfBirthError = null, errorMessage = null, isSuccess = false)
             }
 
             is RegisterIntent.PasswordChanged -> updateState {
@@ -67,7 +67,7 @@ class RegisterViewModel @Inject constructor(
                 errorMessage = null,
                 emailError = null,
                 fullNameError = null,
-                ageError = null,
+                dateOfBirthError = null,
                 passwordError = null,
                 confirmPasswordError = null,
                 isSuccess = false
@@ -89,7 +89,7 @@ class RegisterViewModel @Inject constructor(
             validateAndRegisterUseCase(
                 fullName = currentState.fullName,
                 email = currentState.email,
-                age = currentState.age,
+                dateOfBirth = currentState.dateOfBirth,
                 password = currentState.password,
                 confirmPassword = currentState.confirmPassword
             )

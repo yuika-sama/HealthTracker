@@ -1,6 +1,7 @@
 package com.yuika.healthtracker.domain.usecase.auth_use_cases
 
 import android.util.Patterns
+import com.yuika.healthtracker.domain.usecase.main_use_cases.user.validateDateOfBirth
 import com.yuika.healthtracker.utils.PASSWORD_REGEX
 import javax.inject.Inject
 
@@ -11,14 +12,13 @@ class ValidateAndRegisterUseCase @Inject constructor(
     suspend operator fun invoke(
         fullName: String,
         email: String,
-        age: String,
+        dateOfBirth: String,
         password: String,
         confirmPassword: String
     )
     {
         val trimmedName = fullName.trim()
         val trimmedEmail = email.trim()
-        val ageInt = age.toIntOrNull()
 
         if (trimmedName.isBlank()) {
             throw IllegalArgumentException("Name would not be blank")
@@ -29,12 +29,10 @@ class ValidateAndRegisterUseCase @Inject constructor(
         if (!Patterns.EMAIL_ADDRESS.matcher(trimmedEmail).matches()) {
             throw IllegalArgumentException("Email format is invalid")
         }
-        if (age.isBlank()) {
-            throw IllegalArgumentException("Age would not be blank")
+        if (dateOfBirth.isBlank()) {
+            throw IllegalArgumentException("Date of birth would not be blank")
         }
-        if (ageInt == null || ageInt !in 10..120) {
-            throw IllegalArgumentException("Please enter a valid age (10-120)")
-        }
+        val validDateOfBirth = validateDateOfBirth(dateOfBirth).first
         if (password.isBlank()) {
             throw IllegalArgumentException("Password would not be blank")
         }
@@ -54,7 +52,7 @@ class ValidateAndRegisterUseCase @Inject constructor(
         registerUseCase(
             fullName = trimmedName,
             email = trimmedEmail,
-            age = age,
+            dateOfBirth = validDateOfBirth,
             password = password
         )
     }

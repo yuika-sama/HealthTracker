@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.CheckBoxOutlineBlank
@@ -27,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.ui.core.components.LabeledField
 import com.yuika.healthtracker.ui.core.components.LabeledPasswordField
@@ -91,12 +89,11 @@ fun RegisterForm(
             Spacer(modifier = Modifier.height(spacing.medium))
 
             LabeledField(
-                value = state.age,
-                onValueChange = { onIntent(RegisterIntent.AgeChanged(it)) },
-                label = "Age",
-                placeholder = "25",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                supportingText = state.ageError,
+                value = state.dateOfBirth,
+                onValueChange = { onIntent(RegisterIntent.DateOfBirthChanged(it)) },
+                label = "Date of birth",
+                placeholder = "yyyy-MM-dd",
+                supportingText = state.dateOfBirthError,
                 enabled = !state.isLoading,
                 leadingIcon = {
                     Icon(

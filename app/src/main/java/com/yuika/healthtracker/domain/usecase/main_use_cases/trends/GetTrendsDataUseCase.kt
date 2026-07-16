@@ -33,9 +33,11 @@ class GetTrendsDataUseCase @Inject constructor(
     private val getFoodEntriesByDateRangeUseCase: GetFoodEntriesByDateRangeUseCase,
     private val getActivitiesByDateRangeUseCase: GetActivitiesByDateRangeUseCase,
     private val calculateUserStatsUseCase: CalculateUserStatsUseCase
-) {
+)
+{
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(period: String): Flow<TrendsData?> {
+    operator fun invoke(period: String): Flow<TrendsData?>
+    {
         val endDate = LocalDate.now()
         val daysToSubtract = if (period == "Week") 6L else 29L
 
@@ -46,13 +48,19 @@ class GetTrendsDataUseCase @Inject constructor(
         val totalDays = (daysToSubtract + 1).toInt()
 
         return getLatestUserUseCase().flatMapLatest { user ->
-            if (user == null) {
+            if (user == null)
+            {
                 flowOf<TrendsData?>(null)
-            } else {
+            }
+            else
+            {
                 val foodFlow = getFoodEntriesByDateRangeUseCase(user.id, startStr, endStr)
                 val activityFlow = getActivitiesByDateRangeUseCase(user.id, startStr, endStr)
 
-                combine(foodFlow, activityFlow) { foodEntries: List<FoodEntry>, activities: List<Activity> ->
+                combine(
+                    foodFlow,
+                    activityFlow
+                ) { foodEntries: List<FoodEntry>, activities: List<Activity> ->
                     val totalIntake = foodEntries.sumOf { it.calories }
                     val avgIntake = if (totalDays > 0) totalIntake / totalDays else 0
 
@@ -70,18 +78,24 @@ class GetTrendsDataUseCase @Inject constructor(
                     val netCaloriesChartData = mutableListOf<TrendsChartDataPoint>()
 
                     var currentDay = startDate
-                    while (!currentDay.isAfter(endDate)) {
+                    while (!currentDay.isAfter(endDate))
+                    {
                         val dateKey = currentDay.toString()
                         val dayIntake = intakeByDate[dateKey]?.sumOf { it.calories } ?: 0
                         val dayBurn = burnByDate[dateKey]?.sumOf { it.kcalBurned } ?: 0
 
-                        if (dayIntake > 0 && dayIntake <= goalKcal + 200) {
+                        if (dayIntake > 0 && dayIntake <= goalKcal + 200)
+                        {
                             daysMeetingGoal++
                         }
 
-                        val label = if (period == "Week") {
-                            currentDay.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
-                        } else {
+                        val label = if (period == "Week")
+                        {
+                            currentDay.dayOfWeek.name.take(3).lowercase()
+                                .replaceFirstChar { it.uppercase() }
+                        }
+                        else
+                        {
                             "${currentDay.dayOfMonth}/${currentDay.monthValue}"
                         }
 

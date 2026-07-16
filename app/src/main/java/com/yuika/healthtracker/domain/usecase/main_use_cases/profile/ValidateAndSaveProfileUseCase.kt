@@ -1,6 +1,7 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.profile
 
 import com.yuika.healthtracker.domain.model.User
+import com.yuika.healthtracker.domain.usecase.main_use_cases.user.validateDateOfBirth
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.UpdateUserUseCase
 import javax.inject.Inject
 
@@ -12,7 +13,7 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
         email: String,
         passwordHash: String,
         name: String,
-        ageStr: String,
+        dateOfBirth: String,
         gender: String,
         weightStr: String,
         heightStr: String,
@@ -22,19 +23,16 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
         createdAt: Long
     ) {
         val trimmedName = name.trim()
-        if (trimmedName.isBlank() || ageStr.isBlank() || weightStr.isBlank() || heightStr.isBlank()) {
+        if (trimmedName.isBlank() || dateOfBirth.isBlank() || weightStr.isBlank() || heightStr.isBlank()) {
             throw IllegalArgumentException("Please fill in your name")
         }
 
-        val ageInt = ageStr.toIntOrNull()
+        val (validDateOfBirth, ageInt) = validateDateOfBirth(dateOfBirth)
         val weightDouble = weightStr.toDoubleOrNull()
         val heightDouble = heightStr.toDoubleOrNull()
 
-        if (ageInt == null || weightDouble == null || heightDouble == null) {
-            throw IllegalArgumentException("Age, weight and height must be a valid number")
-        }
-        if (ageInt !in 10..120) {
-            throw IllegalArgumentException("Age must be between 10 and 120")
+        if (weightDouble == null || heightDouble == null) {
+            throw IllegalArgumentException("Weight and height must be a valid number")
         }
         if (weightDouble !in 20.0..300.0) {
             throw IllegalArgumentException("Weight must be between 20 and 300 kg")
@@ -70,6 +68,7 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
             email = email,
             password = passwordHash,
             name = trimmedName,
+            dateOfBirth = validDateOfBirth,
             age = ageInt,
             gender = gender,
             weight = weightDouble,
