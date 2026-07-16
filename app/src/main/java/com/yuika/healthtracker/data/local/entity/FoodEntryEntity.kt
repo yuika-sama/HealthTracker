@@ -24,12 +24,15 @@ import androidx.room.PrimaryKey
 data class FoodEntryEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val userId: Int = 0,
+    val foodCatalogId: Int? = null,
     val dateText: String,
     val mealType: String,
     val foodName: String,
     val quantity: Float,
     val unit: String,
+    val caloriesPerServing: Int,
     val calories: Int,
     val imagePath: String?,
+    val note: String? = null,
     val timestamp: Long = System.currentTimeMillis()
 )

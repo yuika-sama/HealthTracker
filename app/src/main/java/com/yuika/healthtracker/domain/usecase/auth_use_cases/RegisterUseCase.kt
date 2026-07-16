@@ -2,6 +2,7 @@ package com.yuika.healthtracker.domain.usecase.auth_use_cases
 
 import com.yuika.healthtracker.domain.model.User
 import com.yuika.healthtracker.domain.repository.UserRepository
+import com.yuika.healthtracker.domain.usecase.main_use_cases.catalog.EnsureUserCatalogSeedUseCase
 import com.yuika.healthtracker.utils.MOCK_ERROR_LOGIN_EMAIL
 import com.yuika.healthtracker.utils.NETWORK_DELAY
 import kotlinx.coroutines.delay
@@ -9,7 +10,8 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 class RegisterUseCase @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val ensureUserCatalogSeedUseCase: EnsureUserCatalogSeedUseCase
 )
 {
     suspend operator fun invoke(fullName: String, email: String, age: String, password: String) {
@@ -22,19 +24,20 @@ class RegisterUseCase @Inject constructor(
             throw Exception("Email already exists")
         }
 
-        userRepository.insertUser(
-            User(
-                email = email,
-                password = password,
-                name = fullName,
-                age = age.toIntOrNull() ?: 18,
-                gender = "Other",
-                height = 0.0,
-                weight = 0.0,
-                activityLevel = "None",
-                goal = "None",
-                avatarPath = null
-            )
+        val user = User(
+            email = email,
+            password = password,
+            name = fullName,
+            age = age.toIntOrNull() ?: 18,
+            gender = "Other",
+            height = 0.0,
+            weight = 0.0,
+            activityLevel = "None",
+            goal = "None",
+            avatarPath = null
         )
+
+        val userId = userRepository.insertUser(user).toInt()
+        ensureUserCatalogSeedUseCase(userId)
     }
 }

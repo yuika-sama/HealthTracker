@@ -1,9 +1,12 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.trends
 
+import com.yuika.healthtracker.domain.model.Activity
+import com.yuika.healthtracker.domain.model.FoodEntry
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.GetActivitiesByDateRangeUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.GetFoodEntriesByDateRangeUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.CalculateUserStatsUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -31,6 +34,7 @@ class GetTrendsDataUseCase @Inject constructor(
     private val getActivitiesByDateRangeUseCase: GetActivitiesByDateRangeUseCase,
     private val calculateUserStatsUseCase: CalculateUserStatsUseCase
 ) {
+    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(period: String): Flow<TrendsData?> {
         val endDate = LocalDate.now()
         val daysToSubtract = if (period == "Week") 6L else 29L
@@ -43,12 +47,12 @@ class GetTrendsDataUseCase @Inject constructor(
 
         return getLatestUserUseCase().flatMapLatest { user ->
             if (user == null) {
-                flowOf(null)
+                flowOf<TrendsData?>(null)
             } else {
                 val foodFlow = getFoodEntriesByDateRangeUseCase(user.id, startStr, endStr)
                 val activityFlow = getActivitiesByDateRangeUseCase(user.id, startStr, endStr)
 
-                combine(foodFlow, activityFlow) { foodEntries, activities ->
+                combine(foodFlow, activityFlow) { foodEntries: List<FoodEntry>, activities: List<Activity> ->
                     val totalIntake = foodEntries.sumOf { it.calories }
                     val avgIntake = if (totalDays > 0) totalIntake / totalDays else 0
 

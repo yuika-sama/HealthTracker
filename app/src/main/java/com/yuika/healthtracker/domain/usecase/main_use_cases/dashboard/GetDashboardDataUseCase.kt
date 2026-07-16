@@ -4,6 +4,7 @@ import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.GetTotalBu
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.GetTotalIntakeCaloriesUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.CalculateUserStatsUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -25,16 +26,17 @@ class GetDashboardDataUseCase @Inject constructor(
     private val getTotalBurnedCaloriesUseCase: GetTotalBurnedCaloriesUseCase,
     private val calculateUserStatsUseCase: CalculateUserStatsUseCase
 ) {
+    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(dbDateText: String): Flow<DashboardData?> {
         return getLatestUserUseCase().flatMapLatest { user ->
             if (user == null) {
-                flowOf(null)
+                flowOf<DashboardData?>(null)
             } else {
                 val stats = calculateUserStatsUseCase(user)
                 val intakeFlow = getTotalIntakeCaloriesUseCase(user.id, dbDateText)
                 val burnedFlow = getTotalBurnedCaloriesUseCase(user.id, dbDateText)
                 
-                combine(intakeFlow, burnedFlow) { intake, burned ->
+                combine(intakeFlow, burnedFlow) { intake: Int?, burned: Int? ->
                     val safeIntake = intake ?: 0
                     val safeBurned = burned ?: 0
                     val net = safeIntake - safeBurned

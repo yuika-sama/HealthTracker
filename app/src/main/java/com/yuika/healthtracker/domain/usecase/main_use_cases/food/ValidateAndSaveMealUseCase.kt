@@ -49,6 +49,7 @@ class ValidateAndSaveMealUseCase @Inject constructor(
                 quantity = tempFood.quantity,
                 unit = tempFood.unit,
                 calories = tempFood.calories,
+                caloriesPerServing = tempFood.calories,
                 imagePath = null
             )
             saveFoodEntryUseCase(entry)

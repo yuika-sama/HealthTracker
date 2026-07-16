@@ -2,8 +2,10 @@ package com.yuika.healthtracker.service.di
 
 import android.content.Context
 import androidx.room.Room
+import com.yuika.healthtracker.data.local.dao.ActivityCatalogDao
 import com.yuika.healthtracker.data.local.dao.ActivityDao
 import com.yuika.healthtracker.data.local.dao.DiaryDao
+import com.yuika.healthtracker.data.local.dao.FoodCatalogDao
 import com.yuika.healthtracker.data.local.dao.FoodEntryDao
 import com.yuika.healthtracker.data.local.dao.UserDao
 import com.yuika.healthtracker.data.local.database.AppDatabase
@@ -55,5 +57,17 @@ object DatabaseModule
     @Singleton
     fun provideFoodEntryDao(database: AppDatabase): FoodEntryDao{
         return database.foodEntryDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFoodCatalogDao(database: AppDatabase) : FoodCatalogDao{
+        return database.foodCatalogDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideActivityCatalogDao(database: AppDatabase) : ActivityCatalogDao{
+        return database.activityCatalogDao()
     }
 }

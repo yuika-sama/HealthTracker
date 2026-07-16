@@ -6,7 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "activities",
+    tableName = "activity_catalog",
     foreignKeys = [
         ForeignKey(
             entity = UserEntity::class,
@@ -16,22 +16,15 @@ import androidx.room.PrimaryKey
         )
     ],
     indices = [
-        Index(value = ["userId", "dateText"]),
-        Index(value = ["userId"])
+        Index(value = ["userId"]),
+        Index(value = ["userId", "name"], unique = true)
     ]
 )
-data class ActivityEntity(
+data class ActivityCatalogEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val userId: Int = 0,
-    val activityCatalogId: Int? = null,
+    val userId: Int,
     val name: String,
-    val iconName: String,
-    val kcalPerHour: Int,
     val met: Double,
-    val weightKg: Double,
-    val durationMins: Int,
-    val intensity: String,
-    val kcalBurned: Int,
-    val dateText: String,
-    val timestamp: Long = System.currentTimeMillis()
+    val iconName: String,
+    val intensity: String
 )

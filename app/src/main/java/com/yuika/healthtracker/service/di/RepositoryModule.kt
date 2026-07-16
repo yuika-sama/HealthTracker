@@ -1,11 +1,15 @@
 package com.yuika.healthtracker.service.di
 
+import com.yuika.healthtracker.data.repository.ActivityCatalogRepositoryImpl
 import com.yuika.healthtracker.data.repository.ActivityRepositoryImpl
 import com.yuika.healthtracker.data.repository.DiaryRepositoryImpl
+import com.yuika.healthtracker.data.repository.FoodCatalogRepositoryImpl
 import com.yuika.healthtracker.data.repository.FoodEntryRepositoryImpl
 import com.yuika.healthtracker.data.repository.UserRepositoryImpl
+import com.yuika.healthtracker.domain.repository.ActivityCatalogRepository
 import com.yuika.healthtracker.domain.repository.ActivityRepository
 import com.yuika.healthtracker.domain.repository.DiaryRepository
+import com.yuika.healthtracker.domain.repository.FoodCatalogRepository
 import com.yuika.healthtracker.domain.repository.FoodEntryRepository
 import com.yuika.healthtracker.domain.repository.UserRepository
 import dagger.Binds
@@ -35,6 +39,18 @@ abstract class RepositoryModule {
     abstract fun bindActivityRepository(
         activityRepositoryImpl: ActivityRepositoryImpl
     ): ActivityRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFoodCatalogRepository(
+        foodCatalogRepositoryImpl: FoodCatalogRepositoryImpl
+    ): FoodCatalogRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindActivityCatalogRepository(
+        activityCatalogRepositoryImpl: ActivityCatalogRepositoryImpl
+    ): ActivityCatalogRepository
 
     @Binds
     @Singleton

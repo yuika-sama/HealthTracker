@@ -32,11 +32,20 @@ class ValidateAndSaveActivityUseCase @Inject constructor(
             throw IllegalStateException("Can't find user information")
         }
 
+        val weightKg = user.weight
+        val met = if (weightKg > 0.0) {
+            validInput.kcalPerHour.toDouble() / weightKg
+        } else {
+            0.0
+        }
+
         val activity = Activity(
             userId = user.id,
             name = validInput.name,
             iconName = selectedIcon,
             kcalPerHour = validInput.kcalPerHour,
+            met = met,
+            weightKg = weightKg,
             durationMins = validInput.durationMins,
             intensity = validInput.selectedIntensity.name,
             kcalBurned = estimatedKcalBurned,

@@ -4,6 +4,7 @@ import com.yuika.healthtracker.domain.model.FoodEntry
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.GetFoodEntriesByDateUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.CalculateUserStatsUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -37,12 +38,13 @@ class GetDiaryDataUseCase @Inject constructor(
     private val getFoodEntriesByDateUseCase: GetFoodEntriesByDateUseCase,
     private val calculateUserStatsUseCase: CalculateUserStatsUseCase
 ) {
+    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(dateText: String): Flow<DiaryData?> {
         return getLatestUserUseCase().flatMapLatest { user ->
             if (user == null) {
-                flowOf(null)
+                flowOf<DiaryData?>(null)
             } else {
-                getFoodEntriesByDateUseCase(user.id, dateText).map { allFoods ->
+                getFoodEntriesByDateUseCase(user.id, dateText).map { allFoods: List<FoodEntry> ->
                     val stats = calculateUserStatsUseCase(user)
 
                     val breakfastEntries = allFoods.filter { it.mealType.equals("Breakfast", ignoreCase = true) }
@@ -61,7 +63,7 @@ class GetDiaryDataUseCase @Inject constructor(
                     val fatGrams = ((totalConsumed * 0.25) / 9).toInt()
                     val carbsGrams = ((totalConsumed * 0.45) / 4).toInt()
 
-                    fun mapToItems(entries: List<FoodEntry>) = entries.map {
+                    fun mapToItems(entries: List<FoodEntry>): List<DiaryFoodItem> = entries.map {
                         DiaryFoodItem(
                             name = it.foodName,
                             description = "${it.quantity} ${it.unit}",
