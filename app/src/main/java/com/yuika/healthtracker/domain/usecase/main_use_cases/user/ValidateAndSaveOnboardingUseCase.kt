@@ -21,7 +21,7 @@ class ValidateAndSaveOnboardingUseCase @Inject constructor(
             throw IllegalArgumentException("Please let me know your infomation.")
         }
 
-        val (validDateOfBirth, ageValue) = validateDateOfBirth(dateOfBirth)
+        val validDateOfBirth = validateDateOfBirth(dateOfBirth).first
         val weightValue = weightStr.toDoubleOrNull()
         val heightValue = heightStr.toDoubleOrNull()
         if (weightValue == null || weightValue !in 20.0..300.0) {
@@ -39,7 +39,6 @@ class ValidateAndSaveOnboardingUseCase @Inject constructor(
             val updatedUser = user.copy(
                 name = trimmedName,
                 dateOfBirth = validDateOfBirth,
-                age = ageValue,
                 gender = gender,
                 weight = weightValue,
                 height = heightValue
@@ -51,7 +50,6 @@ class ValidateAndSaveOnboardingUseCase @Inject constructor(
                 password = "dummy",
                 name = trimmedName,
                 dateOfBirth = validDateOfBirth,
-                age = ageValue,
                 gender = gender,
                 weight = weightValue,
                 height = heightValue,

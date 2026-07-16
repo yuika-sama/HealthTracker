@@ -1,7 +1,6 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.profile
 
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
-import java.time.LocalDate
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
@@ -51,7 +50,7 @@ class GetProfileFormDataUseCase @Inject constructor(
             email = user.email,
             passwordHash = user.password,
             name = user.name,
-            dateOfBirth = user.dateOfBirth ?: LocalDate.now().minusYears(user.age.toLong()).toString(),
+            dateOfBirth = user.dateOfBirth,
             gender = user.gender,
             weight = user.weight.toString(),
             height = user.height.toString(),

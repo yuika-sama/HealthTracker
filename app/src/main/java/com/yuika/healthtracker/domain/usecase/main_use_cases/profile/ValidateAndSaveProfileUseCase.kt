@@ -27,7 +27,7 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
             throw IllegalArgumentException("Please fill in your name")
         }
 
-        val (validDateOfBirth, ageInt) = validateDateOfBirth(dateOfBirth)
+        val validDateOfBirth = validateDateOfBirth(dateOfBirth).first
         val weightDouble = weightStr.toDoubleOrNull()
         val heightDouble = heightStr.toDoubleOrNull()
 
@@ -69,7 +69,6 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
             password = passwordHash,
             name = trimmedName,
             dateOfBirth = validDateOfBirth,
-            age = ageInt,
             gender = gender,
             weight = weightDouble,
             height = heightDouble,

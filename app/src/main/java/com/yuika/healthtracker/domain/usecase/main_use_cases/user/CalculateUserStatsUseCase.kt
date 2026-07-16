@@ -5,7 +5,6 @@ import javax.inject.Inject
 import kotlin.math.roundToInt
 
 data class UserStats(
-    val age: Int,
     val bmi: Double,
     val bmiCategory: String,
     val bmr: Double,
@@ -17,15 +16,16 @@ class CalculateUserStatsUseCase @Inject constructor()
 {
     operator fun invoke(user: User): UserStats
     {
-        val age = calculateAgeFromDateOfBirth(user.dateOfBirth) ?: user.age
+        val yearsOld = calculateYearsOldFromDateOfBirth(user.dateOfBirth)
+            ?: throw IllegalArgumentException("Date of birth is invalid")
         val hMeter = user.height / 100.0
         val bmi = if (hMeter > 0.0) user.weight / (hMeter * hMeter) else 0.0
 
         val bmr = when (user.gender.lowercase())
         {
-            "male", "nam" -> 10 * user.weight + 6.25 * user.height - 5 * age + 5
-            "female", "nu", "nữ" -> 10 * user.weight + 6.25 * user.height - 5 * age - 161
-            else -> 10 * user.weight + 6.25 * user.height - 5 * age
+            "male", "nam" -> 10 * user.weight + 6.25 * user.height - 5 * yearsOld + 5
+            "female", "nu", "nữ" -> 10 * user.weight + 6.25 * user.height - 5 * yearsOld - 161
+            else -> 10 * user.weight + 6.25 * user.height - 5 * yearsOld
         }
 
         val tdee = bmr * when (user.activityLevel)
@@ -46,7 +46,6 @@ class CalculateUserStatsUseCase @Inject constructor()
         }).roundToInt().coerceAtLeast(0)
 
         return UserStats(
-            age = age,
             bmi = bmi,
             bmiCategory = classifyBmi(bmi),
             bmr = bmr,

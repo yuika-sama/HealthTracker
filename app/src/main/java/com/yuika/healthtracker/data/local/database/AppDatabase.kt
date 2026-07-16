@@ -24,7 +24,7 @@ import com.yuika.healthtracker.data.local.entity.UserEntity
         FoodCatalogEntity::class,
         ActivityCatalogEntity::class
    ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase()

@@ -24,14 +24,13 @@ class RegisterUseCase @Inject constructor(
         if (existingUser != null) {
             throw Exception("Email already exists")
         }
-        val (validDateOfBirth, age) = validateDateOfBirth(dateOfBirth)
+        val validDateOfBirth = validateDateOfBirth(dateOfBirth).first
 
         val user = User(
             email = email,
             password = password,
             name = fullName,
             dateOfBirth = validDateOfBirth,
-            age = age,
             gender = "Other",
             height = 0.0,
             weight = 0.0,
