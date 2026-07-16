@@ -18,13 +18,14 @@ class CalculateUserStatsUseCase @Inject constructor()
     {
         val yearsOld = calculateYearsOldFromDateOfBirth(user.dateOfBirth)
             ?: throw IllegalArgumentException("Date of birth is invalid")
-        val hMeter = user.height / 100.0
-        val bmi = if (hMeter > 0.0) user.weight / (hMeter * hMeter) else 0.0
+        val heightMeter = user.height / 100.0
+        val bmi = if (heightMeter > 0.0) user.weight / (heightMeter * heightMeter) else 0.0
+        val gender = user.gender.trim().lowercase()
 
-        val bmr = when (user.gender.lowercase())
+        val bmr = when
         {
-            "male", "nam" -> 10 * user.weight + 6.25 * user.height - 5 * yearsOld + 5
-            "female", "nu", "nữ" -> 10 * user.weight + 6.25 * user.height - 5 * yearsOld - 161
+            gender == "male" || gender == "nam" -> 10 * user.weight + 6.25 * user.height - 5 * yearsOld + 5
+            gender == "female" || gender == "nu" || gender == "nữ" -> 10 * user.weight + 6.25 * user.height - 5 * yearsOld - 161
             else -> 10 * user.weight + 6.25 * user.height - 5 * yearsOld
         }
 
