@@ -2,29 +2,20 @@ package com.yuika.healthtracker.ui.features.main_features.add_activity.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.DirectionsBike
-import androidx.compose.material.icons.automirrored.outlined.DirectionsRun
-import androidx.compose.material.icons.automirrored.outlined.DirectionsWalk
-import androidx.compose.material.icons.outlined.FitnessCenter
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityIntent
 import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityUiState
@@ -35,111 +26,58 @@ fun ActivityDetailsCard(
     state: AddActivityUiState,
     onIntent: (AddActivityIntent) -> Unit
 ) {
-
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
-            .background( MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Header row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "ACTIVITY INFO",
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-            )
-        }
+        Text(
+            text = "ACTIVITY CATALOG",
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+        )
 
-        Column {
+        if (state.activityCatalogs.isEmpty()) {
             Text(
-                text = "Activity name",
+                text = "No activities available",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                modifier = Modifier.padding(bottom = 8.dp)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
-                OutlinedTextField(
-                    value = state.activityName,
-                    onValueChange = { onIntent(AddActivityIntent.OnActivityNameChange(it)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    isError = state.activityNameError != null,
-                    supportingText = state.activityNameError?.let { { Text(it) } },
-                    colors = textFieldColors()
-                )
-        }
-
-        Column {
-            Text(
-                text = "Activity icon",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                ActivityIconItem(
-                    icon = Icons.AutoMirrored.Outlined.DirectionsRun,
-                    isSelected = state.selectedIcon == "run",
-                    onClick = { onIntent(AddActivityIntent.OnIconChange("run")) }
-                )
-                ActivityIconItem(
-                    icon = Icons.AutoMirrored.Outlined.DirectionsWalk,
-                    isSelected = state.selectedIcon == "walk",
-                    onClick = { onIntent(AddActivityIntent.OnIconChange("walk")) }
-                )
-                ActivityIconItem(
-                    icon = Icons.AutoMirrored.Outlined.DirectionsBike,
-                    isSelected = state.selectedIcon == "bike",
-                    onClick = { onIntent(AddActivityIntent.OnIconChange("bike")) }
-                )
-                ActivityIconItem(
-                    icon = Icons.Outlined.FitnessCenter,
-                    isSelected = state.selectedIcon == "gym",
-                    onClick = { onIntent(AddActivityIntent.OnIconChange("gym")) }
-                )
+        } else {
+            state.activityCatalogs.forEach { activity ->
+                val selected = state.selectedActivity?.id == activity.id
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(if (selected) MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f) else Color.Transparent)
+                        .border(
+                            1.dp,
+                            if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline.copy(alpha = 0.15f),
+                            RoundedCornerShape(12.dp)
+                        )
+                        .clickable { onIntent(AddActivityIntent.OnActivitySelected(activity)) }
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = activity.name,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Text(
+                            text = "${activity.met} MET - ${activity.intensity}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                        )
+                    }
+                }
             }
-        }
-
-        Column {
-            Text(
-                text = "Kcal / hour",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            OutlinedTextField(
-                value = state.kcalPerHour,
-                onValueChange = { onIntent(AddActivityIntent.OnKcalPerHourChange(it)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                isError = state.kcalPerHourError != null,
-                supportingText = state.kcalPerHourError?.let { { Text(it) } },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                suffix = { Text("kcal/h") },
-                colors = textFieldColors()
-            )
         }
     }
 }
-
-
-@Composable
-fun textFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = MaterialTheme.colorScheme.secondary,
-    unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-    focusedLabelColor = MaterialTheme.colorScheme.secondary,
-    cursorColor = MaterialTheme.colorScheme.secondary,
-    focusedContainerColor = Color.White,
-    unfocusedContainerColor = Color.White
-)

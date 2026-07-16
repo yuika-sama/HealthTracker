@@ -4,5 +4,5 @@ import com.yuika.healthtracker.ui.core.base.UiEffect
 
 sealed class ActivityEffect : UiEffect
 {
-    object NavigateToAddActivity : ActivityEffect()
+    data class NavigateToAddActivity(val dateText: String) : ActivityEffect()
 }

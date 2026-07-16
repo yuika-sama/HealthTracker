@@ -57,6 +57,7 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun AddActivityScreen(
     modifier: Modifier = Modifier,
+    dateText: String,
     viewModel: AddActivityViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onSaveClick: () -> Unit = {}
@@ -67,8 +68,8 @@ fun AddActivityScreen(
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    LaunchedEffect(Unit) {
-        viewModel.onIntent(AddActivityIntent.Init())
+    LaunchedEffect(dateText) {
+        viewModel.onIntent(AddActivityIntent.Init(dateText))
     }
 
     LaunchedEffect(Unit) {
@@ -194,10 +195,4 @@ fun AddActivityScreen(
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AddActivityScreenPreview() {
-    AddActivityScreen()
 }

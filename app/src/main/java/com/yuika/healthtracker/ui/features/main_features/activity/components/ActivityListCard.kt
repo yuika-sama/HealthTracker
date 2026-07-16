@@ -16,17 +16,21 @@ import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.ui.core.model.IntensityLevel
 
 data class ActivityItemData(
+    val id: Int,
     val title: String,
     val intensity: IntensityLevel,
     val durationMins: Int,
     val kcal: Int,
-    val iconType: IntensityLevel
+    val iconType: IntensityLevel,
+    val met: Double,
+    val weightKg: Double
 )
 
 @Composable
 fun ActivityListCard(
     modifier: Modifier = Modifier,
-    activities: List<ActivityItemData>
+    activities: List<ActivityItemData>,
+    onActivityClick: (ActivityItemData) -> Unit = {}
 )
 {
     Column(
@@ -41,7 +45,10 @@ fun ActivityListCard(
             .background(MaterialTheme.colorScheme.background)
     ) {
         activities.forEachIndexed { index, activity ->
-            ActivityItem(activity = activity)
+            ActivityItem(
+                activity = activity,
+                onClick = { onActivityClick(activity) }
+            )
             if (index < activities.lastIndex){
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 16.dp),

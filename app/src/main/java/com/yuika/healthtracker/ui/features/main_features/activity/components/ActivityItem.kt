@@ -1,6 +1,7 @@
 package com.yuika.healthtracker.ui.features.main_features.activity.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,7 +36,8 @@ import com.yuika.healthtracker.ui.core.model.IntensityLevel
 @Composable
 fun ActivityItem(
     modifier: Modifier = Modifier,
-    activity: ActivityItemData
+    activity: ActivityItemData,
+    onClick: () -> Unit = {}
 ) {
     val (icon, iconTint, iconBg) = when (activity.iconType) {
         IntensityLevel.LIGHT -> Triple(
@@ -76,6 +78,7 @@ fun ActivityItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable { onClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

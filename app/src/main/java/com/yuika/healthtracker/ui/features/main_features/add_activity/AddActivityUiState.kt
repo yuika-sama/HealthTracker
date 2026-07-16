@@ -1,27 +1,25 @@
 package com.yuika.healthtracker.ui.features.main_features.add_activity
 
+import com.yuika.healthtracker.domain.model.ActivityCatalog
 import com.yuika.healthtracker.ui.core.base.UiState
 import com.yuika.healthtracker.ui.core.model.IntensityLevel
 import java.time.LocalDate
+import kotlin.math.roundToInt
 
 data class AddActivityUiState(
-    val activityName: String = "",
-    val activityNameError: String? = null,
-    val selectedIcon: String = "run",
-    val kcalPerHour: String = "",
-    val kcalPerHourError: String? = null,
+    val dateText: String = LocalDate.now().toString(),
+    val activityCatalogs: List<ActivityCatalog> = emptyList(),
+    val selectedActivity: ActivityCatalog? = null,
+    val activityCatalogError: String? = null,
     val duration: String = "",
     val durationError: String? = null,
-    val selectedIntensity: IntensityLevel = IntensityLevel.MEDIUM,
-    val dateText: String = LocalDate.now().toString(),
+    val userWeightKg: Double = 0.0,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val isSuccess: Boolean = false
-) : UiState {
+) : UiState
+{
     val estimatedKcalBurned: Int
-        get(){
-            val kcal = kcalPerHour.toIntOrNull() ?: 0
-            val mins = duration.toIntOrNull() ?: 0
-            return (kcal * mins) / 60
-        }
+        get() = ((selectedActivity?.met ?: 0.0) * userWeightKg * ((duration.toIntOrNull()
+            ?: 0) / 60.0)).roundToInt()
 }

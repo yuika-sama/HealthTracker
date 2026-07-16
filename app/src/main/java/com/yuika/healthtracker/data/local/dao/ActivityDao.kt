@@ -21,6 +21,9 @@ interface ActivityDao
     @Delete
     suspend fun deleteActivity(activity: ActivityEntity)
 
+    @Query("DELETE FROM activities WHERE id = :id")
+    suspend fun deleteActivityById(id: Int)
+
     @Query("SELECT * FROM activities WHERE userId = :userId AND dateText = :dateText ORDER BY timestamp ASC")
     fun getActivitiesByDate(userId: Int, dateText: String): Flow<List<ActivityEntity>>
 

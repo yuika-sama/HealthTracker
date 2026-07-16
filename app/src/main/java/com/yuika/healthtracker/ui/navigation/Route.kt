@@ -22,7 +22,7 @@ sealed interface Route
     @Serializable data class AddMeal(val mealType: String, val dateText: String): Route
 
     @Serializable object Activity: Route
-    @Serializable object AddActivity: Route
+    @Serializable data class AddActivity(val dateText: String): Route
 
     @Serializable object Trends: Route
 

@@ -11,6 +11,8 @@ interface ActivityRepository
 
     suspend fun deleteActivity(activity: Activity)
 
+    suspend fun deleteActivityById(id: Int)
+
     fun getActivitiesByDate(userId: Int, dateText: String): Flow<List<Activity>>
 
     fun getTotalBurnedCaloriesByDate(userId: Int, dateText: String): Flow<Int?>

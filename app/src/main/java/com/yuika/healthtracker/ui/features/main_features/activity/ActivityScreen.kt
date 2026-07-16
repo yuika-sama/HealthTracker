@@ -1,6 +1,5 @@
 package com.yuika.healthtracker.ui.features.main_features.activity
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +12,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -20,12 +20,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
@@ -48,13 +48,12 @@ import com.yuika.healthtracker.utils.DATE_FORMATTER
 fun ActivityScreen(
     modifier: Modifier = Modifier,
     viewModel: ActivityViewModel = hiltViewModel(),
-    onAddActivityClick: () -> Unit = {},
+    onAddActivityClick: (String) -> Unit = {},
     onTabClick: (String) -> Unit = {}
 )
 {
     val spacing = LocalSpacing.current
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     LaunchedEffect(Unit) {
@@ -68,7 +67,7 @@ fun ActivityScreen(
                 {
                     is ActivityEffect.NavigateToAddActivity ->
                     {
-                        onAddActivityClick()
+                        onAddActivityClick(effect.dateText)
                     }
                 }
             }
@@ -94,6 +93,31 @@ fun ActivityScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
+        state.selectedDetail?.let { activity ->
+            AlertDialog(
+                onDismissRequest = { viewModel.onIntent(ActivityIntent.DismissDetail) },
+                title = { Text(activity.title) },
+                text = {
+                    Column {
+                        Text("Duration: ${activity.durationMins} mins")
+                        Text("MET: ${activity.met}")
+                        Text("Weight: ${activity.weightKg} kg")
+                        Text("Burned: ${activity.kcal} kcal", fontWeight = FontWeight.Bold)
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.onIntent(ActivityIntent.DeleteActivityClick(activity.id)) }) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { viewModel.onIntent(ActivityIntent.DismissDetail) }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
@@ -158,7 +182,10 @@ fun ActivityScreen(
                             "${activity.title}-${activity.durationMins}-${activity.kcal}-$index"
                         }
                     ) { index, activity ->
-                        ActivityItem(activity = activity)
+                        ActivityItem(
+                            activity = activity,
+                            onClick = { viewModel.onIntent(ActivityIntent.ActivityClick(activity)) }
+                        )
                         if (index < state.activities.lastIndex)
                         {
                             HorizontalDivider(

@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.activity
 
+import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.DeleteActivityUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.GetActivityDataUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ParseActivityIntensityUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
@@ -15,14 +16,23 @@ import javax.inject.Inject
 @HiltViewModel
 class ActivityViewModel @Inject constructor(
     private val getActivityDataUseCase: GetActivityDataUseCase,
-    private val parseActivityIntensityUseCase: ParseActivityIntensityUseCase
+    private val parseActivityIntensityUseCase: ParseActivityIntensityUseCase,
+    private val deleteActivityUseCase: DeleteActivityUseCase
 ) : BaseViewModel<ActivityUiState, ActivityIntent, ActivityEffect>(
     initialState = ActivityUiState()
 ) {
     override fun onIntent(intent: ActivityIntent) {
         when (intent) {
             is ActivityIntent.LoadActivityData -> handleFetchActivity(intent.date)
-            is ActivityIntent.OnAddActivityClick -> sendEffect(ActivityEffect.NavigateToAddActivity)
+            is ActivityIntent.OnAddActivityClick -> {
+                sendEffect(ActivityEffect.NavigateToAddActivity(state.value.selectedDate.toString()))
+            }
+            is ActivityIntent.ActivityClick -> updateState { it.copy(selectedDetail = intent.activity) }
+            is ActivityIntent.DismissDetail -> updateState { it.copy(selectedDetail = null) }
+            is ActivityIntent.DeleteActivityClick -> launchSafe {
+                deleteActivityUseCase(intent.id)
+                updateState { it.copy(selectedDetail = null) }
+            }
         }
     }
 
@@ -50,11 +60,14 @@ class ActivityViewModel @Inject constructor(
                     val intensityLevel = parseActivityIntensityUseCase(entity.intensity)
 
                     ActivityItemData(
+                        id = entity.id,
                         title = entity.name,
                         intensity = intensityLevel,
                         durationMins = entity.durationMins,
                         kcal = entity.kcalBurned,
-                        iconType = intensityLevel
+                        iconType = intensityLevel,
+                        met = entity.met,
+                        weightKg = entity.weightKg
                     )
                 }
 

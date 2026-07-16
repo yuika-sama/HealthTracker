@@ -163,7 +163,7 @@ fun NavGraphBuilder.mainNavGraph(appNavigator: AppNavigator)
                     )
                 )
             },
-            onAddActivityClick = { appNavigator.navigate(Route.AddActivity) },
+            onAddActivityClick = { appNavigator.navigate(Route.AddActivity(LocalDate.now().toString())) },
             onTabClick = handleTabClick
         )
     }
@@ -188,12 +188,14 @@ fun NavGraphBuilder.mainNavGraph(appNavigator: AppNavigator)
 
     composable<Route.Activity> {
         ActivityScreen(
-            onAddActivityClick = { appNavigator.navigate(Route.AddActivity) },
+            onAddActivityClick = {dateText -> appNavigator.navigate(Route.AddActivity(dateText)) },
             onTabClick = handleTabClick
         )
     }
     composable<Route.AddActivity> {
+        val route = it.toRoute<Route.AddActivity>()
         AddActivityScreen(
+            dateText = route.dateText,
             onBackClick = { appNavigator.popBackStack() },
             onSaveClick = { appNavigator.popBackStack() }
         )

@@ -29,6 +29,11 @@ class ActivityRepositoryImpl @Inject constructor(
         return activityDao.deleteActivity(activity.toEntity())
     }
 
+    override suspend fun deleteActivityById(id: Int)
+    {
+        activityDao.deleteActivityById(id)
+    }
+
     override fun getActivitiesByDate(
         userId: Int,
         dateText: String

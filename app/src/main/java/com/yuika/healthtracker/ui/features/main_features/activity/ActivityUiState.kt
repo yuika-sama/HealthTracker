@@ -7,6 +7,7 @@ import java.time.LocalDate
 data class ActivityUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val activities: List<ActivityItemData> = emptyList(),
+    val selectedDetail: ActivityItemData? = null,
     val burnedKcal: Int = 0,
     val goalKcal: Int = 0,
     val isLoading: Boolean = false,
