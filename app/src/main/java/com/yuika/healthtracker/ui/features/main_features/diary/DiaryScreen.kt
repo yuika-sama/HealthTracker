@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +21,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -34,8 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.features.main_features.diary.components.DailyStats
 import com.yuika.healthtracker.ui.features.main_features.diary.components.DateSelector
 import com.yuika.healthtracker.ui.features.main_features.diary.components.MealCard
@@ -51,9 +49,9 @@ import com.yuika.healthtracker.utils.DATE_FORMATTER
 @Composable
 fun DiaryScreen(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     viewModel: DiaryViewModel = hiltViewModel(),
-    onAddFoodClick: (String, String) -> Unit = {_, _ ->},
-    onTabClick: (String) -> Unit = {}
+    onAddFoodClick: (String, String) -> Unit = {_, _ ->}
 ) {
     val spacing = LocalSpacing.current
 
@@ -76,61 +74,47 @@ fun DiaryScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            DashboardTopBar()
-        },
-        bottomBar = {
-            DashboardBottomNav(currentRoute = "diary", onTabClick = onTabClick)
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { viewModel.onIntent(DiaryIntent.AddFoodClick("Breakfast")) },
-                shape = CircleShape,
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.background
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        state.selectedDetail?.let { detail ->
-            AlertDialog(
-                onDismissRequest = { viewModel.onIntent(DiaryIntent.DismissDetail) },
-                title = { Text(detail.title) },
-                text = {
-                    Column {
-                        detail.foods.forEach { food ->
-                            Text("${food.name} - ${food.description} - ${food.kcal} kcal")
-                        }
-                        Text("Total: ${detail.totalKcal} kcal", fontWeight = FontWeight.Bold)
+    state.selectedDetail?.let { detail ->
+        AlertDialog(
+            onDismissRequest = { viewModel.onIntent(DiaryIntent.DismissDetail) },
+            title = { Text(detail.title) },
+            text = {
+                Column {
+                    detail.foods.forEach { food ->
+                        Text("${food.name} - ${food.description} - ${food.kcal} kcal")
                     }
-                },
-                confirmButton = {
-                    if (detail.canDelete && detail.foods.isNotEmpty()) {
-                        TextButton(onClick = { viewModel.onIntent(DiaryIntent.DeleteFoodClick(detail.foods.first().id)) }) {
-                            Text("Delete")
-                        }
-                    } else {
-                        TextButton(onClick = { viewModel.onIntent(DiaryIntent.DismissDetail) }) {
-                            Text("OK")
-                        }
+                    Text("Total: ${detail.totalKcal} kcal", fontWeight = FontWeight.Bold)
+                }
+            },
+            confirmButton = {
+                if (detail.canDelete && detail.foods.isNotEmpty()) {
+                    TextButton(onClick = { viewModel.onIntent(DiaryIntent.DeleteFoodClick(detail.foods.first().id)) }) {
+                        Text("Delete")
                     }
-                },
-                dismissButton = {
-                    if (detail.canDelete) {
-                        TextButton(onClick = { viewModel.onIntent(DiaryIntent.DismissDetail) }) {
-                            Text("Cancel")
-                        }
+                } else {
+                    TextButton(onClick = { viewModel.onIntent(DiaryIntent.DismissDetail) }) {
+                        Text("OK")
                     }
                 }
-            )
-        }
+            },
+            dismissButton = {
+                if (detail.canDelete) {
+                    TextButton(onClick = { viewModel.onIntent(DiaryIntent.DismissDetail) }) {
+                        Text("Cancel")
+                    }
+                }
+            }
+        )
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(contentPadding)
+    ) {
         LazyColumn(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .padding(horizontal = spacing.large),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -240,6 +224,18 @@ fun DiaryScreen(
             }
             
             item { Spacer(modifier = Modifier.height(32.dp)) }
+        }
+
+        FloatingActionButton(
+            onClick = { viewModel.onIntent(DiaryIntent.AddFoodClick("Breakfast")) },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(spacing.large),
+            shape = CircleShape,
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.background
+        ) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
         }
     }
 }

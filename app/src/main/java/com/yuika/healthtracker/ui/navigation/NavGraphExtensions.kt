@@ -1,6 +1,6 @@
 package com.yuika.healthtracker.ui.navigation
 
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
@@ -19,28 +19,35 @@ import com.yuika.healthtracker.ui.features.main_features.update_profile.UpdatePr
 import com.yuika.healthtracker.utils.getMealIntentForCurrentTime
 import java.time.LocalDate
 
-fun NavGraphBuilder.onboardingNavGraph(appNavigator: AppNavigator)
+fun NavGraphBuilder.onboardingNavGraph(
+    appNavigator: AppNavigator,
+    contentPadding: PaddingValues
+)
 {
     composable<Route.Onboarding1> {
         OnboardingPage1Screen(
+            contentPadding = contentPadding,
             onNavigateNext = { appNavigator.navigate(Route.Onboarding2) },
             onNavigateBack = { appNavigator.popBackStack() }
         )
     }
     composable<Route.Onboarding2> {
         OnboardingPage2Screen(
+            contentPadding = contentPadding,
             onNavigateNext = { appNavigator.navigate(Route.Onboarding3) },
             onNavigateBack = { appNavigator.popBackStack() }
         )
     }
     composable<Route.Onboarding3> {
         OnboardingPage3Screen(
+            contentPadding = contentPadding,
             onNavigateNext = { appNavigator.navigate(Route.Onboarding4) },
             onNavigateBack = { appNavigator.popBackStack() }
         )
     }
     composable<Route.Onboarding4> {
         OnboardingPage4Screen(
+            contentPadding = contentPadding,
             onNavigateNext = {
                 appNavigator.navigate(Route.Dashboard) {
                     popUpTo(Route.Onboarding1) { inclusive = true }
@@ -51,29 +58,14 @@ fun NavGraphBuilder.onboardingNavGraph(appNavigator: AppNavigator)
     }
 }
 
-fun NavGraphBuilder.mainNavGraph(appNavigator: AppNavigator)
+fun NavGraphBuilder.mainNavGraph(
+    appNavigator: AppNavigator,
+    contentPadding: PaddingValues
+)
 {
-    val handleTabClick: (String) -> Unit = { tab ->
-        val targetRoute = when (tab)
-        {
-            "home" -> Route.Dashboard
-            "diary" -> Route.Diary
-            "activity" -> Route.Activity
-            "trends" -> Route.Trends
-            "profile" -> Route.Profile
-            else -> Route.Dashboard
-        }
-        appNavigator.navigate(targetRoute) {
-            popUpTo(Route.Dashboard) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
-    }
-
     composable<Route.Dashboard> {
         DashboardScreen(
+            contentPadding = contentPadding,
             onAddMealClick = {
                 appNavigator.navigate(
                     Route.AddMeal(
@@ -82,60 +74,60 @@ fun NavGraphBuilder.mainNavGraph(appNavigator: AppNavigator)
                     )
                 )
             },
-            onAddActivityClick = { appNavigator.navigate(Route.AddActivity(LocalDate.now().toString())) },
-            onTabClick = handleTabClick
+            onAddActivityClick = { appNavigator.navigate(Route.AddActivity(LocalDate.now().toString())) }
         )
     }
 
     composable<Route.Diary> {
         DiaryScreen(
+            contentPadding = contentPadding,
             onAddFoodClick = { mealType, dateText ->
                 appNavigator.navigate(Route.AddMeal(mealType, dateText))
-            },
-            onTabClick = handleTabClick
+            }
         )
     }
     composable<Route.AddMeal> {
         val route = it.toRoute<Route.AddMeal>()
         AddMealScreen(
+            contentPadding = contentPadding,
             mealType = route.mealType,
             dateText = route.dateText,
-            onBackClick = { appNavigator.popBackStack() },
             onSaveClick = { appNavigator.popBackStack() }
         )
     }
 
     composable<Route.Activity> {
         ActivityScreen(
-            onAddActivityClick = {dateText -> appNavigator.navigate(Route.AddActivity(dateText)) },
-            onTabClick = handleTabClick
+            contentPadding = contentPadding,
+            onAddActivityClick = { dateText -> appNavigator.navigate(Route.AddActivity(dateText)) }
         )
     }
     composable<Route.AddActivity> {
         val route = it.toRoute<Route.AddActivity>()
         AddActivityScreen(
+            contentPadding = contentPadding,
             dateText = route.dateText,
-            onBackClick = { appNavigator.popBackStack() },
             onSaveClick = { appNavigator.popBackStack() }
         )
     }
 
     composable<Route.Trends> {
         TrendsScreen(
-            onTabClick = handleTabClick
+            contentPadding = contentPadding
         )
     }
 
     composable<Route.Profile> {
         ProfileScreen(
+            contentPadding = contentPadding,
             onEditProfileClick = {
                 appNavigator.navigate(Route.ProfileUpdate)
-            },
-            onTabClick = handleTabClick
+            }
         )
     }
     composable<Route.ProfileUpdate> {
         UpdateProfileScreen(
+            contentPadding = contentPadding,
             onBackClick = { appNavigator.popBackStack() }
         )
     }

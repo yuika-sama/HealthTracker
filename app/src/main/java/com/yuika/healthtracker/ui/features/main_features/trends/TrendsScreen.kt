@@ -10,7 +10,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -31,8 +30,6 @@ import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.StatCard
 import com.yuika.healthtracker.ui.core.components.SuccessText
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.features.main_features.trends.components.CalorieIntakeChart
 import com.yuika.healthtracker.ui.features.main_features.trends.components.NetCaloriesChart
 import com.yuika.healthtracker.ui.theme.LocalSpacing
@@ -40,8 +37,8 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun TrendsScreen(
     modifier: Modifier = Modifier,
-    viewModel: TrendsViewModel = hiltViewModel(),
-    onTabClick: (String) -> Unit = {}
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    viewModel: TrendsViewModel = hiltViewModel()
 )
 {
     val spacing = LocalSpacing.current
@@ -71,23 +68,14 @@ fun TrendsScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            DashboardTopBar()
-        },
-        bottomBar = {
-            DashboardBottomNav(currentRoute = "trends", onTabClick = onTabClick)
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = spacing.large)
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(contentPadding)
+            .padding(horizontal = spacing.large)
+            .verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
             Spacer(modifier = Modifier.height(4.dp))
 
             Column {
@@ -207,6 +195,5 @@ fun TrendsScreen(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
-        }
     }
 }

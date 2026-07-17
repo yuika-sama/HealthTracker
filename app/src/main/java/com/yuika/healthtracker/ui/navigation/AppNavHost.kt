@@ -3,7 +3,6 @@ package com.yuika.healthtracker.ui.navigation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -19,7 +18,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.navigation.components.AppBottomBar
+import com.yuika.healthtracker.ui.navigation.components.AppTopBar
 
 @Composable
 fun AppNavHost(
@@ -33,21 +35,64 @@ fun AppNavHost(
         AppNavigator(navController, scope) { isNavigationLoading = it }
     }
     val startRoute by startViewModel.startRoute.collectAsStateWithLifecycle()
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val barsState = appBarsStateFor(backStackEntry?.destination?.route)
+    val onTabClick: (String) -> Unit = remember(appNavigator) {
+        { tab ->
+            val targetRoute = when (tab) {
+                "home" -> Route.Dashboard
+                "diary" -> Route.Diary
+                "activity" -> Route.Activity
+                "trends" -> Route.Trends
+                "profile" -> Route.Profile
+                else -> Route.Dashboard
+            }
+
+            appNavigator.navigate(targetRoute) {
+                popUpTo(Route.Dashboard) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+    }
 
     Box(modifier.fillMaxSize()){
         if (startRoute == null) {
             LoadingIndicator(modifier = Modifier.align(Alignment.Center))
         } else {
             Scaffold(
-                modifier = modifier
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    AppTopBar(
+                        showMainBar = barsState.mainTab != null,
+                        title = barsState.title,
+                        showBackButton = barsState.showBackButton,
+                        onBackClick = { appNavigator.popBackStack() }
+                    )
+                },
+                bottomBar = {
+                    AppBottomBar(
+                        currentTab = barsState.mainTab,
+                        onTabClick = onTabClick
+                    )
+                },
+                containerColor = MaterialTheme.colorScheme.background
             ) { innerPadding ->
                 NavHost(
                     navController = navController,
                     startDestination = startRoute!!,
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.fillMaxSize()
                 ){
-                    onboardingNavGraph(appNavigator = appNavigator)
-                    mainNavGraph(appNavigator = appNavigator)
+                    onboardingNavGraph(
+                        appNavigator = appNavigator,
+                        contentPadding = innerPadding
+                    )
+                    mainNavGraph(
+                        appNavigator = appNavigator,
+                        contentPadding = innerPadding
+                    )
                 }
             }
         }
@@ -60,5 +105,30 @@ fun AppNavHost(
                 LoadingIndicator()
             }
         }
+    }
+}
+
+private data class AppBarsState(
+    val mainTab: String? = null,
+    val title: String? = null,
+    val showBackButton: Boolean = false
+)
+
+private fun appBarsStateFor(route: String?): AppBarsState {
+    if (route == null) return AppBarsState()
+
+    return when {
+        route.contains("AddMeal") -> AppBarsState(title = "Add a meal", showBackButton = true)
+        route.contains("AddActivity") -> AppBarsState(title = "Add an activity", showBackButton = true)
+        route.contains("ProfileUpdate") -> AppBarsState(title = "Update profile", showBackButton = true)
+        route.contains("Onboarding2") -> AppBarsState(title = "Health Tracker", showBackButton = true)
+        route.contains("Onboarding3") -> AppBarsState(title = "Your Health Goals", showBackButton = true)
+        route.contains("Onboarding4") -> AppBarsState(title = "Goal Calculated")
+        route.contains("Dashboard") -> AppBarsState(mainTab = "home")
+        route.contains("Diary") -> AppBarsState(mainTab = "diary")
+        route.contains("Activity") -> AppBarsState(mainTab = "activity")
+        route.contains("Trends") -> AppBarsState(mainTab = "trends")
+        route.contains("Profile") -> AppBarsState(mainTab = "profile")
+        else -> AppBarsState()
     }
 }

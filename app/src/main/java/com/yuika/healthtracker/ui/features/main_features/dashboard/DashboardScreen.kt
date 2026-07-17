@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +26,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,8 +45,6 @@ import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DailySummaryCard
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.InfoBanner
 import com.yuika.healthtracker.ui.core.components.StatCard
 import com.yuika.healthtracker.ui.theme.EnergyAmber
@@ -56,10 +54,10 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     viewModel: DashboardViewModel = hiltViewModel(),
     onAddMealClick: () -> Unit = {},
-    onAddActivityClick: () -> Unit = {},
-    onTabClick: (String) -> Unit = {}
+    onAddActivityClick: () -> Unit = {}
 )
 {
     val spacing = LocalSpacing.current
@@ -112,22 +110,13 @@ fun DashboardScreen(
         )
     }
 
-    Scaffold(
-        topBar = {
-            DashboardTopBar()
-        },
-        bottomBar = {
-            DashboardBottomNav(currentRoute = "home", onTabClick = onTabClick)
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = spacing.large)
-                .verticalScroll(scrollState)
-        ) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(contentPadding)
+            .padding(horizontal = spacing.large)
+            .verticalScroll(scrollState)
+    ) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
@@ -293,6 +282,5 @@ fun DashboardScreen(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
-        }
     }
 }

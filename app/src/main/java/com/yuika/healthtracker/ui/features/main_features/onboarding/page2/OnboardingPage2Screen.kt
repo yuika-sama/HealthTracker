@@ -7,7 +7,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.*
@@ -69,10 +68,10 @@ val activityLevelOptions = listOf(
     )
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingPage2Screen(
     viewModel: OnboardingPage2ViewModel = hiltViewModel(),
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     onNavigateBack: () -> Unit = {},
     onNavigateNext: () -> Unit = {}
 ) {
@@ -91,61 +90,14 @@ fun OnboardingPage2Screen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Health Tracker",
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
-            )
-        },
-        bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                // Removed background here so it matches the padding correctly or handled internally
-            ) {
-                Button(
-                    onClick = { viewModel.onIntent(OnboardingPage2Intent.Submit) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp)
-                        .height(56.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.background
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("Continue", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                }
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 24.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(contentPadding)
+            .padding(horizontal = 24.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
             Spacer(modifier = Modifier.height(16.dp))
 
             // Header Section
@@ -214,7 +166,22 @@ fun OnboardingPage2Screen(
                 }
             }
             
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = { viewModel.onIntent(OnboardingPage2Intent.Submit) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.background
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Continue", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
-    }
 }

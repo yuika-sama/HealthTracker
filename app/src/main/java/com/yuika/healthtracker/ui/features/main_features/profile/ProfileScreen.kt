@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +23,6 @@ import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,8 +45,6 @@ import com.yuika.healthtracker.domain.model.ThemeMode
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SuccessText
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.features.main_features.profile.components.CurrentGoalBanner
 import com.yuika.healthtracker.ui.features.main_features.profile.components.NotificationSwitchItem
 import com.yuika.healthtracker.ui.features.main_features.profile.components.ProfileHeaderCard
@@ -58,9 +56,9 @@ import com.yuika.healthtracker.ui.theme.LocalSpacing
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     viewModel: ProfileViewModel = hiltViewModel(),
-    onEditProfileClick: () -> Unit = {},
-    onTabClick: (String) -> Unit = {}
+    onEditProfileClick: () -> Unit = {}
 )
 {
     val spacing = LocalSpacing.current
@@ -171,23 +169,14 @@ fun ProfileScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            DashboardTopBar()
-        },
-        bottomBar = {
-            DashboardBottomNav(currentRoute = "profile", onTabClick = onTabClick)
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = spacing.large)
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(contentPadding)
+            .padding(horizontal = spacing.large)
+            .verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
             Spacer(modifier = Modifier.height(4.dp))
 
             Column {
@@ -310,6 +299,5 @@ fun ProfileScreen(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
-        }
     }
 }

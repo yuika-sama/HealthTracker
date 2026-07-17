@@ -2,6 +2,7 @@ package com.yuika.healthtracker.ui.features.main_features.activity
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +19,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -39,17 +38,15 @@ import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityItem
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivitySummaryCard
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 import com.yuika.healthtracker.utils.DATE_FORMATTER
 
 @Composable
 fun ActivityScreen(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     viewModel: ActivityViewModel = hiltViewModel(),
-    onAddActivityClick: (String) -> Unit = {},
-    onTabClick: (String) -> Unit = {}
+    onAddActivityClick: (String) -> Unit = {}
 )
 {
     val spacing = LocalSpacing.current
@@ -74,54 +71,40 @@ fun ActivityScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            DashboardTopBar()
-        },
-        bottomBar = {
-            DashboardBottomNav(currentRoute = "activity", onTabClick = onTabClick)
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { viewModel.onIntent(ActivityIntent.OnAddActivityClick) },
-                shape = CircleShape,
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.background
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Activity")
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        state.selectedDetail?.let { activity ->
-            AlertDialog(
-                onDismissRequest = { viewModel.onIntent(ActivityIntent.DismissDetail) },
-                title = { Text(activity.title) },
-                text = {
-                    Column {
-                        Text("Duration: ${activity.durationMins} mins")
-                        Text("MET: ${activity.met}")
-                        Text("Weight: ${activity.weightKg} kg")
-                        Text("Burned: ${activity.kcal} kcal", fontWeight = FontWeight.Bold)
-                    }
-                },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.onIntent(ActivityIntent.DeleteActivityClick(activity.id)) }) {
-                        Text("Delete")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { viewModel.onIntent(ActivityIntent.DismissDetail) }) {
-                        Text("Cancel")
-                    }
+    state.selectedDetail?.let { activity ->
+        AlertDialog(
+            onDismissRequest = { viewModel.onIntent(ActivityIntent.DismissDetail) },
+            title = { Text(activity.title) },
+            text = {
+                Column {
+                    Text("Duration: ${activity.durationMins} mins")
+                    Text("MET: ${activity.met}")
+                    Text("Weight: ${activity.weightKg} kg")
+                    Text("Burned: ${activity.kcal} kcal", fontWeight = FontWeight.Bold)
                 }
-            )
-        }
+            },
+            confirmButton = {
+                TextButton(onClick = { viewModel.onIntent(ActivityIntent.DeleteActivityClick(activity.id)) }) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onIntent(ActivityIntent.DismissDetail) }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(contentPadding)
+    ) {
 
         LazyColumn(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .padding(horizontal = spacing.large)
         ) {
             item {
@@ -215,6 +198,18 @@ fun ActivityScreen(
             }
 
             item { Spacer(modifier = Modifier.height(32.dp)) }
+        }
+
+        FloatingActionButton(
+            onClick = { viewModel.onIntent(ActivityIntent.OnAddActivityClick) },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(spacing.large),
+            shape = CircleShape,
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.background
+        ) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = "Add Activity")
         }
     }
 }

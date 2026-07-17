@@ -35,6 +35,7 @@ import com.yuika.healthtracker.ui.theme.*
 @Composable
 fun OnboardingPage1Screen(
     viewModel: OnboardingPage1ViewModel = hiltViewModel(),
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     onNavigateBack: () -> Unit = {},
     onNavigateNext: () -> Unit = {}
 ) {
@@ -57,6 +58,7 @@ fun OnboardingPage1Screen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .padding(contentPadding)
             .padding(24.dp)
             .verticalScroll(rememberScrollState())
     ) {
