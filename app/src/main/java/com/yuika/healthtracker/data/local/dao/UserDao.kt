@@ -23,12 +23,6 @@ interface UserDao
     @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
     suspend fun getUserById(userId: Int): UserEntity?
 
-    @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
-    suspend fun getUserByEmail(email: String): UserEntity?
-
-    @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
-    fun getUserByEmailFlow(email: String): Flow<UserEntity?>
-
     @Query("SELECT * FROM users ORDER BY createdAt DESC LIMIT 1")
     fun getLatestUserFlow(): Flow<UserEntity?>
 }

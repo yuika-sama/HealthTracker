@@ -9,7 +9,6 @@ import com.yuika.healthtracker.ui.core.base.UiIntent
 sealed class ProfileIntent : UiIntent{
     object LoadProfile : ProfileIntent()
     object EditProfile : ProfileIntent()
-    object Logout : ProfileIntent()
 
     object LanguageClick: ProfileIntent()
     object ThemeModeClick: ProfileIntent()

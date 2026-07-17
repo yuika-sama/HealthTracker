@@ -17,9 +17,6 @@ class UpdateProfileViewModel @Inject constructor(
     initialState = UpdateProfileUiState()
 )
 {
-
-    private var currentPasswordHash: String = ""
-
     override fun onIntent(intent: UpdateProfileIntent)
     {
         when (intent)
@@ -53,12 +50,10 @@ class UpdateProfileViewModel @Inject constructor(
             val formData = getProfileFormDataUseCase()
             if (formData != null)
             {
-                currentPasswordHash = formData.passwordHash
                 delay(NETWORK_DELAY.toLong())
                 updateState {
                     it.copy(
                         id = formData.id,
-                        email = formData.email,
                         name = formData.name,
                         dateOfBirth = formData.dateOfBirth,
                         gender = formData.gender,
@@ -101,8 +96,6 @@ class UpdateProfileViewModel @Inject constructor(
         ) {
             validateAndSaveProfileUseCase(
                 id = currentState.id,
-                email = currentState.email,
-                passwordHash = currentPasswordHash,
                 name = currentState.name,
                 dateOfBirth = currentState.dateOfBirth,
                 gender = currentState.gender,

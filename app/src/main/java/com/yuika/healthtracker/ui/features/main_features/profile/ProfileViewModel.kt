@@ -32,7 +32,6 @@ class ProfileViewModel @Inject constructor(
         {
             is ProfileIntent.LoadProfile -> handleLoadProfile()
             is ProfileIntent.EditProfile -> sendEffect(ProfileEffect.NavigateToEditProfile)
-            is ProfileIntent.Logout -> sendEffect(ProfileEffect.NavigateToLogin)
 
             is ProfileIntent.LanguageClick -> showDialog(ProfileSettingsDialog.LANGUAGE)
             is ProfileIntent.ThemeModeClick -> showDialog(ProfileSettingsDialog.THEME_MODE)

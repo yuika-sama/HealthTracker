@@ -13,9 +13,5 @@ interface UserRepository
 
     suspend fun getUserById(userId: Int): User?
 
-    suspend fun getUserByEmail(email: String): User?
-
-    fun getUserByEmailFlow(email: String): Flow<User?>
-
     fun getLatestUserFlow(): Flow<User?>
 }

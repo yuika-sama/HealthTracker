@@ -3,52 +3,35 @@ package com.yuika.healthtracker.ui.features.main_features.profile
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Language
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.TextFields
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
@@ -70,14 +53,12 @@ import com.yuika.healthtracker.ui.features.main_features.profile.components.Prof
 import com.yuika.healthtracker.ui.features.main_features.profile.components.SettingsChoiceDialog
 import com.yuika.healthtracker.ui.features.main_features.profile.components.SettingsGroup
 import com.yuika.healthtracker.ui.features.main_features.profile.components.SettingsItem
-import com.yuika.healthtracker.ui.theme.ErrorRed
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
-    onLogoutClick: () -> Unit = {},
     onEditProfileClick: () -> Unit = {},
     onTabClick: (String) -> Unit = {}
 )
@@ -140,11 +121,6 @@ fun ProfileScreen(
             viewModel.effect.collect { effect ->
                 when (effect)
                 {
-                    is ProfileEffect.NavigateToLogin ->
-                    {
-                        onLogoutClick()
-                    }
-
                     is ProfileEffect.NavigateToEditProfile ->
                     {
                         onEditProfileClick()
@@ -268,7 +244,7 @@ fun ProfileScreen(
                 )
             }
 
-            SettingsGroup(title = "ACCOUNT") {
+            SettingsGroup(title = "PROFILE") {
                 SettingsItem(
                     icon = Icons.Outlined.PersonOutline,
                     iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
@@ -331,33 +307,6 @@ fun ProfileScreen(
                     checked = state.testNotificationEnabled,
                     onCheckedChange = onTestNotificationToggle
                 )
-            }
-
-            OutlinedButton(
-                onClick = { viewModel.onIntent(ProfileIntent.Logout) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.medium,
-                border = BorderStroke(1.dp, ErrorRed),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = ErrorRed,
-                    containerColor = Color.Transparent
-                )
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.Logout,
-                        contentDescription = "Logout",
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Log out",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
             }
 
             Spacer(modifier = Modifier.height(32.dp))

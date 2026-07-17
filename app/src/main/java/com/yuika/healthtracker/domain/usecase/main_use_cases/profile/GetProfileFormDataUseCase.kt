@@ -6,8 +6,6 @@ import javax.inject.Inject
 
 data class ProfileFormData(
     val id: Int,
-    val email: String,
-    val passwordHash: String,
     val name: String,
     val dateOfBirth: String,
     val gender: String,
@@ -47,8 +45,6 @@ class GetProfileFormDataUseCase @Inject constructor(
 
         return ProfileFormData(
             id = user.id,
-            email = user.email,
-            passwordHash = user.password,
             name = user.name,
             dateOfBirth = user.dateOfBirth,
             gender = user.gender,

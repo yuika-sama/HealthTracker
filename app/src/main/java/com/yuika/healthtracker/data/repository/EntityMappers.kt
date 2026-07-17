@@ -15,8 +15,6 @@ import com.yuika.healthtracker.domain.model.User
 
 fun UserEntity.toDomain() = User(
     id = id,
-    email = email,
-    password = password,
     name = name,
     dateOfBirth = dateOfBirth,
     gender = gender,
@@ -30,8 +28,6 @@ fun UserEntity.toDomain() = User(
 
 fun User.toEntity() = UserEntity(
     id = id,
-    email = email,
-    password = password,
     name = name,
     dateOfBirth = dateOfBirth,
     gender = gender,

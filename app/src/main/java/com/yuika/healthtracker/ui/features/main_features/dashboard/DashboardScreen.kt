@@ -1,8 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.dashboard
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,10 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -54,8 +49,6 @@ import com.yuika.healthtracker.ui.features.main_features.dashboard.components.Da
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.InfoBanner
 import com.yuika.healthtracker.ui.core.components.StatCard
-import com.yuika.healthtracker.ui.features.auth.login.LoginUiEffect
-import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.EnergyAmber
 import com.yuika.healthtracker.ui.theme.InfoBlue
 import com.yuika.healthtracker.ui.theme.LocalSpacing
@@ -71,7 +64,6 @@ fun DashboardScreen(
 {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
-    val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val state by viewModel.state.collectAsStateWithLifecycle()

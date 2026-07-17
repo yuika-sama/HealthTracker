@@ -1,13 +1,15 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.user
 
 import com.yuika.healthtracker.domain.model.User
+import com.yuika.healthtracker.domain.usecase.main_use_cases.catalog.EnsureUserCatalogSeedUseCase
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class ValidateAndSaveOnboardingUseCase @Inject constructor(
     private val getLatestUserUseCase: GetLatestUserUseCase,
     private val saveUserUseCase: SaveUserUseCase,
-    private val updateUserUseCase: UpdateUserUseCase
+    private val updateUserUseCase: UpdateUserUseCase,
+    private val ensureUserCatalogSeedUseCase: EnsureUserCatalogSeedUseCase
 ) {
     suspend operator fun invoke(
         name: String,
@@ -44,10 +46,9 @@ class ValidateAndSaveOnboardingUseCase @Inject constructor(
                 height = heightValue
             )
             updateUserUseCase(updatedUser)
+            ensureUserCatalogSeedUseCase(updatedUser.id)
         } else {
             val newUser = User(
-                email = "dummy@example.com",
-                password = "dummy",
                 name = trimmedName,
                 dateOfBirth = validDateOfBirth,
                 gender = gender,
@@ -57,7 +58,8 @@ class ValidateAndSaveOnboardingUseCase @Inject constructor(
                 goal = "lose_weight",
                 avatarPath = null
             )
-            saveUserUseCase(newUser)
+            val userId = saveUserUseCase(newUser).toInt()
+            ensureUserCatalogSeedUseCase(userId)
         }
     }
 }

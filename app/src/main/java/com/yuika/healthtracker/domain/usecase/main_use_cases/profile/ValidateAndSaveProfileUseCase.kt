@@ -10,8 +10,6 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         id: Int,
-        email: String,
-        passwordHash: String,
         name: String,
         dateOfBirth: String,
         gender: String,
@@ -65,8 +63,6 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
 
         val updatedUser = User(
             id = id,
-            email = email,
-            password = passwordHash,
             name = trimmedName,
             dateOfBirth = validDateOfBirth,
             gender = gender,

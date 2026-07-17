@@ -33,16 +33,6 @@ class UserRepositoryImpl @Inject constructor(
         return userDao.getUserById(userId)?.toDomain()
     }
 
-    override suspend fun getUserByEmail(email: String): User?
-    {
-        return userDao.getUserByEmail(email)?.toDomain()
-    }
-
-    override fun getUserByEmailFlow(email: String): Flow<User?>
-    {
-        return userDao.getUserByEmailFlow(email).map { it?.toDomain() }
-    }
-
     override fun getLatestUserFlow(): Flow<User?>
     {
         return userDao.getLatestUserFlow().map { it?.toDomain() }
