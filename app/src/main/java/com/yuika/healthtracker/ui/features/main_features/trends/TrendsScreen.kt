@@ -1,9 +1,14 @@
 package com.yuika.healthtracker.ui.features.main_features.trends
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -13,10 +18,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.service.pdf_exporter.WeeklyReportService
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.StatCard
@@ -37,9 +47,28 @@ fun TrendsScreen(
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(TrendsIntent.LoadTrendsData)
+    }
+
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewModel.effect.collect { effect ->
+                when(effect){
+                    is TrendsEffect.ShareWeeklyReport -> {
+                        val chooser = Intent.createChooser(
+                            WeeklyReportService.shareIntent(effect.uri),
+                            "Share weekly report"
+                        )
+                        chooser.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        context.startActivity(chooser)
+                    }
+                }
+            }
+        }
     }
 
     Scaffold(
@@ -73,6 +102,16 @@ fun TrendsScreen(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
+            }
+
+            Button(
+                onClick = {viewModel.onIntent(TrendsIntent.ExportWeeklyReportClick)},
+                enabled = !state.isExportingReport,
+                modifier = Modifier.fillMaxWidth()
+            ){
+                Icon(imageVector = Icons.Outlined.FileDownload, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(if(state.isExportingReport) "Exporting..." else "Export weekly PDF")
             }
 
             state.selectedDetail?.let { detail ->

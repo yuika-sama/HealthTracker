@@ -36,5 +36,6 @@ data class TrendsUiState(
 
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
-    val isSuccess: Boolean = false
+    val isSuccess: Boolean = false,
+    val isExportingReport: Boolean = false
 ) : UiState
