@@ -1,13 +1,15 @@
 package com.yuika.healthtracker.ui.features.main_features.onboarding.page1
 
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.ValidateAndSaveOnboardingUseCase
+import com.yuika.healthtracker.service.widget.WidgetService
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingPage1ViewModel @Inject constructor(
-    private val validateAndSaveOnboardingUseCase: ValidateAndSaveOnboardingUseCase
+    private val validateAndSaveOnboardingUseCase: ValidateAndSaveOnboardingUseCase,
+    private val widgetService: WidgetService
 ) : BaseViewModel<OnboardingPage1UiState, OnboardingPage1Intent, OnboardingPage1Effect>(
     initialState = OnboardingPage1UiState()
 ) {
@@ -40,6 +42,7 @@ class OnboardingPage1ViewModel @Inject constructor(
                 weightStr = currentState.weight,
                 heightStr = currentState.height
             )
+            widgetService.refresh()
             updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(OnboardingPage1Effect.NavigateToPage2)
         }
