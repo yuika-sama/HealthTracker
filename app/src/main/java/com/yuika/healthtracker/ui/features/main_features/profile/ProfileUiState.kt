@@ -19,8 +19,8 @@ data class ProfileUiState(
     val themeColorPreset: ThemeColorPreset = ThemeColorPreset.GREEN,
     val fontSize: AppFontSize = AppFontSize.MEDIUM,
     val notificationEnabled: Boolean = false,
-    val activeSettingsDialog: ProfileSettingsDialog? = null,
     val testNotificationEnabled: Boolean = false,
+    val activeSettingsDialog: ProfileSettingsDialog? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val isSuccess: Boolean = false

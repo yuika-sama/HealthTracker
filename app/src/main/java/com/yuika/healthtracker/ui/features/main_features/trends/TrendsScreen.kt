@@ -52,9 +52,9 @@ fun TrendsScreen(
     }
 
     LaunchedEffect(Unit) {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
-                when(effect){
+                when (effect) {
                     is TrendsEffect.ShareWeeklyReport -> {
                         val chooser = Intent.createChooser(
                             WeeklyReportService.shareIntent(effect.uri),

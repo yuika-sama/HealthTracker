@@ -27,6 +27,7 @@ class ReminderNotificationService @Inject constructor(
     {
         val reminderHours = listOf(7, 12, 19)
         const val TEST_WORK_NAME = "diary_reminder_test_every_minute"
+        const val TEST_DELAY_MINUTES = 1L
     }
 
     fun setDailyReminderEnabled(enabled: Boolean)
@@ -86,7 +87,8 @@ class ReminderNotificationService @Inject constructor(
     private fun enqueueTestReminder(policy: ExistingWorkPolicy)
     {
         val request =
-            OneTimeWorkRequestBuilder<ReminderWorker>().setInitialDelay(1, TimeUnit.MINUTES)
+            OneTimeWorkRequestBuilder<ReminderWorker>()
+                .setInitialDelay(TEST_DELAY_MINUTES, TimeUnit.MINUTES)
                 .setInputData(workDataOf(ReminderWorker.KEY_TYPE to ReminderWorker.TYPE_TEST))
                 .build()
 

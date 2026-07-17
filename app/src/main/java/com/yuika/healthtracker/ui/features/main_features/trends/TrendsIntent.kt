@@ -8,5 +8,4 @@ sealed class TrendsIntent : UiIntent
     data class PointClick(val title: String, val point: ChartDataPoint) : TrendsIntent()
     object DismissDetail: TrendsIntent()
     object ExportWeeklyReportClick: TrendsIntent()
-//    data class OnPeriodChange(val period: String) : TrendsIntent()
 }

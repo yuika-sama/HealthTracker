@@ -27,23 +27,19 @@ class ReminderWorker(
             val settings = AppSettingsStore(applicationContext).settings.first()
             val type = inputData.getString(KEY_TYPE) ?: TYPE_DAILY
 
-            val enabled = when(type){
+            val enabled = when (type) {
                 TYPE_TEST -> settings.testNotificationEnabled
-                else -> settings.notificationEnabled
+                TYPE_DAILY -> settings.notificationEnabled
+                else -> false
             }
-
             if (!enabled) return Result.success()
 
             NotificationHelper(applicationContext).showNotification(
-                title  =  if(type == TYPE_TEST) "Test_reminder" else "Diary reminder",
-                message = if (type == TYPE_TEST) {
-                    "This is a 1-minute test reminder."
-                } else {
-                    "Don't forget to update your meal diary."
-                }
+                title = "Diary reminder",
+                message = "Don't forget to update your meal diary."
             )
 
-            if (type == TYPE_TEST){
+            if (type == TYPE_TEST) {
                 ReminderNotificationService(applicationContext).scheduleNextTestReminder()
             }
 
