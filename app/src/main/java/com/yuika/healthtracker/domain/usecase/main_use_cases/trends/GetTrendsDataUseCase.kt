@@ -1,7 +1,5 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.trends
 
-import com.yuika.healthtracker.domain.model.Activity
-import com.yuika.healthtracker.domain.model.FoodEntry
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.GetActivitiesByDateRangeUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.GetFoodEntriesByDateRangeUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.CalculateUserStatsUseCase
@@ -16,8 +14,13 @@ import javax.inject.Inject
 
 data class TrendsChartDataPoint(
     val label: String,
-    val value: Float
-)
+    val value: Float,
+    val dateText: String,
+    val intake: Int,
+    val burned: Int
+){
+    val balance: Int get() = intake - burned
+}
 
 data class TrendsData(
     val avgIntakeStr: String,
@@ -25,7 +28,7 @@ data class TrendsData(
     val daysMeetingGoal: String,
     val goalDays: String,
     val intakeChartData: List<TrendsChartDataPoint>,
-    val netCaloriesChartData: List<TrendsChartDataPoint>
+    val weeklyTrendChartData: List<TrendsChartDataPoint>
 )
 
 class GetTrendsDataUseCase @Inject constructor(
@@ -36,85 +39,76 @@ class GetTrendsDataUseCase @Inject constructor(
 )
 {
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(period: String): Flow<TrendsData?>
+    operator fun invoke(): Flow<TrendsData?>
     {
         val endDate = LocalDate.now()
-        val daysToSubtract = if (period == "Week") 6L else 29L
-
-        val startDate = endDate.minusDays(daysToSubtract)
-
-        val startStr = startDate.toString()
-        val endStr = endDate.toString()
-        val totalDays = (daysToSubtract + 1).toInt()
+        val dailyStart = endDate.minusDays(6)
+        val trendStart = endDate.minusDays(27)
 
         return getLatestUserUseCase().flatMapLatest { user ->
-            if (user == null)
-            {
-                flowOf<TrendsData?>(null)
-            }
-            else
-            {
-                val foodFlow = getFoodEntriesByDateRangeUseCase(user.id, startStr, endStr)
-                val activityFlow = getActivitiesByDateRangeUseCase(user.id, startStr, endStr)
+            if (user == null) return@flatMapLatest flowOf(null)
 
-                combine(
-                    foodFlow,
-                    activityFlow
-                ) { foodEntries: List<FoodEntry>, activities: List<Activity> ->
-                    val totalIntake = foodEntries.sumOf { it.calories }
-                    val avgIntake = if (totalDays > 0) totalIntake / totalDays else 0
+            combine(
+                getFoodEntriesByDateRangeUseCase(user.id, trendStart.toString(), endDate.toString()),
+                getActivitiesByDateRangeUseCase(user.id, trendStart.toString(), endDate.toString())
+            ) { foods, activities ->
+                val goalKcal = calculateUserStatsUseCase(user).goalKcal
+                val foodsByDate = foods.groupBy { it.dateText }
+                val activitiesByDate = activities.groupBy { it.dateText }
 
-                    val totalBurned = activities.sumOf { it.kcalBurned }
-                    val avgBurned = if (totalDays > 0) totalBurned / totalDays else 0
+                fun totals(date: LocalDate): Pair<Int, Int> {
+                    val key = date.toString()
+                    val intake = foodsByDate[key]?.sumOf { it.calories } ?: 0
+                    val burned = activitiesByDate[key]?.sumOf { it.kcalBurned } ?: 0
+                    return Pair(intake, burned)
+                }
 
-                    val stats = calculateUserStatsUseCase(user)
-                    val goalKcal = stats.goalKcal
+                val days = generateSequence(dailyStart) { it.plusDays(1) }
+                    .take(7)
+                    .toList()
 
-                    val intakeByDate = foodEntries.groupBy { it.dateText }
-                    val burnByDate = activities.groupBy { it.dateText }
-                    var daysMeetingGoal = 0
-
-                    val intakeChartData = mutableListOf<TrendsChartDataPoint>()
-                    val netCaloriesChartData = mutableListOf<TrendsChartDataPoint>()
-
-                    var currentDay = startDate
-                    while (!currentDay.isAfter(endDate))
-                    {
-                        val dateKey = currentDay.toString()
-                        val dayIntake = intakeByDate[dateKey]?.sumOf { it.calories } ?: 0
-                        val dayBurn = burnByDate[dateKey]?.sumOf { it.kcalBurned } ?: 0
-
-                        if (dayIntake > 0 && dayIntake <= goalKcal + 200)
-                        {
-                            daysMeetingGoal++
-                        }
-
-                        val label = if (period == "Week")
-                        {
-                            currentDay.dayOfWeek.name.take(3).lowercase()
-                                .replaceFirstChar { it.uppercase() }
-                        }
-                        else
-                        {
-                            "${currentDay.dayOfMonth}/${currentDay.monthValue}"
-                        }
-
-                        intakeChartData.add(TrendsChartDataPoint(label, dayIntake.toFloat()))
-                        val netCalories = dayIntake - dayBurn
-                        netCaloriesChartData.add(TrendsChartDataPoint(label, netCalories.toFloat()))
-
-                        currentDay = currentDay.plusDays(1)
-                    }
-
-                    TrendsData(
-                        avgIntakeStr = String.format("%,d", avgIntake).replace(',', '.'),
-                        avgBurnedStr = String.format("%,d", avgBurned).replace(',', '.'),
-                        daysMeetingGoal = daysMeetingGoal.toString(),
-                        goalDays = "/ $totalDays days",
-                        intakeChartData = intakeChartData,
-                        netCaloriesChartData = netCaloriesChartData
+                val dailyPoints = days.map { date ->
+                    val (intake, burned) = totals(date)
+                    TrendsChartDataPoint(
+                        label = date.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() },
+                        value = intake.toFloat(),
+                        dateText = date.toString(),
+                        intake = intake,
+                        burned = burned
                     )
                 }
+
+                val weeklyPoints = (0..3).map { index ->
+                    val start = trendStart.plusDays(index * 7L)
+                    val end = minOf(start.plusDays(6), endDate)
+                    val weekDays = generateSequence(start) { it.plusDays(1) }
+                        .takeWhile { !it.isAfter(end) }
+                        .toList()
+
+                    val intake = weekDays.sumOf { totals(it).first }
+                    val burned = weekDays.sumOf { totals(it).second }
+
+                    TrendsChartDataPoint(
+                        label =  "${start.dayOfMonth}/${start.monthValue}",
+                        value = (intake - burned).toFloat(),
+                        dateText = "${start} - ${end}",
+                        intake = intake,
+                        burned = burned
+                    )
+                }
+
+                val totalIntake = dailyPoints.sumOf { it.intake }
+                val totalBurned = dailyPoints.sumOf { it.burned }
+                val daysMeetingGoal = dailyPoints.count{it.intake > 0 && it.balance in (goalKcal - 300) .. (goalKcal + 200)}
+
+                TrendsData(
+                    avgIntakeStr = "%,d".format(totalIntake / 7).replace(',', '.'),
+                    avgBurnedStr = "%,d".format(totalBurned / 7).replace(',', '.'),
+                    daysMeetingGoal = daysMeetingGoal.toString(),
+                    goalDays = "/ 7 days",
+                    intakeChartData = dailyPoints,
+                    weeklyTrendChartData = weeklyPoints
+                )
             }
         }
     }

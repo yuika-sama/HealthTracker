@@ -1,28 +1,24 @@
 package com.yuika.healthtracker.ui.features.main_features.trends
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
-import com.yuika.healthtracker.ui.core.components.SegmentedSelector
 import com.yuika.healthtracker.ui.core.components.StatCard
 import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
@@ -41,6 +37,7 @@ fun TrendsScreen(
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) {
         viewModel.onIntent(TrendsIntent.LoadTrendsData)
     }
@@ -78,11 +75,25 @@ fun TrendsScreen(
                 )
             }
 
-            SegmentedSelector(
-                options = listOf("Week", "Month"),
-                selectedOption = state.selectedPeriod,
-                onOptionSelected = { viewModel.onIntent(TrendsIntent.OnPeriodChange(it)) }
-            )
+            state.selectedDetail?.let { detail ->
+                AlertDialog(
+                    onDismissRequest = { viewModel.onIntent(TrendsIntent.DismissDetail) },
+                    title = { Text(detail.title) },
+                    text = {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(detail.dateText)
+                            Text("Intake: ${detail.intake} kcal")
+                            Text("Burned: ${detail.burned} kcal")
+                            Text("Balance: ${detail.balance} kcal")
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { viewModel.onIntent(TrendsIntent.DismissDetail) }) {
+                            Text("Close")
+                        }
+                    }
+                )
+            }
 
             if (state.errorMessage != null)
             {
@@ -136,14 +147,23 @@ fun TrendsScreen(
             {
                 CalorieIntakeChart(
                     dataPoints = state.intakeChartData,
-                    periodLabel = if (state.selectedPeriod == "Week") "This Week" else "This Month"
+                    periodLabel = "Last 7 days",
+                    onPointClick = { viewModel.onIntent(TrendsIntent.PointClick("Day detail", it)) }
                 )
             }
 
-            if (state.netCaloriesChartData.isNotEmpty())
+            if (state.weeklyTrendChartData.isNotEmpty())
             {
                 NetCaloriesChart(
-                    dataPoints = state.netCaloriesChartData
+                    dataPoints = state.weeklyTrendChartData,
+                    onPointClick = {
+                        viewModel.onIntent(
+                            TrendsIntent.PointClick(
+                                "Week detail",
+                                it
+                            )
+                        )
+                    }
                 )
             }
 

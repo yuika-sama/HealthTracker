@@ -4,19 +4,35 @@ import com.yuika.healthtracker.ui.core.base.UiState
 
 data class ChartDataPoint(
     val label: String,
-    val value: Float
+    val value: Float,
+    val dateText: String = "",
+    val intake: Int = 0,
+    val burned: Int = 0
 )
+{
+    val balance: Int get() = intake - burned
+}
+
+data class TrendDetail(
+    val title: String,
+    val label: String,
+    val dateText: String,
+    val intake: Int,
+    val burned: Int
+)
+{
+    val balance: Int get() = intake - burned
+}
 
 data class TrendsUiState(
-    val selectedPeriod: String = "Week",
-
     val avgIntake: String = "0",
     val avgBurned: String = "0",
     val daysMeetingGoal: String = "0",
     val goalDays: String = " / 7 days",
 
     val intakeChartData: List<ChartDataPoint> = emptyList(),
-    val netCaloriesChartData: List<ChartDataPoint> = emptyList(),
+    val weeklyTrendChartData: List<ChartDataPoint> = emptyList(),
+    val selectedDetail: TrendDetail? = null,
 
     val isLoading: Boolean = false,
     val errorMessage: String? = null,

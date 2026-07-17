@@ -2,6 +2,7 @@ package com.yuika.healthtracker.ui.features.main_features.trends.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,13 +30,19 @@ import com.yuika.healthtracker.ui.features.main_features.trends.ChartDataPoint
 fun CalorieIntakeChart(
     modifier: Modifier = Modifier,
     dataPoints: List<ChartDataPoint>,
-    periodLabel: String
-) {
+    periodLabel: String,
+    onPointClick: (ChartDataPoint) -> Unit = {}
+)
+{
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.1f), RoundedCornerShape(16.dp))
+            .border(
+                1.dp,
+                MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
+                RoundedCornerShape(16.dp)
+            )
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
@@ -49,7 +56,7 @@ fun CalorieIntakeChart(
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground
             )
-            
+
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
@@ -63,7 +70,7 @@ fun CalorieIntakeChart(
                 )
             }
         }
-        
+
         Spacer(modifier = Modifier.height(24.dp))
 
         val maxIntake = dataPoints.maxOfOrNull { it.value }?.coerceAtLeast(100f) ?: 100f
@@ -82,7 +89,7 @@ fun CalorieIntakeChart(
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
                 }
             }
-            
+
             // Bars
             Row(
                 modifier = Modifier.fillMaxSize(),
@@ -93,7 +100,9 @@ fun CalorieIntakeChart(
                     val heightFraction = (point.value / maxIntake).coerceIn(0f, 1f)
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { onPointClick(point) }
                     ) {
                         Box(
                             modifier = Modifier
@@ -106,7 +115,7 @@ fun CalorieIntakeChart(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(8.dp))
 
         // Labels

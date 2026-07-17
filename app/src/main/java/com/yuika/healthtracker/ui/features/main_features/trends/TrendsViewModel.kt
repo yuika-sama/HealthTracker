@@ -23,20 +23,28 @@ class TrendsViewModel @Inject constructor(
         {
             is TrendsIntent.LoadTrendsData ->
             {
-                handleFetchTrends(state.value.selectedPeriod)
+                handleFetchTrends()
             }
 
-            is TrendsIntent.OnPeriodChange ->
-            {
-                updateState { it.copy(selectedPeriod = intent.period) }
-                handleFetchTrends(intent.period)
+            is TrendsIntent.PointClick -> updateState {
+                it.copy(
+                    selectedDetail = TrendDetail(
+                        title = intent.title,
+                        label = intent.point.label,
+                        dateText = intent.point.dateText,
+                        intake = intent.point.intake,
+                        burned = intent.point.burned
+                    )
+                )
             }
+
+            is TrendsIntent.DismissDetail -> updateState { it.copy(selectedDetail = null) }
         }
     }
 
     private var fetchJob: Job? = null
 
-    private fun handleFetchTrends(period: String)
+    private fun handleFetchTrends()
     {
         updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
 
@@ -44,24 +52,29 @@ class TrendsViewModel @Inject constructor(
         fetchJob = launchSafe(
             onError = { throwable ->
                 val message = throwable.message ?: "Can't get data"
-                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = message,
+                        isSuccess = false
+                    )
+                }
             }
         ) {
-            getTrendsDataUseCase(period).collectLatest { trendsData ->
+            getTrendsDataUseCase().collectLatest { trendsData ->
                 if (trendsData == null)
                 {
                     updateState {
                         it.copy(
                             isLoading = false,
-                            errorMessage = "Can't find user information",
-                            isSuccess = false
+                            errorMessage = "Can't find user information"
                         )
                     }
                     return@collectLatest
                 }
 
-                fun List<TrendsChartDataPoint>.toUiModels() = this.map {
-                    ChartDataPoint(label = it.label, value = it.value)
+                fun List<TrendsChartDataPoint>.toUiModels() = map {
+                    ChartDataPoint(it.label, it.value, it.dateText, it.intake, it.burned)
                 }
 
                 delay(NETWORK_DELAY.toLong())
@@ -73,10 +86,10 @@ class TrendsViewModel @Inject constructor(
                         daysMeetingGoal = trendsData.daysMeetingGoal,
                         goalDays = trendsData.goalDays,
                         intakeChartData = trendsData.intakeChartData.toUiModels(),
-                        netCaloriesChartData = trendsData.netCaloriesChartData.toUiModels(),
+                        weeklyTrendChartData = trendsData.weeklyTrendChartData.toUiModels(),
                         isLoading = false,
                         isSuccess = true,
-                        errorMessage = null,
+                        errorMessage = null
                     )
                 }
             }
