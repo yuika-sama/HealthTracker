@@ -24,3 +24,12 @@ val OnSurfaceDark = Color(0xFFFFFFFF)
 
 val OnSurfaceVariantLight = Color(0xFF6C7E79)
 val OnSurfaceVariantDark = Color(0xFFB7C7C2)
+
+val AccentBluePrimary = Color(0xFF2563EB)
+val AccentBlueSecondary = Color(0xFF06B6D4)
+
+val AccentPurplePrimary = Color(0xFF7C3AED)
+val AccentPurpleSecondary= Color(0xFFA855F7)
+
+val AccentOrangePrimary = Color(0xFFF97316)
+val AccentOrangeSecondary = Color(0xFFF59E0B)

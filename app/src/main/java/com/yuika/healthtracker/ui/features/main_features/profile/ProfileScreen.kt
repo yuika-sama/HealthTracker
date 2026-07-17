@@ -1,7 +1,13 @@
 package com.yuika.healthtracker.ui.features.main_features.profile
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,11 +20,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.ButtonDefaults
@@ -27,34 +36,41 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.domain.model.AppFontSize
+import com.yuika.healthtracker.domain.model.AppLanguage
+import com.yuika.healthtracker.domain.model.ThemeColorPreset
+import com.yuika.healthtracker.domain.model.ThemeMode
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
 import com.yuika.healthtracker.ui.features.main_features.profile.components.CurrentGoalBanner
+import com.yuika.healthtracker.ui.features.main_features.profile.components.NotificationSwitchItem
 import com.yuika.healthtracker.ui.features.main_features.profile.components.ProfileHeaderCard
+import com.yuika.healthtracker.ui.features.main_features.profile.components.SettingsChoiceDialog
 import com.yuika.healthtracker.ui.features.main_features.profile.components.SettingsGroup
 import com.yuika.healthtracker.ui.features.main_features.profile.components.SettingsItem
 import com.yuika.healthtracker.ui.theme.ErrorRed
-import com.yuika.healthtracker.ui.theme.InfoBlue
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
@@ -64,12 +80,37 @@ fun ProfileScreen(
     onLogoutClick: () -> Unit = {},
     onEditProfileClick: () -> Unit = {},
     onTabClick: (String) -> Unit = {}
-) {
+)
+{
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted)
+        {
+            viewModel.onIntent(ProfileIntent.ChangeNotificationEnabled(true))
+        }
+    }
+    val onNotificationToggle: (Boolean) -> Unit = { enabled ->
+        val needsPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+
+        if (enabled && needsPermission)
+        {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        else
+        {
+            viewModel.onIntent(ProfileIntent.ChangeNotificationEnabled(enabled))
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(ProfileIntent.LoadProfile)
@@ -78,15 +119,60 @@ fun ProfileScreen(
     LaunchedEffect(Unit) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
-                when (effect) {
-                    is ProfileEffect.NavigateToLogin -> {
+                when (effect)
+                {
+                    is ProfileEffect.NavigateToLogin ->
+                    {
                         onLogoutClick()
                     }
-                    is ProfileEffect.NavigateToEditProfile -> {
+
+                    is ProfileEffect.NavigateToEditProfile ->
+                    {
                         onEditProfileClick()
                     }
                 }
             }
+        }
+    }
+
+    state.activeSettingsDialog?.let { dialog ->
+        when (dialog)
+        {
+            ProfileSettingsDialog.LANGUAGE -> SettingsChoiceDialog(
+                title = "Language",
+                options = AppLanguage.entries,
+                selectedOption = state.language,
+                labelProvider = { it.label },
+                onSelect = { viewModel.onIntent(ProfileIntent.ChangeLanguage(it)) },
+                onDismiss = { viewModel.onIntent(ProfileIntent.DismissSettingsDialog) }
+            )
+
+            ProfileSettingsDialog.THEME_MODE -> SettingsChoiceDialog(
+                title = "Theme",
+                options = ThemeMode.entries,
+                selectedOption = state.themeMode,
+                labelProvider = { it.label },
+                onSelect = { viewModel.onIntent(ProfileIntent.ChangeThemeMode(it)) },
+                onDismiss = { viewModel.onIntent(ProfileIntent.DismissSettingsDialog) }
+            )
+
+            ProfileSettingsDialog.THEME_COLOR -> SettingsChoiceDialog(
+                title = "Theme color",
+                options = ThemeColorPreset.entries,
+                selectedOption = state.themeColorPreset,
+                labelProvider = { it.label },
+                onSelect = { viewModel.onIntent(ProfileIntent.ChangeThemeColor(it)) },
+                onDismiss = { viewModel.onIntent(ProfileIntent.DismissSettingsDialog) }
+            )
+
+            ProfileSettingsDialog.FONT_SIZE -> SettingsChoiceDialog(
+                title = "Font size",
+                options = AppFontSize.entries,
+                selectedOption = state.fontSize,
+                labelProvider = { it.label },
+                onSelect = { viewModel.onIntent(ProfileIntent.ChangeFontSize(it)) },
+                onDismiss = { viewModel.onIntent(ProfileIntent.DismissSettingsDialog) }
+            )
         }
     }
 
@@ -123,21 +209,32 @@ fun ProfileScreen(
                 )
             }
 
-            if (state.errorMessage != null){
+            if (state.errorMessage != null)
+            {
                 ErrorText(state.errorMessage!!)
             }
 
-            if (state.isSuccess && !state.isLoading && state.errorMessage == null) {
+            if (state.isSuccess && !state.isLoading && state.errorMessage == null)
+            {
                 SuccessText("Profile loaded")
             }
-            
-            if (state.isLoading) {
-                Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                    Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center){
+
+            if (state.isLoading)
+            {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         LoadingIndicator()
                     }
                 }
-            } else {
+            }
+            else
+            {
                 ProfileHeaderCard(
                     name = state.name,
                     subtitle = state.subtitle,
@@ -145,13 +242,13 @@ fun ProfileScreen(
                     height = state.height,
                     bmi = state.bmi
                 )
-                
+
                 CurrentGoalBanner(
                     title = state.goalTitle,
                     description = state.goalDescription
                 )
             }
-            
+
             SettingsGroup(title = "ACCOUNT") {
                 SettingsItem(
                     icon = Icons.Outlined.PersonOutline,
@@ -163,34 +260,52 @@ fun ProfileScreen(
                     onClick = { viewModel.onIntent(ProfileIntent.EditProfile) }
                 )
             }
-            
+
             SettingsGroup(title = "CONFIG DISPLAY") {
                 SettingsItem(
                     icon = Icons.Outlined.Language,
                     iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
                     iconTintColor = MaterialTheme.colorScheme.tertiary,
                     title = "Language",
-                    value = "Vietnamese"
+                    value = state.languageLabel,
+                    onClick = { viewModel.onIntent(ProfileIntent.LanguageClick) }
                 )
-                
+
                 SettingsItem(
                     icon = Icons.Outlined.DarkMode,
                     iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
                     iconTintColor = MaterialTheme.colorScheme.tertiary,
                     title = "Theme",
-                    value = "System"
+                    value = state.themeModeLabel,
+                    onClick = { viewModel.onIntent(ProfileIntent.ThemeModeClick) }
                 )
-                
+
+                SettingsItem(
+                    icon = Icons.Outlined.Palette,
+                    iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
+                    iconTintColor = MaterialTheme.colorScheme.tertiary,
+                    title = "Theme color",
+                    value = state.themeColorLabel,
+                    onClick = { viewModel.onIntent(ProfileIntent.ThemeColorClick) }
+                )
+
                 SettingsItem(
                     icon = Icons.Outlined.TextFields,
                     iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
                     iconTintColor = MaterialTheme.colorScheme.tertiary,
                     title = "Font size",
-                    value = "Normal",
-                    showDivider = false
+                    value = state.fontSizeLabel,
+                    onClick = { viewModel.onIntent(ProfileIntent.FontSizeClick) }
                 )
             }
-            
+
+            SettingsGroup(title = "REMINDERS") {
+                NotificationSwitchItem(
+                    checked = state.notificationEnabled,
+                    onCheckedChange = onNotificationToggle
+                )
+            }
+
             OutlinedButton(
                 onClick = { viewModel.onIntent(ProfileIntent.Logout) },
                 modifier = Modifier
@@ -217,9 +332,8 @@ fun ProfileScreen(
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
-
