@@ -2,8 +2,11 @@ package com.yuika.healthtracker.ui.features.main_features.dashboard.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,21 +29,27 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DailySummaryCard(
     modifier: Modifier = Modifier,
-    remainingKcal: Int = 540,
-    goalKcal: Int = 2400
+    targetKcal: Int,
+    eatenKcal: Int,
+    burnedKcal: Int,
+    remainingKcal: Int,
+    balanceKcal: Int,
+    progress: Float,
+    onClick: () -> Unit
 ) {
-    val progress = if (goalKcal > 0) {
-        ((goalKcal - remainingKcal) / goalKcal.toFloat()).coerceIn(0f, 1f)
-    } else {
-        0f
-    }
+    val isOver = remainingKcal < 0
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
+            .border(
+                1.dp,
+                MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                RoundedCornerShape(16.dp)
+            )
             .background(MaterialTheme.colorScheme.background)
+            .clickable { onClick() }
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -78,18 +87,18 @@ fun DailySummaryCard(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = remainingKcal.toString(),
+                    text = if (isOver) "${-remainingKcal}" else "$remainingKcal",
                     style = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = "kcal remaining",
+                    text = if (!isOver) "kcal remaining" else "kcal over",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Goal: $goalKcal kcal",
+                    text = "Target: $targetKcal kcal",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
@@ -97,5 +106,12 @@ fun DailySummaryCard(
         }
         
         Spacer(modifier = Modifier.height(16.dp))
+
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text("Eaten: $eatenKcal kcal")
+            Text("Burned: $burnedKcal kcal")
+        }
+        Spacer(Modifier.height(8.dp))
+        Text("Balance: $balanceKcal kcal", fontWeight = FontWeight.Medium)
     }
 }

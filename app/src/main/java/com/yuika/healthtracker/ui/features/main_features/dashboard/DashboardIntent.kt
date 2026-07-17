@@ -7,4 +7,6 @@ sealed class DashboardIntent : UiIntent
     object LoadDashboardData: DashboardIntent()
     object AddMealClick: DashboardIntent()
     object AddActivityClick: DashboardIntent()
+    object SummaryClick: DashboardIntent()
+    object DismissBreakdown : DashboardIntent()
 }

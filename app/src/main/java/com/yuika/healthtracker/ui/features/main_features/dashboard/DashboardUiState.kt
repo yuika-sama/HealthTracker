@@ -14,6 +14,18 @@ data class DashboardUiState(
     val tdeeCalories: Int = 0,
     val bmi: String  = "",
     val bmiCategory: String = "",
+    val isBreakdownVisible: Boolean = false,
     val errorMessage: String? = null,
     val isSuccess: Boolean = false
-) : UiState
+) : UiState {
+    val progressFraction: Float
+        get() = if (goalCalories > 0) (netBalance / goalCalories.toFloat().coerceIn(0f, 1f)) else 0f
+
+    val adviceText: String
+        get() = when {
+            goalCalories <= 0 -> "Update your profile to calculate today's target."
+            remainingCalories < 0 -> "You are ${-remainingCalories} kcal over target today."
+            remainingCalories <= 300 -> "You are close to today's target."
+            else -> "You still have $remainingCalories kcal for today"
+        }
+}

@@ -23,6 +23,8 @@ class DashboardViewModel @Inject constructor(
             is DashboardIntent.LoadDashboardData -> loadDashboardData()
             is DashboardIntent.AddMealClick -> sendEffect(DashboardEffect.NavigateToDiary)
             is DashboardIntent.AddActivityClick -> sendEffect(DashboardEffect.NavigateToActivity)
+            is DashboardIntent.SummaryClick -> updateState { it.copy(isBreakdownVisible = true) }
+            is DashboardIntent.DismissBreakdown -> updateState { it.copy(isBreakdownVisible = false) }
         }
     }
 

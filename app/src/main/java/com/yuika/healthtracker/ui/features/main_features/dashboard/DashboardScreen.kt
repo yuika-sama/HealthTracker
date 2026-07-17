@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Balance
 import androidx.compose.material.icons.outlined.LocalDining
 import androidx.compose.material.icons.outlined.LocalFireDepartment
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -28,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -90,6 +92,34 @@ fun DashboardScreen(
         }
     }
 
+    if (state.isBreakdownVisible) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onIntent(DashboardIntent.DismissBreakdown) },
+            title = { Text("Today breakdown") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("Target: ${state.goalCalories} kcal")
+                    Text("TDEE: ${state.tdeeCalories} kcal")
+                    Text("Eaten: ${state.intakeCalories} kcal")
+                    Text("Burned: ${state.burnedCalories} kcal")
+                    Text("Balance: ${state.netBalance} kcal")
+                    Text(
+                        if (state.remainingCalories < 0)
+                            "Over: ${-state.remainingCalories} kcal"
+                        else
+                            "Remaining: ${state.remainingCalories} kcal"
+                    )
+                    Text("BMI: ${state.bmi} ${state.bmiCategory}")
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { viewModel.onIntent(DashboardIntent.DismissBreakdown) }) {
+                    Text("Close")
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             DashboardTopBar()
@@ -139,13 +169,18 @@ fun DashboardScreen(
             }
             else
             {
-                InfoBanner(message = "Hi ${state.userName}, let's track your health!")
+                InfoBanner(message = state.adviceText)
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 DailySummaryCard(
+                    targetKcal = state.goalCalories,
+                    eatenKcal = state.intakeCalories,
+                    burnedKcal = state.burnedCalories,
                     remainingKcal = state.remainingCalories,
-                    goalKcal = state.goalCalories
+                    balanceKcal = state.netBalance,
+                    progress = state.progressFraction,
+                    onClick = {viewModel.onIntent(DashboardIntent.SummaryClick)}
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -157,7 +192,7 @@ fun DashboardScreen(
                     StatCard(
                         modifier = Modifier.weight(1f),
                         title = "TDEE",
-                        value = "${state.intakeCalories}",
+                        value = "${state.tdeeCalories}",
                         icon = Icons.Outlined.LocalFireDepartment,
                         iconTint = EnergyAmber,
                         iconBgColor = EnergyAmber.copy(alpha = 0.15f)
