@@ -5,7 +5,8 @@ data class AppSettingsState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val themeColorPreset: ThemeColorPreset = ThemeColorPreset.GREEN,
     val fontSize: AppFontSize = AppFontSize.MEDIUM,
-    val notificationEnabled: Boolean = false
+    val notificationEnabled: Boolean = false,
+    val testNotificationEnabled: Boolean  = false
 )
 
 enum class AppLanguage(val label: String){

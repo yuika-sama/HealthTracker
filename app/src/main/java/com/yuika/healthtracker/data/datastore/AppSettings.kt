@@ -30,11 +30,12 @@ object PreferencesKeys
     val FONT_SIZE = stringPreferencesKey("font_size")
     val LANGUAGE = stringPreferencesKey("language")
     val NOTIFICATION_ENABLED = booleanPreferencesKey("notification_enabled")
+    val TEST_NOTIFICATION_ENABLED = booleanPreferencesKey("test_notification_enabled")
 }
 
 @Singleton
 class AppSettingsStore @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 )
 {
     val settings: Flow<AppSettingsState> = context.dataStore.data
@@ -50,7 +51,8 @@ class AppSettingsStore @Inject constructor(
                     ThemeColorPreset.GREEN
                 ),
                 fontSize = readEnum(preferences[PreferencesKeys.FONT_SIZE], AppFontSize.MEDIUM),
-                notificationEnabled = preferences[PreferencesKeys.NOTIFICATION_ENABLED] ?: false
+                notificationEnabled = preferences[PreferencesKeys.NOTIFICATION_ENABLED] ?: false,
+                testNotificationEnabled = preferences[PreferencesKeys.TEST_NOTIFICATION_ENABLED] ?: false
             )
         }
     private suspend fun save(key: Preferences.Key<String>, value: String){
@@ -75,6 +77,10 @@ class AppSettingsStore @Inject constructor(
 
     suspend fun setNotificationEnabled(value: Boolean){
         context.dataStore.edit { it[PreferencesKeys.NOTIFICATION_ENABLED] = value}
+    }
+
+    suspend fun setTestNotificationEnabled(value: Boolean){
+        context.dataStore.edit { it[PreferencesKeys.TEST_NOTIFICATION_ENABLED] = value }
     }
 
     private inline fun <reified T : Enum<T>> readEnum(value: String?, default: T): T

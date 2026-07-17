@@ -87,7 +87,7 @@ fun ProfileScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+    val dailyNotificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted)
@@ -95,20 +95,39 @@ fun ProfileScreen(
             viewModel.onIntent(ProfileIntent.ChangeNotificationEnabled(true))
         }
     }
-    val onNotificationToggle: (Boolean) -> Unit = { enabled ->
-        val needsPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+    val testNotificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted)
+        {
+            viewModel.onIntent(ProfileIntent.ChangeTestNotificationEnabled(true))
+        }
+    }
+    fun needsNotificationPermission(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
                 ContextCompat.checkSelfPermission(
                     context,
                     Manifest.permission.POST_NOTIFICATIONS
                 ) != PackageManager.PERMISSION_GRANTED
-
-        if (enabled && needsPermission)
+    }
+    val onNotificationToggle: (Boolean) -> Unit = { enabled ->
+        if (enabled && needsNotificationPermission())
         {
-            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            dailyNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
         else
         {
             viewModel.onIntent(ProfileIntent.ChangeNotificationEnabled(enabled))
+        }
+    }
+    val onTestNotificationToggle: (Boolean) -> Unit = { enabled ->
+        if (enabled && needsNotificationPermission())
+        {
+            testNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        else
+        {
+            viewModel.onIntent(ProfileIntent.ChangeTestNotificationEnabled(enabled))
         }
     }
 
@@ -301,8 +320,16 @@ fun ProfileScreen(
 
             SettingsGroup(title = "REMINDERS") {
                 NotificationSwitchItem(
+                    title = "Diary reminders",
+                    subtitle = "7 AM, 12 PM, 7 PM",
                     checked = state.notificationEnabled,
                     onCheckedChange = onNotificationToggle
+                )
+                NotificationSwitchItem(
+                    title = "Test reminders",
+                    subtitle = "Every 1 minute",
+                    checked = state.testNotificationEnabled,
+                    onCheckedChange = onTestNotificationToggle
                 )
             }
 

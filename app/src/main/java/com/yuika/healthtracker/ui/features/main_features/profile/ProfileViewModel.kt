@@ -1,30 +1,22 @@
 package com.yuika.healthtracker.ui.features.main_features.profile
 
-import android.content.Context
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.yuika.healthtracker.data.datastore.AppSettingsStore
 import com.yuika.healthtracker.domain.usecase.main_use_cases.profile.GetProfileDataUseCase
-import com.yuika.healthtracker.service.notification.ReminderWorker
+import com.yuika.healthtracker.service.notification.ReminderNotificationService
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.NETWORK_DELAY
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import java.time.Duration
-import java.time.LocalDateTime
-import java.util.concurrent.TimeUnit
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val getProfileDataUseCase: GetProfileDataUseCase,
     private val appSettingsStore: AppSettingsStore,
-    @ApplicationContext private val appContext: Context
+    private val reminderNotificationService: ReminderNotificationService
 ) : BaseViewModel<ProfileUiState, ProfileIntent, ProfileEffect>(
     initialState = ProfileUiState()
 )
@@ -53,6 +45,7 @@ class ProfileViewModel @Inject constructor(
             is ProfileIntent.ChangeThemeColor -> saveSetting { appSettingsStore.setThemeColorPreset(intent.value) }
             is ProfileIntent.ChangeFontSize -> saveSetting { appSettingsStore.setFontSize(intent.value) }
             is ProfileIntent.ChangeNotificationEnabled -> changeNotificationEnabled(intent.value)
+            is ProfileIntent.ChangeTestNotificationEnabled -> changeTestNotificationEnabled(intent.value)
         }
     }
 
@@ -65,7 +58,8 @@ class ProfileViewModel @Inject constructor(
                         themeMode = settings.themeMode,
                         themeColorPreset = settings.themeColorPreset,
                         fontSize = settings.fontSize,
-                        notificationEnabled = settings.notificationEnabled
+                        notificationEnabled = settings.notificationEnabled,
+                        testNotificationEnabled = settings.testNotificationEnabled
                     )
                 }
             }
@@ -94,46 +88,24 @@ class ProfileViewModel @Inject constructor(
                 updateState { it.copy(errorMessage = error.message ?: "Can't save notification settings") }
             }
         ) {
-            if (enabled) scheduleReminderWorkers() else cancelReminderWorkers()
             appSettingsStore.setNotificationEnabled(enabled)
+            reminderNotificationService.setDailyReminderEnabled(enabled)
             updateState { it.copy(errorMessage = null) }
         }
     }
 
-    private fun scheduleReminderWorkers()
+    private fun changeTestNotificationEnabled(enabled: Boolean)
     {
-        val workManager = WorkManager.getInstance(appContext)
-
-        reminderHours.forEach { hour ->
-            val request = PeriodicWorkRequestBuilder<ReminderWorker>(1, TimeUnit.DAYS)
-                .setInitialDelay(delayUntil(hour), TimeUnit.MILLISECONDS)
-                .build()
-
-            workManager.enqueueUniquePeriodicWork(
-                reminderWorkName(hour),
-                ExistingPeriodicWorkPolicy.UPDATE,
-                request
-            )
+        launchSafe(
+            onError = { error ->
+                updateState { it.copy(errorMessage = error.message ?: "Can't save test notification settings") }
+            }
+        ) {
+            appSettingsStore.setTestNotificationEnabled(enabled)
+            reminderNotificationService.setTestReminderEnabled(enabled)
+            updateState { it.copy(errorMessage = null) }
         }
     }
-
-    private fun cancelReminderWorkers()
-    {
-        val workManager = WorkManager.getInstance(appContext)
-        reminderHours.forEach { hour ->
-            workManager.cancelUniqueWork(reminderWorkName(hour))
-        }
-    }
-
-    private fun delayUntil(hour: Int): Long
-    {
-        val now = LocalDateTime.now()
-        var target = now.withHour(hour).withMinute(0).withSecond(0).withNano(0)
-        if (!target.isAfter(now)) target = target.plusDays(1)
-        return Duration.between(now, target).toMillis()
-    }
-
-    private fun reminderWorkName(hour: Int) = "diary_reminder_$hour"
 
     private var fetchJob: Job? = null
 
@@ -180,10 +152,4 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
-
-    private companion object
-    {
-        val reminderHours = listOf(7, 12, 19)
-    }
-
 }

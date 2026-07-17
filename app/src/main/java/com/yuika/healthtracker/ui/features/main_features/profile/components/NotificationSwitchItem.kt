@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun NotificationSwitchItem(
+    title: String,
+    subtitle: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
@@ -53,12 +55,12 @@ fun NotificationSwitchItem(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Diary reminders",
+                text = title,
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                 color = MaterialTheme.colorScheme.onBackground
             )
             Text(
-                text = "7 AM, 12 PM, 7 PM",
+                text = subtitle,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
             )
