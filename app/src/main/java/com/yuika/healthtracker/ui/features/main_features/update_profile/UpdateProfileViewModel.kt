@@ -2,6 +2,7 @@ package com.yuika.healthtracker.ui.features.main_features.update_profile
 
 import com.yuika.healthtracker.domain.usecase.main_use_cases.profile.GetProfileFormDataUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.profile.ValidateAndSaveProfileUseCase
+import com.yuika.healthtracker.service.widget.WidgetService
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +13,8 @@ import kotlin.math.roundToInt
 @HiltViewModel
 class UpdateProfileViewModel @Inject constructor(
     private val getProfileFormDataUseCase: GetProfileFormDataUseCase,
-    private val validateAndSaveProfileUseCase: ValidateAndSaveProfileUseCase
+    private val validateAndSaveProfileUseCase: ValidateAndSaveProfileUseCase,
+    private val widgetService: WidgetService
 ) : BaseViewModel<UpdateProfileUiState, UpdateProfileIntent, UpdateProfileEffect>(
     initialState = UpdateProfileUiState()
 )
@@ -106,6 +108,8 @@ class UpdateProfileViewModel @Inject constructor(
                 avatarPath = currentState.avatarPath,
                 createdAt = currentState.createdAt
             )
+
+            widgetService.refresh()
 
             updateState { it.copy(isSaving = false, isSuccess = true) }
             sendEffect(UpdateProfileEffect.ShowSuccess("Update successfully"))

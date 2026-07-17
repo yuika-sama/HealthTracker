@@ -3,6 +3,7 @@ package com.yuika.healthtracker.ui.features.main_features.add_activity
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.GetActivityCatalogUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ValidateAndSaveActivityUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
+import com.yuika.healthtracker.service.widget.WidgetService
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
@@ -12,7 +13,8 @@ import javax.inject.Inject
 class AddActivityViewModel @Inject constructor(
     private val validateAndSaveActivityUseCase: ValidateAndSaveActivityUseCase,
     private val getActivityCatalogUseCase: GetActivityCatalogUseCase,
-    private val getLatestUserUseCase: GetLatestUserUseCase
+    private val getLatestUserUseCase: GetLatestUserUseCase,
+    private val widgetService: WidgetService
 ) : BaseViewModel<AddActivityUiState, AddActivityIntent, AddActivityEffect>(
     initialState = AddActivityUiState()
 )
@@ -78,6 +80,8 @@ class AddActivityViewModel @Inject constructor(
                 durationStr = currentState.duration,
                 dateText = currentState.dateText
             )
+
+            widgetService.refresh()
 
             updateState { it.copy(isLoading = false, isSuccess = true) }
             sendEffect(AddActivityEffect.NavigateToActivity)

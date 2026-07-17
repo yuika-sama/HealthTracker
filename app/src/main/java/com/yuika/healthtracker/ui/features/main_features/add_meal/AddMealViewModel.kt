@@ -3,6 +3,7 @@ package com.yuika.healthtracker.ui.features.main_features.add_meal
 import com.yuika.healthtracker.domain.model.FoodCatalog
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.SearchFoodCatalogUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.ValidateAndSaveMealUseCase
+import com.yuika.healthtracker.service.widget.WidgetService
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -13,7 +14,8 @@ import kotlin.math.roundToInt
 @HiltViewModel
 class AddMealViewModel @Inject constructor(
     private val validateAndSaveMealUseCase: ValidateAndSaveMealUseCase,
-    private val searchFoodCatalogUseCase: SearchFoodCatalogUseCase
+    private val searchFoodCatalogUseCase: SearchFoodCatalogUseCase,
+    private val widgetService: WidgetService
 ) : BaseViewModel<AddMealUiState, AddMealIntent, AddMealEffect>(
     initialState = AddMealUiState()
 )
@@ -256,6 +258,8 @@ class AddMealViewModel @Inject constructor(
                 dateText = currentState.dateText,
                 mealType = currentState.mealType
             )
+
+            widgetService.refresh()
 
             updateState {
                 it.copy(

@@ -4,6 +4,7 @@ import com.yuika.healthtracker.domain.usecase.main_use_cases.diary.DiaryFoodItem
 import com.yuika.healthtracker.domain.usecase.main_use_cases.diary.GetDiaryDataUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.diary.ValidateDiaryLogicUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.DeleteFoodEntryUseCase
+import com.yuika.healthtracker.service.widget.WidgetService
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.ui.features.main_features.diary.components.FoodItem
 import com.yuika.healthtracker.utils.NETWORK_DELAY
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class DiaryViewModel @Inject constructor(
     private val getDiaryDataUseCase: GetDiaryDataUseCase,
     private val validateDiaryLogicUseCase: ValidateDiaryLogicUseCase,
-    private val deleteFoodEntryUseCase: DeleteFoodEntryUseCase
+    private val deleteFoodEntryUseCase: DeleteFoodEntryUseCase,
+    private val widgetService: WidgetService
 ) : BaseViewModel<DiaryUiState, DiaryIntent, DiaryEffect>(
     initialState = DiaryUiState()
 )
@@ -66,6 +68,7 @@ class DiaryViewModel @Inject constructor(
 
             is DiaryIntent.DeleteFoodClick -> launchSafe {
                 deleteFoodEntryUseCase(intent.foodId)
+                widgetService.refresh()
                 updateState { it.copy(selectedDetail = null) }
             }
         }

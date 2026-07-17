@@ -2,6 +2,7 @@ package com.yuika.healthtracker.ui.features.main_features.activity
 
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.DeleteActivityUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.GetActivityDataUseCase
+import com.yuika.healthtracker.service.widget.WidgetService
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.ui.core.model.IntensityLevel
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityItemData
@@ -16,20 +17,27 @@ import javax.inject.Inject
 @HiltViewModel
 class ActivityViewModel @Inject constructor(
     private val getActivityDataUseCase: GetActivityDataUseCase,
-    private val deleteActivityUseCase: DeleteActivityUseCase
+    private val deleteActivityUseCase: DeleteActivityUseCase,
+    private val widgetService: WidgetService
 ) : BaseViewModel<ActivityUiState, ActivityIntent, ActivityEffect>(
     initialState = ActivityUiState()
-) {
-    override fun onIntent(intent: ActivityIntent) {
-        when (intent) {
+)
+{
+    override fun onIntent(intent: ActivityIntent)
+    {
+        when (intent)
+        {
             is ActivityIntent.LoadActivityData -> handleFetchActivity(intent.date)
-            is ActivityIntent.OnAddActivityClick -> {
+            is ActivityIntent.OnAddActivityClick ->
+            {
                 sendEffect(ActivityEffect.NavigateToAddActivity(state.value.selectedDate.toString()))
             }
+
             is ActivityIntent.ActivityClick -> updateState { it.copy(selectedDetail = intent.activity) }
             is ActivityIntent.DismissDetail -> updateState { it.copy(selectedDetail = null) }
             is ActivityIntent.DeleteActivityClick -> launchSafe {
                 deleteActivityUseCase(intent.id)
+                widgetService.refresh()
                 updateState { it.copy(selectedDetail = null) }
             }
         }
@@ -37,21 +45,42 @@ class ActivityViewModel @Inject constructor(
 
     private var fetchJob: Job? = null
 
-    private fun handleFetchActivity(date: LocalDate) {
-        updateState { it.copy(isLoading = true, errorMessage = null, selectedDate = date, isSuccess = false) }
+    private fun handleFetchActivity(date: LocalDate)
+    {
+        updateState {
+            it.copy(
+                isLoading = true,
+                errorMessage = null,
+                selectedDate = date,
+                isSuccess = false
+            )
+        }
 
         fetchJob?.cancel()
         fetchJob = launchSafe(
             onError = { throwable ->
                 val message = throwable.message ?: "Can't get activity data"
-                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = message,
+                        isSuccess = false
+                    )
+                }
             }
         ) {
             val dateText = date.toString()
 
             getActivityDataUseCase(dateText).collectLatest { activityData ->
-                if (activityData == null) {
-                    updateState { it.copy(isLoading = false, errorMessage = "Can't find user data", isSuccess = false) }
+                if (activityData == null)
+                {
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "Can't find user data",
+                            isSuccess = false
+                        )
+                    }
                     return@collectLatest
                 }
 
@@ -87,6 +116,11 @@ class ActivityViewModel @Inject constructor(
 
     private fun parseIntensity(value: String): IntensityLevel =
         runCatching { IntensityLevel.valueOf(value.uppercase()) }.getOrNull()
-            ?: IntensityLevel.entries.firstOrNull { it.displayName.equals(value, ignoreCase = true) }
+            ?: IntensityLevel.entries.firstOrNull {
+                it.displayName.equals(
+                    value,
+                    ignoreCase = true
+                )
+            }
             ?: IntensityLevel.LIGHT
 }

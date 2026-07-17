@@ -19,7 +19,7 @@ data class DashboardUiState(
     val isSuccess: Boolean = false
 ) : UiState {
     val progressFraction: Float
-        get() = if (goalCalories > 0) (netBalance / goalCalories.toFloat().coerceIn(0f, 1f)) else 0f
+        get() = if (goalCalories > 0) (netBalance / goalCalories.toFloat()).coerceIn(0f, 1f) else 0f
 
     val adviceText: String
         get() = when {
