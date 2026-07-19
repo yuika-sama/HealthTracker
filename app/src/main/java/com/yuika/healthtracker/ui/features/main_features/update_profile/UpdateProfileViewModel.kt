@@ -66,7 +66,7 @@ class UpdateProfileViewModel @Inject constructor(
                         avatarPath = formData.avatarPath,
                         createdAt = formData.createdAt,
                         isLoading = false,
-                        isSuccess = true,
+                        isSuccess = false,
                         errorMessage = null
                     )
                 }

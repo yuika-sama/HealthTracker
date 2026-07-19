@@ -127,11 +127,6 @@ fun TrendsScreen(
                 ErrorText(msg = state.errorMessage!!)
             }
 
-            if (state.isSuccess && !state.isLoading && state.errorMessage == null)
-            {
-                SuccessText(msg = "Trends loaded")
-            }
-
             if (state.isLoading)
             {
                 Box(

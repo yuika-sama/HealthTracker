@@ -119,7 +119,8 @@ fun UpdateProfileScreen(
                         Text(
                             text = "Save changes",
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }
