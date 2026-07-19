@@ -46,9 +46,9 @@ fun DailyStats(
             modifier = Modifier.weight(1f),
             title = "Remaining",
             value = remainingKcal.toString(),
-            valueColor = MaterialTheme.colorScheme.onSecondary,
+            valueColor = MaterialTheme.colorScheme.onBackground,
             bgColor = MaterialTheme.colorScheme.secondary,
-            labelColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.8f),
+            labelColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
             horizontalAlignment = Alignment.CenterHorizontally
         )
 

@@ -1,6 +1,5 @@
 package com.yuika.healthtracker.ui.features.main_features.diary
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,9 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -55,7 +52,6 @@ fun DiaryScreen(
 ) {
     val spacing = LocalSpacing.current
 
-    val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -146,10 +142,6 @@ fun DiaryScreen(
 
             if (state.errorMessage != null){
                 item { ErrorText(msg = state.errorMessage!!) }
-            }
-
-            if (state.isSuccess && !state.isLoading && state.errorMessage == null) {
-                item { SuccessText(msg = "Diary loaded") }
             }
             
             if (state.isLoading){
