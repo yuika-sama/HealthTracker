@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityIntent
@@ -30,22 +29,22 @@ fun ActivityDetailsCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.background)
+            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.12f), RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
             text = "ACTIVITY CATALOG",
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         if (state.activityCatalogs.isEmpty()) {
             Text(
                 text = "No activities available",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         } else {
             state.activityCatalogs.forEach { activity ->
@@ -54,10 +53,20 @@ fun ActivityDetailsCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .background(if (selected) MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f) else Color.Transparent)
+                        .background(
+                            if (selected) {
+                                MaterialTheme.colorScheme.secondary.copy(alpha = 0.14f)
+                            } else {
+                                MaterialTheme.colorScheme.surface.copy(alpha = 0.55f)
+                            }
+                        )
                         .border(
                             1.dp,
-                            if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline.copy(alpha = 0.15f),
+                            if (selected) {
+                                MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f)
+                            } else {
+                                MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
+                            },
                             RoundedCornerShape(12.dp)
                         )
                         .clickable { onIntent(AddActivityIntent.OnActivitySelected(activity)) }
@@ -67,13 +76,13 @@ fun ActivityDetailsCard(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = activity.name,
-                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onBackground
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = "${activity.met} MET - ${activity.intensity}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
