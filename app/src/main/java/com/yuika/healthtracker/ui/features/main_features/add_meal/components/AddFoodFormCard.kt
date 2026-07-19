@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
@@ -23,8 +22,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +36,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yuika.healthtracker.domain.model.FoodCatalog
+import com.yuika.healthtracker.ui.core.components.FormTextField
 import com.yuika.healthtracker.ui.features.main_features.add_meal.AddMealUiState
 
 @Composable
@@ -73,47 +71,29 @@ fun AddFoodFormCard(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(
-                text = "Food name",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            OutlinedTextField(
-                value = state.foodName,
-                onValueChange = onFoodNameChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .compactInputHeight(),
-                singleLine = true,
-                isError = state.foodNameError != null,
-                placeholder = {
-                    Text(
-                        text = "Enter food name",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                trailingIcon = {
-                    if (state.foodName.isNotEmpty()) {
-                        IconButton(
-                            onClick = { onFoodNameChange("") },
-                            modifier = Modifier.size(36.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear",
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
+        FormTextField(
+            value = state.foodName,
+            onValueChange = onFoodNameChange,
+            label = "Food name",
+            placeholder = "Enter food name",
+            errorMessage = state.foodNameError,
+            compact = true,
+            trailingIcon = {
+                if (state.foodName.isNotEmpty()) {
+                    IconButton(
+                        onClick = { onFoodNameChange("") },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
-                },
-                shape = compactInputShape(),
-                textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
-                colors = textFieldColors()
-            )
-            FieldError(state.foodNameError)
-        }
+                }
+            }
+        )
 
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
@@ -125,48 +105,30 @@ fun AddFoodFormCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Column(modifier = Modifier.weight(0.35f)) {
-                    OutlinedTextField(
-                        value = state.quantity,
-                        onValueChange = onQuantityChange,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .compactInputHeight(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
-                        isError = state.quantityError != null,
-                        placeholder = {
-                            Text(
-                                text = "1",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        },
-                        shape = compactInputShape(),
-                        textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
-                        colors = textFieldColors()
-                    )
-                    FieldError(state.quantityError)
-                }
+                FormTextField(
+                    value = state.quantity,
+                    onValueChange = onQuantityChange,
+                    modifier = Modifier.weight(0.35f),
+                    placeholder = "1",
+                    errorMessage = state.quantityError,
+                    keyboardType = KeyboardType.Decimal,
+                    compact = true
+                )
 
                 Column(modifier = Modifier.weight(0.65f)) {
                     Box {
-                        OutlinedTextField(
+                        FormTextField(
                             value = state.unit,
                             onValueChange = {},
                             readOnly = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .compactInputHeight(),
-                            shape = compactInputShape(),
-                            textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+                            compact = true,
                             trailingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.ArrowDropDown,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
-                            },
-                            colors = textFieldColors()
+                            }
                         )
                         
                         Box(
@@ -265,35 +227,21 @@ fun AddFoodFormCard(
                         color = MaterialTheme.colorScheme.onSurface
                     )
 
-                    OutlinedTextField(
+                    FormTextField(
                         value = state.calories,
                         onValueChange = onCaloriesChange,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .compactInputHeight(),
-                        singleLine = true,
-                        isError = state.caloriesError != null,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        placeholder = {
-                            Text(
-                                text = "0",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        },
-                        trailingIcon = {
+                        placeholder = "0",
+                        errorMessage = state.caloriesError,
+                        keyboardType = KeyboardType.Number,
+                        compact = true,
+                        suffix = {
                             Text(
                                 text = "kcal",
                                 style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(end = 4.dp)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                        },
-                        shape = compactInputShape(),
-                        textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
-                        colors = textFieldColors()
+                        }
                     )
-
-                    FieldError(state.caloriesError)
                 }
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -346,29 +294,3 @@ fun AddFoodFormCard(
         }
     }
 }
-
-private fun Modifier.compactInputHeight() = height(48.dp)
-
-private fun compactInputShape() = RoundedCornerShape(14.dp)
-
-@Composable
-private fun FieldError(message: String?) {
-    if (message != null) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.error,
-            modifier = Modifier.padding(start = 12.dp)
-        )
-    }
-}
-
-@Composable
-private fun textFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = MaterialTheme.colorScheme.secondary,
-    unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-    focusedLabelColor = MaterialTheme.colorScheme.secondary,
-    cursorColor = MaterialTheme.colorScheme.secondary,
-    focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.72f),
-    unfocusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.72f)
-)

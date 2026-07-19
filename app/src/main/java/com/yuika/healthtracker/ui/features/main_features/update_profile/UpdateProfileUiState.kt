@@ -13,6 +13,13 @@ data class UpdateProfileUiState(
     val goal: String = "Lose weight",
     val avatarPath: String? = null,
     val createdAt: Long = 0L,
+    val nameError: String? = null,
+    val dateOfBirthError: String? = null,
+    val genderError: String? = null,
+    val weightError: String? = null,
+    val heightError: String? = null,
+    val activityLevelError: String? = null,
+    val goalError: String? = null,
     
     val isLoading: Boolean = false,
     val isSaving: Boolean = false,

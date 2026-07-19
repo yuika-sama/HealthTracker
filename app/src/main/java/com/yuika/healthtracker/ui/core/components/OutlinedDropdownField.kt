@@ -3,7 +3,9 @@ package com.yuika.healthtracker.ui.core.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun <T> OutlinedDropdownField(
@@ -25,46 +28,59 @@ fun <T> OutlinedDropdownField(
     selectedOption: T,
     options: List<T>,
     onOptionSelected: (T) -> Unit,
+    errorMessage: String? = null,
+    enabled: Boolean = true,
     labelProvider: (T) -> String = { it.toString() }
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Box(modifier = modifier.fillMaxWidth()) {
-        OutlinedTextField(
-            value = labelProvider(selectedOption),
-            onValueChange = { },
-            label = { Text(label) },
-            modifier = Modifier.fillMaxWidth(),
-            readOnly = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                focusedLabelColor = MaterialTheme.colorScheme.secondary,
-                cursorColor = MaterialTheme.colorScheme.secondary
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
+                value = labelProvider(selectedOption),
+                onValueChange = { },
+                label = { Text(label) },
+                modifier = Modifier.fillMaxWidth(),
+                readOnly = true,
+                enabled = enabled,
+                isError = errorMessage != null,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                    focusedLabelColor = MaterialTheme.colorScheme.secondary,
+                    cursorColor = MaterialTheme.colorScheme.secondary
+                )
             )
-        )
 
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(Color.Transparent)
-                .clickable { expanded = true }
-        )
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth(0.85f)
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(labelProvider(option)) },
-                    onClick = {
-                        onOptionSelected(option)
-                        expanded = false
-                    }
+            if (enabled) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(Color.Transparent)
+                        .clickable { expanded = true }
                 )
             }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth(0.85f)
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(labelProvider(option)) },
+                        onClick = {
+                            onOptionSelected(option)
+                            expanded = false
+                        }
+                    )
+                }
+            }
         }
+
+        FieldErrorText(errorMessage)
     }
 }

@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.main_features.onboarding.components
+package com.yuika.healthtracker.ui.core.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -28,11 +28,20 @@ import java.time.ZoneOffset
 fun DateOfBirthInput(
     value: String,
     isError: Boolean,
-    onDateSelected: (String) -> Unit
+    onDateSelected: (String) -> Unit,
+    enabled: Boolean = true
 ) {
     var isPickerVisible by remember { mutableStateOf(false) }
+    val selectedDateMillis = remember(value) {
+        runCatching {
+            LocalDate.parse(value)
+                .atStartOfDay(ZoneOffset.UTC)
+                .toInstant()
+                .toEpochMilli()
+        }.getOrNull()
+    }
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = value.toPickerMillis()
+        initialSelectedDateMillis = selectedDateMillis
     )
 
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -41,6 +50,7 @@ fun DateOfBirthInput(
             onValueChange = {},
             modifier = Modifier.fillMaxWidth(),
             readOnly = true,
+            enabled = enabled,
             isError = isError,
             singleLine = true,
             placeholder = { Text("yyyy-MM-dd") },
@@ -48,11 +58,13 @@ fun DateOfBirthInput(
                 Icon(imageVector = Icons.Outlined.CalendarToday, contentDescription = null)
             }
         )
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .clickable { isPickerVisible = true }
-        )
+        if (enabled) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .clickable { isPickerVisible = true }
+            )
+        }
     }
 
     if (isPickerVisible) {
@@ -61,7 +73,13 @@ fun DateOfBirthInput(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        datePickerState.selectedDateMillis?.let { onDateSelected(it.toDateText()) }
+                        datePickerState.selectedDateMillis?.let {
+                            val date = Instant.ofEpochMilli(it)
+                                .atZone(ZoneOffset.UTC)
+                                .toLocalDate()
+                                .toString()
+                            onDateSelected(date)
+                        }
                         isPickerVisible = false
                     }
                 ) {
@@ -78,17 +96,3 @@ fun DateOfBirthInput(
         }
     }
 }
-
-private fun String.toPickerMillis(): Long? =
-    runCatching {
-        LocalDate.parse(this)
-            .atStartOfDay(ZoneOffset.UTC)
-            .toInstant()
-            .toEpochMilli()
-    }.getOrNull()
-
-private fun Long.toDateText(): String =
-    Instant.ofEpochMilli(this)
-        .atZone(ZoneOffset.UTC)
-        .toLocalDate()
-        .toString()

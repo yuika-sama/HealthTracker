@@ -27,10 +27,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.BasicInputField
+import com.yuika.healthtracker.ui.core.components.DateOfBirthInput
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SegmentedSelector
-import com.yuika.healthtracker.ui.features.main_features.onboarding.components.DateOfBirthInput
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.OnboardingField
 import com.yuika.healthtracker.ui.theme.*
 import java.time.Instant

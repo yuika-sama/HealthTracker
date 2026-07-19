@@ -82,15 +82,13 @@ fun ProfileScreen(
             viewModel.onIntent(ProfileIntent.ChangeTestNotificationEnabled(true))
         }
     }
-    fun needsNotificationPermission(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-    }
+    val needsNotificationPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
     val onNotificationToggle: (Boolean) -> Unit = { enabled ->
-        if (enabled && needsNotificationPermission())
+        if (enabled && needsNotificationPermission)
         {
             dailyNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
@@ -100,7 +98,7 @@ fun ProfileScreen(
         }
     }
     val onTestNotificationToggle: (Boolean) -> Unit = { enabled ->
-        if (enabled && needsNotificationPermission())
+        if (enabled && needsNotificationPermission)
         {
             testNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }

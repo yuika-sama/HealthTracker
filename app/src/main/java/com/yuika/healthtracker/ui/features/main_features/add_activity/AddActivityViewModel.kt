@@ -23,10 +23,10 @@ class AddActivityViewModel @Inject constructor(
         when (intent) {
             is AddActivityIntent.Init -> loadData(intent.dateText)
             is AddActivityIntent.OnActivitySelected -> updateState {
-                it.copy(selectedActivity = intent.activity, activityCatalogError = null)
+                it.copy(selectedActivity = intent.activity, activityCatalogError = null, isSuccess = false)
             }
             is AddActivityIntent.OnDurationChange -> {
-                updateState { it.copy(duration = intent.duration, durationError = null) }
+                updateState { it.copy(duration = intent.duration, durationError = null, isSuccess = false) }
             }
             is AddActivityIntent.OnSaveClick -> {
                 handleSaveActivity()
@@ -58,6 +58,28 @@ class AddActivityViewModel @Inject constructor(
     private fun handleSaveActivity()
     {
         val currentState = state.value
+        val activityError = if (currentState.selectedActivity == null) "Please select an activity" else null
+        val duration = currentState.duration.toIntOrNull()
+        val durationError = when
+        {
+            currentState.duration.isBlank() -> "Please fill in practice duration"
+            duration == null || duration <= 0 -> "Please fill in valid practice duration"
+            else -> null
+        }
+
+        if (activityError != null || durationError != null)
+        {
+            updateState {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = null,
+                    activityCatalogError = activityError,
+                    durationError = durationError,
+                    isSuccess = false
+                )
+            }
+            return
+        }
 
         updateState {
             it.copy(

@@ -50,10 +50,13 @@ fun DateSelector(
     onDateSelected: (LocalDate) -> Unit = {}
 ) {
     var showPicker by remember { mutableStateOf(false) }
+    val selectedDateMillis = remember(selectedDate) {
+        selectedDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+    }
 
     if (showPicker) {
         val pickerState = rememberDatePickerState(
-            initialSelectedDateMillis = selectedDate.toEpochMillis()
+            initialSelectedDateMillis = selectedDateMillis
         )
 
         DatePickerDialog(
@@ -61,8 +64,12 @@ fun DateSelector(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        pickerState.selectedDateMillis
-                            ?.let { onDateSelected(it.toLocalDate()) }
+                        pickerState.selectedDateMillis?.let {
+                            val date = Instant.ofEpochMilli(it)
+                                .atZone(ZoneOffset.UTC)
+                                .toLocalDate()
+                            onDateSelected(date)
+                        }
                         showPicker = false
                     }
                 ) {
@@ -139,9 +146,3 @@ fun DateSelector(
         }
     }
 }
-
-private fun LocalDate.toEpochMillis(): Long =
-    atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-
-private fun Long.toLocalDate(): LocalDate =
-    Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()

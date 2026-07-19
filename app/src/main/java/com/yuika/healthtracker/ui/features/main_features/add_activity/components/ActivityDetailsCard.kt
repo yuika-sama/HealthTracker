@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.ui.core.components.FieldErrorText
 import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityIntent
 import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityUiState
 
@@ -39,6 +40,8 @@ fun ActivityDetailsCard(
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+
+        FieldErrorText(state.activityCatalogError)
 
         if (state.activityCatalogs.isEmpty()) {
             Text(

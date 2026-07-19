@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -18,7 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.ui.core.components.DateOfBirthInput
+import com.yuika.healthtracker.ui.core.components.FieldErrorText
+import com.yuika.healthtracker.ui.core.components.FormTextField
 import com.yuika.healthtracker.ui.core.components.SegmentedSelector
 import com.yuika.healthtracker.ui.core.components.OutlinedDropdownField
 import com.yuika.healthtracker.ui.features.main_features.update_profile.UpdateProfileUiState
@@ -41,26 +43,29 @@ fun UpdateProfileForm(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        OutlinedTextField(
+        FormTextField(
             value = state.name,
             onValueChange = { onIntent(UpdateProfileIntent.UpdateName(it)) },
-            label = { Text("Full name") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
+            label = "Full name",
+            errorMessage = state.nameError,
             enabled = !state.isSaving,
-            colors = textFieldColors()
+            modifier = Modifier.fillMaxWidth()
         )
 
-        OutlinedTextField(
-            value = state.dateOfBirth,
-            onValueChange = { onIntent(UpdateProfileIntent.UpdateDateOfBirth(it)) },
-            label = { Text("Date of birth") },
-            placeholder = { Text("yyyy-MM-dd") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            enabled = !state.isSaving,
-            colors = textFieldColors()
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(
+                text = "Date of birth",
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            DateOfBirthInput(
+                value = state.dateOfBirth,
+                isError = state.dateOfBirthError != null,
+                enabled = !state.isSaving,
+                onDateSelected = { onIntent(UpdateProfileIntent.UpdateDateOfBirth(it)) }
+            )
+            FieldErrorText(state.dateOfBirthError)
+        }
 
         Column {
             Text(
@@ -74,32 +79,33 @@ fun UpdateProfileForm(
                 selectedOption = state.gender,
                 onOptionSelected = { onIntent(UpdateProfileIntent.UpdateGender(it)) }
             )
+            FieldErrorText(state.genderError)
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            OutlinedTextField(
+            FormTextField(
                 value = state.weight,
                 onValueChange = { onIntent(UpdateProfileIntent.UpdateWeight(it)) },
-                label = { Text("Weight") },
-                suffix = { Text("kg") },
+                label = "Weight",
+                errorMessage = state.weightError,
+                keyboardType = KeyboardType.Decimal,
                 modifier = Modifier.weight(1f),
-                singleLine = true,
                 enabled = !state.isSaving,
-                colors = textFieldColors()
+                suffix = { Text("kg") }
             )
             
-            OutlinedTextField(
+            FormTextField(
                 value = state.height,
                 onValueChange = { onIntent(UpdateProfileIntent.UpdateHeight(it)) },
-                label = { Text("Height") },
-                suffix = { Text("cm") },
+                label = "Height",
+                errorMessage = state.heightError,
+                keyboardType = KeyboardType.Decimal,
                 modifier = Modifier.weight(1f),
-                singleLine = true,
                 enabled = !state.isSaving,
-                colors = textFieldColors()
+                suffix = { Text("cm") }
             )
         }
 
@@ -141,21 +147,16 @@ fun UpdateProfileForm(
                 Text("Sedentary", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
                 Text("Active", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
             }
+            FieldErrorText(state.activityLevelError)
         }
 
         OutlinedDropdownField(
             label = "Goal",
             selectedOption = state.goal,
             options = goals,
-            onOptionSelected = { onIntent(UpdateProfileIntent.UpdateGoal(it)) }
+            onOptionSelected = { onIntent(UpdateProfileIntent.UpdateGoal(it)) },
+            errorMessage = state.goalError,
+            enabled = !state.isSaving
         )
     }
 }
-
-@Composable
-private fun textFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = MaterialTheme.colorScheme.secondary,
-    unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-    focusedLabelColor = MaterialTheme.colorScheme.secondary,
-    cursorColor = MaterialTheme.colorScheme.secondary
-)
