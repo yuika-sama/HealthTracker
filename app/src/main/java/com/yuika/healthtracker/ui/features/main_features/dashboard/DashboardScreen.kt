@@ -33,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -132,10 +133,10 @@ fun DashboardScreen(
                 ErrorText(state.errorMessage!!)
             }
 
-            if (state.isSuccess && !state.isLoading && state.errorMessage == null)
-            {
-                SuccessText("Dashboard loaded")
-            }
+//            if (state.isSuccess && !state.isLoading && state.errorMessage == null)
+//            {
+//                SuccessText("Dashboard loaded")
+//            }
 
             if (state.isLoading)
             {
@@ -166,46 +167,55 @@ fun DashboardScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        title = "TDEE",
-                        value = "${state.tdeeCalories}",
-                        icon = Icons.Outlined.LocalFireDepartment,
-                        iconTint = EnergyAmber,
-                        iconBgColor = EnergyAmber.copy(alpha = 0.15f)
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            title = "TDEE",
+                            value = "${state.tdeeCalories}",
+                            icon = Icons.Outlined.LocalFireDepartment,
+                            iconTint = EnergyAmber,
+                            iconBgColor = EnergyAmber.copy(alpha = 0.15f)
+                        )
 
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        title = "BMI",
-                        value = "${state.bmi}",
-                        unit = state.bmiCategory.ifBlank { null },
-                        icon = Icons.Outlined.Balance,
-                        iconTint = InfoBlue,
-                        iconBgColor = InfoBlue.copy(alpha = 0.15f)
-                    )
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            title = "BMI",
+                            value = "${state.bmi}",
+                            unit = state.bmiCategory.ifBlank { null },
+                            icon = Icons.Outlined.Balance,
+                            iconTint = InfoBlue,
+                            iconBgColor = InfoBlue.copy(alpha = 0.15f)
+                        )
+                    }
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            title = "Intake",
+                            value = "${state.intakeCalories}",
+                            icon = Icons.Outlined.LocalDining,
+                            iconTint = MaterialTheme.colorScheme.tertiary,
+                            iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f)
+                        )
 
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Intake",
-                        value = "${state.intakeCalories}",
-                        icon = Icons.Outlined.LocalDining,
-                        iconTint = MaterialTheme.colorScheme.tertiary,
-                        iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f)
-                    )
-
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Burned",
-                        value = "${state.burnedCalories}",
-                        icon = Icons.Outlined.LocalFireDepartment,
-                        iconTint = EnergyAmber,
-                        iconBgColor = EnergyAmber.copy(alpha = 0.15f)
-                    )
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            title = "Burned",
+                            value = "${state.burnedCalories}",
+                            icon = Icons.Outlined.LocalFireDepartment,
+                            iconTint = EnergyAmber,
+                            iconBgColor = EnergyAmber.copy(alpha = 0.15f)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -259,10 +269,10 @@ fun DashboardScreen(
                         .fillMaxWidth()
                         .height(56.dp),
                     shape = MaterialTheme.shapes.medium,
-                    border = BorderStroke(1.dp, InfoBlue),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.background,
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                        contentColor = MaterialTheme.colorScheme.onBackground,
+                        containerColor = MaterialTheme.colorScheme.background
                     )
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
