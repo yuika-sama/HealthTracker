@@ -10,10 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -33,17 +34,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yuika.healthtracker.domain.model.FoodCatalog
-import com.yuika.healthtracker.ui.features.main_features.add_meal.AddMealIntent
 import com.yuika.healthtracker.ui.features.main_features.add_meal.AddMealUiState
-import com.yuika.healthtracker.ui.theme.Emerald
-import com.yuika.healthtracker.ui.theme.ErrorRed
 
 @Composable
 fun AddFoodFormCard(
@@ -66,77 +62,119 @@ fun AddFoodFormCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.15f), RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.background)
+            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.12f), RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        Column {
+        Text(
+            text = "FOOD DETAILS",
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
                 text = "Food name",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                modifier = Modifier.padding(bottom = 8.dp)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             OutlinedTextField(
                 value = state.foodName,
                 onValueChange = onFoodNameChange,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .compactInputHeight(),
                 singleLine = true,
                 isError = state.foodNameError != null,
-                supportingText = state.foodNameError?.let { { Text(it) } },
+                placeholder = {
+                    Text(
+                        text = "Enter food name",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
                 trailingIcon = {
                     if (state.foodName.isNotEmpty()) {
-                        IconButton(onClick = { onFoodNameChange("") }) {
+                        IconButton(
+                            onClick = { onFoodNameChange("") },
+                            modifier = Modifier.size(36.dp)
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
                                 contentDescription = "Clear",
-                                tint = ErrorRed
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(18.dp)
                             )
                         }
                     }
                 },
+                shape = compactInputShape(),
+                textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
                 colors = textFieldColors()
             )
+            FieldError(state.foodNameError)
         }
 
-        Column {
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
                 text = "Portion",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                modifier = Modifier.padding(bottom = 8.dp)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                OutlinedTextField(
-                    value = state.quantity,
-                    onValueChange = onQuantityChange,
-                    modifier = Modifier.weight(0.35f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                    isError = state.quantityError != null,
-                    supportingText = state.quantityError?.let { { Text(it) } },
-                    colors = textFieldColors()
-                )
-
-                Box(modifier = Modifier.weight(0.65f)) {
+                Column(modifier = Modifier.weight(0.35f)) {
                     OutlinedTextField(
-                        value = state.unit,
-                        onValueChange = {},
-                        readOnly = true,
-                        modifier = Modifier.fillMaxWidth(),
+                        value = state.quantity,
+                        onValueChange = onQuantityChange,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .compactInputHeight(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                        isError = state.quantityError != null,
+                        placeholder = {
+                            Text(
+                                text = "1",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        shape = compactInputShape(),
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
                         colors = textFieldColors()
                     )
-                    
-                    Box(
-                        modifier = Modifier
-                            .matchParentSize()
-                            .background(Color.Transparent)
-                            .clickable { unitExpanded = true }
-                    )
+                    FieldError(state.quantityError)
+                }
+
+                Column(modifier = Modifier.weight(0.65f)) {
+                    Box {
+                        OutlinedTextField(
+                            value = state.unit,
+                            onValueChange = {},
+                            readOnly = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .compactInputHeight(),
+                            shape = compactInputShape(),
+                            textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowDropDown,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            },
+                            colors = textFieldColors()
+                        )
+                        
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clickable { unitExpanded = true }
+                        )
+                    }
                     
                     DropdownMenu(
                         expanded = unitExpanded,
@@ -159,17 +197,24 @@ fun AddFoodFormCard(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.55f))
+                .padding(end = 12.dp)
         ) {
             Checkbox(
                 checked = state.isManual,
                 onCheckedChange = {onManualChange()},
-                colors = CheckboxDefaults.colors(checkedColor = Emerald)
+                colors = CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colorScheme.secondary,
+                    checkmarkColor = MaterialTheme.colorScheme.onSecondary
+                )
             )
             Text(
                 text = "Manual",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -179,6 +224,7 @@ fun AddFoodFormCard(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
                     .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.15f), RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.surface)
             ) {
                 state.searchResults.forEach { food ->
                     Row(
@@ -188,8 +234,16 @@ fun AddFoodFormCard(
                             .padding(12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(food.name, fontWeight = FontWeight.Medium)
-                        Text("${food.caloriesPerServing} kcal / ${food.defaultQuantity} ${food.unit}")
+                        Text(
+                            text = food.name,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            text = "${food.caloriesPerServing} kcal / ${food.defaultQuantity} ${food.unit}",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
                 }
             }
@@ -198,82 +252,114 @@ fun AddFoodFormCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f))
-                .border(1.dp, MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f), RoundedCornerShape(12.dp))
-                .padding(16.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f))
+                .border(1.dp, MaterialTheme.colorScheme.secondary.copy(alpha = 0.16f), RoundedCornerShape(16.dp))
+                .padding(14.dp)
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                // Calories input row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "Nutritional content",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
+                        text = "Calories",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        color = MaterialTheme.colorScheme.onSurface
                     )
-                    
+
                     OutlinedTextField(
                         value = state.calories,
                         onValueChange = onCaloriesChange,
-                        modifier = Modifier.width(100.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .compactInputHeight(),
                         singleLine = true,
                         isError = state.caloriesError != null,
-                        supportingText = state.caloriesError?.let { { Text(it) } },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        textStyle = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        ),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                            focusedBorderColor = Emerald,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
-                        )
+                        placeholder = {
+                            Text(
+                                text = "0",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        trailingIcon = {
+                            Text(
+                                text = "kcal",
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(end = 4.dp)
+                            )
+                        },
+                        shape = compactInputShape(),
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
+                        colors = textFieldColors()
                     )
-                    
-                    Text(
-                        text = "Calories (Kcal)",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
-                    )
+
+                    FieldError(state.caloriesError)
                 }
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Emerald.copy(alpha = 0.05f))
-                ) {
-                    mealTypes.forEach { option ->
-                        val isSelected = state.mealType.equals(option, ignoreCase = true)
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .padding(4.dp)
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(if (isSelected) Color.White else Color.Transparent)
-                                .clickable { onMealTypeChange(option) },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = option,
-                                fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
-                                color = if (isSelected) Emerald else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-                                fontSize = 13.sp
-                            )
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        text = "Meal type",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.85f))
+                    ) {
+                        mealTypes.forEach { option ->
+                            val isSelected = state.mealType.equals(option, ignoreCase = true)
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(44.dp)
+                                    .padding(3.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .then(
+                                        if (isSelected) {
+                                            Modifier.background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.18f))
+                                        } else {
+                                            Modifier
+                                        }
+                                    )
+                                    .clickable { onMealTypeChange(option) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = option,
+                                    fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
+                                    color = if (isSelected) {
+                                        MaterialTheme.colorScheme.secondary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                    fontSize = 12.sp
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+private fun Modifier.compactInputHeight() = height(48.dp)
+
+private fun compactInputShape() = RoundedCornerShape(14.dp)
+
+@Composable
+private fun FieldError(message: String?) {
+    if (message != null) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.padding(start = 12.dp)
+        )
     }
 }
 
@@ -283,6 +369,6 @@ private fun textFieldColors() = OutlinedTextFieldDefaults.colors(
     unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
     focusedLabelColor = MaterialTheme.colorScheme.secondary,
     cursorColor = MaterialTheme.colorScheme.secondary,
-    focusedContainerColor = Color.Transparent,
-    unfocusedContainerColor = Color.Transparent
+    focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.72f),
+    unfocusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.72f)
 )
