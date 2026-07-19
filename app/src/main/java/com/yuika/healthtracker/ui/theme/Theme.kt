@@ -6,13 +6,10 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import com.yuika.healthtracker.domain.model.AppFontSize
 import com.yuika.healthtracker.domain.model.ThemeColorPreset
-
-private data class Accent(val primary: Color, val secondary: Color, val tertiary: Color)
 
 @Composable
 fun HealthTrackerTheme(
@@ -22,12 +19,7 @@ fun HealthTrackerTheme(
     content: @Composable () -> Unit
 )
 {
-    val accent = when(colorPreset){
-        ThemeColorPreset.GREEN -> Accent(VitalityGreen, Emerald, InfoBlue)
-        ThemeColorPreset.BLUE -> Accent(AccentBluePrimary, AccentBlueSecondary, EnergyAmber)
-        ThemeColorPreset.PURPLE -> Accent(AccentPurpleSecondary, AccentPurpleSecondary, InfoBlue)
-        ThemeColorPreset.ORANGE -> Accent(AccentOrangePrimary, AccentOrangeSecondary, InfoBlue)
-    }
+    val accent = colorPreset.accentColors()
     val colorScheme = if (!darkTheme) {
         lightColorScheme(
             primary = accent.primary,

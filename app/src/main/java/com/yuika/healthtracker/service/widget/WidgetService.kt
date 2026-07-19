@@ -2,10 +2,12 @@ package com.yuika.healthtracker.service.widget
 
 import android.content.Context
 import androidx.glance.appwidget.updateAll
+import com.yuika.healthtracker.data.datastore.AppSettingsStore
 import com.yuika.healthtracker.domain.usecase.main_use_cases.dashboard.GetDashboardDataUseCase
 import com.yuika.healthtracker.ui.features.widget.AppWidgetInfo
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import java.time.LocalDate
 import javax.inject.Inject
@@ -14,10 +16,19 @@ import javax.inject.Singleton
 @Singleton
 class WidgetService @Inject constructor(
     @param:ApplicationContext private val context: Context,
-    private val getDashboardDataUseCase: GetDashboardDataUseCase
+    private val getDashboardDataUseCase: GetDashboardDataUseCase,
+    private val appSettingsStore: AppSettingsStore
 )
 {
-    suspend fun loadTodayCalories(): WidgetCaloriesState
+    suspend fun loadWidgetState(): WidgetState
+    {
+        return WidgetState(
+            calories = loadTodayCalories(),
+            settings = appSettingsStore.settings.first()
+        )
+    }
+
+    private suspend fun loadTodayCalories(): WidgetCaloriesState
     {
         val data = getDashboardDataUseCase(LocalDate.now().toString()).firstOrNull()
             ?: return WidgetCaloriesState.empty()

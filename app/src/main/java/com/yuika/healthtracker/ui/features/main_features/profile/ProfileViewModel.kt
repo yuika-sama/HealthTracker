@@ -3,6 +3,7 @@ package com.yuika.healthtracker.ui.features.main_features.profile
 import com.yuika.healthtracker.data.datastore.AppSettingsStore
 import com.yuika.healthtracker.domain.usecase.main_use_cases.profile.GetProfileDataUseCase
 import com.yuika.healthtracker.service.notification.ReminderNotificationService
+import com.yuika.healthtracker.service.widget.WidgetService
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,8 @@ import kotlinx.coroutines.delay
 class ProfileViewModel @Inject constructor(
     private val getProfileDataUseCase: GetProfileDataUseCase,
     private val appSettingsStore: AppSettingsStore,
-    private val reminderNotificationService: ReminderNotificationService
+    private val reminderNotificationService: ReminderNotificationService,
+    private val widgetService: WidgetService
 ) : BaseViewModel<ProfileUiState, ProfileIntent, ProfileEffect>(
     initialState = ProfileUiState()
 )
@@ -76,6 +78,7 @@ class ProfileViewModel @Inject constructor(
             }
         ) {
             block()
+            widgetService.refresh()
             updateState { it.copy(activeSettingsDialog = null, errorMessage = null) }
         }
     }
