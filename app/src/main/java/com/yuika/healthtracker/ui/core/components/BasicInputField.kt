@@ -1,6 +1,7 @@
 package com.yuika.healthtracker.ui.core.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -21,13 +23,21 @@ fun BasicInputField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    suffix: String? = null
+    suffix: String? = null,
+    isError: Boolean = false
 ) {
+    val shape = RoundedCornerShape(8.dp)
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
+            .clip(shape)
             .background(MaterialTheme.colorScheme.surface)
+            .border(
+                width = 1.dp,
+                color = if (isError) MaterialTheme.colorScheme.error else Color.Transparent,
+                shape = shape
+            )
             .padding(horizontal = 8.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically

@@ -5,6 +5,7 @@ import com.yuika.healthtracker.ui.core.base.UiState
 data class OnboardingPage3UiState( 
     val isLoading: Boolean = false,
     val goal: String = "lose_weight",
+    val goalError: String? = null,
     val errorMessage: String? = null,
     val isSuccess: Boolean = false
 ) : UiState

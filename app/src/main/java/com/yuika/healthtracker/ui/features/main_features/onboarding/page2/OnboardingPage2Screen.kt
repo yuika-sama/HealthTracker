@@ -170,6 +170,10 @@ fun OnboardingPage2Screen(
             
             Spacer(modifier = Modifier.height(24.dp))
 
+            state.activityLevelError?.let {
+                ErrorText(it)
+            }
+
             state.errorMessage?.let {
                 ErrorText(it)
             }

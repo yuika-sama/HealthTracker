@@ -1,8 +1,8 @@
 package com.yuika.healthtracker.ui.features.main_features.onboarding.page1
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +21,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -31,8 +30,12 @@ import com.yuika.healthtracker.ui.core.components.BasicInputField
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SegmentedSelector
+import com.yuika.healthtracker.ui.features.main_features.onboarding.components.DateOfBirthInput
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.OnboardingField
 import com.yuika.healthtracker.ui.theme.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 @Composable
 fun OnboardingPage1Screen(
@@ -43,7 +46,6 @@ fun OnboardingPage1Screen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED){
@@ -125,8 +127,13 @@ fun OnboardingPage1Screen(
         ) {
             BasicInputField(
                 value = state.name, 
-                onValueChange = { viewModel.onIntent(OnboardingPage1Intent.NameChanged(it)) }
+                onValueChange = { viewModel.onIntent(OnboardingPage1Intent.NameChanged(it)) },
+                isError = state.nameError != null
             )
+            state.nameError?.let {
+                Spacer(modifier = Modifier.height(8.dp))
+                ErrorText(it)
+            }
         }
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -135,10 +142,15 @@ fun OnboardingPage1Screen(
             icon = Icons.Outlined.CalendarToday,
             label = "Date of birth"
         ) {
-            BasicInputField(
+            DateOfBirthInput(
                 value = state.dateOfBirth,
-                onValueChange = { viewModel.onIntent(OnboardingPage1Intent.DateOfBirthChanged(it)) },
+                isError = state.dateOfBirthError != null,
+                onDateSelected = { viewModel.onIntent(OnboardingPage1Intent.DateOfBirthChanged(it)) }
             )
+            state.dateOfBirthError?.let {
+                Spacer(modifier = Modifier.height(8.dp))
+                ErrorText(it)
+            }
         }
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -153,6 +165,10 @@ fun OnboardingPage1Screen(
                 selectedOption = state.gender,
                 onOptionSelected = { viewModel.onIntent(OnboardingPage1Intent.GenderChanged(it)) }
             )
+            state.genderError?.let {
+                Spacer(modifier = Modifier.height(8.dp))
+                ErrorText(it)
+            }
         }
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -163,8 +179,13 @@ fun OnboardingPage1Screen(
                     BasicInputField(
                         value = state.weight,
                         onValueChange = { viewModel.onIntent(OnboardingPage1Intent.WeightChanged(it)) },
-                        suffix = "kg"
+                        suffix = "kg",
+                        isError = state.weightError != null
                     )
+                    state.weightError?.let {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        ErrorText(it)
+                    }
                 }
             }
             Box(modifier = Modifier.weight(1f)) {
@@ -172,8 +193,13 @@ fun OnboardingPage1Screen(
                     BasicInputField(
                         value = state.height,
                         onValueChange = { viewModel.onIntent(OnboardingPage1Intent.HeightChanged(it)) },
-                        suffix = "cm"
+                        suffix = "cm",
+                        isError = state.heightError != null
                     )
+                    state.heightError?.let {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        ErrorText(it)
+                    }
                 }
             }
         }

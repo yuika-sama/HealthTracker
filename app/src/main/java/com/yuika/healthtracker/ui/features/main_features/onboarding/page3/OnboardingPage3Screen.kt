@@ -147,6 +147,10 @@ fun OnboardingPage3Screen(
             
             Spacer(modifier = Modifier.height(32.dp))
 
+            state.goalError?.let {
+                ErrorText(it)
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -18,14 +18,33 @@ class OnboardingPage3ViewModel @Inject constructor(
 ) {
     override fun onIntent(intent: OnboardingPage3Intent) {
         when (intent) {
-            is OnboardingPage3Intent.GoalChanged -> updateState { it.copy(goal = intent.goal) }
+            is OnboardingPage3Intent.GoalChanged -> updateState { it.copy(goal = intent.goal, goalError = null) }
             is OnboardingPage3Intent.Submit -> saveAndNavigate()
         }
     }
 
     private fun saveAndNavigate() {
-        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
         val currentGoal = state.value.goal
+        if (currentGoal !in validGoals) {
+            updateState {
+                it.copy(
+                    isLoading = false,
+                    goalError = "Please select your goal",
+                    errorMessage = null,
+                    isSuccess = false
+                )
+            }
+            return
+        }
+
+        updateState {
+            it.copy(
+                isLoading = true,
+                goalError = null,
+                errorMessage = null,
+                isSuccess = false
+            )
+        }
 
         launchSafe(
             onError = { throwable ->
@@ -46,5 +65,9 @@ class OnboardingPage3ViewModel @Inject constructor(
                 updateState { it.copy(isLoading = false, errorMessage = "User not found", isSuccess = false) }
             }
         }
+    }
+
+    private companion object {
+        val validGoals = setOf("lose_weight", "maintain_weight", "gain_weight")
     }
 }

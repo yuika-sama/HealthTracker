@@ -18,14 +18,35 @@ class OnboardingPage2ViewModel @Inject constructor(
 ) {
     override fun onIntent(intent: OnboardingPage2Intent) {
         when (intent) {
-            is OnboardingPage2Intent.ActivityLevelChanged -> updateState { it.copy(activityLevel = intent.level) }
+            is OnboardingPage2Intent.ActivityLevelChanged -> updateState {
+                it.copy(activityLevel = intent.level, activityLevelError = null)
+            }
             is OnboardingPage2Intent.Submit -> saveAndNavigate()
         }
     }
 
     private fun saveAndNavigate() {
-        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
         val currentLevel = state.value.activityLevel
+        if (currentLevel !in validActivityLevels) {
+            updateState {
+                it.copy(
+                    isLoading = false,
+                    activityLevelError = "Please select your activity level",
+                    errorMessage = null,
+                    isSuccess = false
+                )
+            }
+            return
+        }
+
+        updateState {
+            it.copy(
+                isLoading = true,
+                activityLevelError = null,
+                errorMessage = null,
+                isSuccess = false
+            )
+        }
 
         launchSafe(
             onError = { throwable ->
@@ -47,5 +68,15 @@ class OnboardingPage2ViewModel @Inject constructor(
                 updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
             }
         }
+    }
+
+    private companion object {
+        val validActivityLevels = setOf(
+            "sedentary",
+            "lightly_active",
+            "moderately_active",
+            "very_active",
+            "extra_active"
+        )
     }
 }
