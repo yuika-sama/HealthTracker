@@ -2,6 +2,7 @@ package com.yuika.healthtracker.ui.features.main_features.profile.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -27,12 +27,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.yuika.healthtracker.ui.core.components.StatCard
-import com.yuika.healthtracker.ui.theme.Emerald
+import java.io.File
 
 @Composable
 fun ProfileHeaderCard(
@@ -41,7 +41,9 @@ fun ProfileHeaderCard(
     subtitle: String = "Pro vip",
     weight: String = "65 kg",
     height: String = "170 cm",
-    bmi: String = "22.5"
+    bmi: String = "22.5",
+    avatarPath: String? = null,
+    onAvatarClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -54,7 +56,9 @@ fun ProfileHeaderCard(
     ) {
         // Avatar with Edit Icon
         Box(
-            modifier = Modifier.size(88.dp)
+            modifier = Modifier
+                .size(88.dp)
+                .clickable(onClick = onAvatarClick)
         ) {
             // Mock Avatar
             Box(
@@ -65,12 +69,25 @@ fun ProfileHeaderCard(
                     .align(Alignment.Center),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.Person,
-                    contentDescription = null,
-                    modifier = Modifier.size(40.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                val avatarModel = avatarPath?.takeIf { it.isNotBlank() }?.let {
+                    if (it.startsWith("http", ignoreCase = true)) it else File(it)
+                }
+
+                if (avatarModel == null){
+                    Icon(
+                        imageVector = Icons.Outlined.Person,
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else {
+                    AsyncImage(
+                        model = avatarModel,
+                        contentDescription = null,
+                        modifier = Modifier.matchParentSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
             
             // Edit Badge

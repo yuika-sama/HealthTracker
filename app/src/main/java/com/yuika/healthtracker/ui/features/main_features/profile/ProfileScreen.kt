@@ -3,6 +3,7 @@ package com.yuika.healthtracker.ui.features.main_features.profile
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -42,6 +46,7 @@ import com.yuika.healthtracker.domain.model.AppFontSize
 import com.yuika.healthtracker.domain.model.AppLanguage
 import com.yuika.healthtracker.domain.model.ThemeColorPreset
 import com.yuika.healthtracker.domain.model.ThemeMode
+import com.yuika.healthtracker.ui.core.components.AvatarSourceDialog
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SuccessText
@@ -52,6 +57,7 @@ import com.yuika.healthtracker.ui.features.main_features.profile.components.Sett
 import com.yuika.healthtracker.ui.features.main_features.profile.components.SettingsGroup
 import com.yuika.healthtracker.ui.features.main_features.profile.components.SettingsItem
 import com.yuika.healthtracker.ui.theme.LocalSpacing
+import com.yuika.healthtracker.utils.copyAvatarToAppStorage
 
 @Composable
 fun ProfileScreen(
@@ -66,6 +72,8 @@ fun ProfileScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    var showAvatarDialog by rememberSaveable { mutableStateOf(false) }
+    var avatarDraft by rememberSaveable { mutableStateOf("") }
     val dailyNotificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -80,6 +88,15 @@ fun ProfileScreen(
         if (granted)
         {
             viewModel.onIntent(ProfileIntent.ChangeTestNotificationEnabled(true))
+        }
+    }
+    val avatarPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            runCatching { copyAvatarToAppStorage(context, uri) }
+                .onSuccess { avatarDraft = it }
+                .onFailure { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
         }
     }
     val needsNotificationPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -124,6 +141,19 @@ fun ProfileScreen(
                 }
             }
         }
+    }
+
+    if (showAvatarDialog) {
+        AvatarSourceDialog(
+            avatarValue = avatarDraft,
+            onAvatarValueChange = { avatarDraft = it },
+            onPickLocal = { avatarPicker.launch("image/*") },
+            onDismiss = { showAvatarDialog = false },
+            onSave = {
+                viewModel.onIntent(ProfileIntent.SaveAvatar(it))
+                showAvatarDialog = false
+            }
+        )
     }
 
     state.activeSettingsDialog?.let { dialog ->
@@ -222,7 +252,12 @@ fun ProfileScreen(
                     subtitle = state.subtitle,
                     weight = state.weight,
                     height = state.height,
-                    bmi = state.bmi
+                    bmi = state.bmi,
+                    avatarPath = state.avatarPath,
+                    onAvatarClick = {
+                        avatarDraft = state.avatarPath.orEmpty()
+                        showAvatarDialog = true
+                    }
                 )
 
                 CurrentGoalBanner(

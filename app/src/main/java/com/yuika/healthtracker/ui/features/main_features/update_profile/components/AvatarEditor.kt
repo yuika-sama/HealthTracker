@@ -15,15 +15,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.yuika.healthtracker.ui.theme.Emerald
+import coil3.compose.AsyncImage
+import java.io.File
 
 @Composable
 fun AvatarEditor(
     modifier: Modifier = Modifier,
+    avatarPath: String?,
     onAvatarClick: () -> Unit
 ) {
+    val avatarModel = avatarPath?.takeIf { it.isNotBlank() }?.let {
+        if (it.startsWith("http", ignoreCase = true)) it else File(it)
+    }
+
     Box(
         modifier = modifier
             .size(100.dp)
@@ -37,12 +43,21 @@ fun AvatarEditor(
                 .align(Alignment.Center),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Person,
-                contentDescription = null,
-                modifier = Modifier.size(48.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            if (avatarModel == null) {
+                Icon(
+                    imageVector = Icons.Outlined.Person,
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                AsyncImage(
+                    model = avatarModel,
+                    contentDescription = null,
+                    modifier = Modifier.matchParentSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
 
         Box(

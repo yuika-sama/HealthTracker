@@ -1,6 +1,8 @@
 package com.yuika.healthtracker.ui.features.main_features.update_profile
 
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,26 +33,39 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.ui.core.components.AvatarSourceDialog
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.update_profile.components.AvatarEditor
 import com.yuika.healthtracker.ui.features.main_features.update_profile.components.UpdateProfileForm
 import com.yuika.healthtracker.ui.theme.LocalSpacing
+import com.yuika.healthtracker.utils.copyAvatarToAppStorage
 
 @Composable
 fun UpdateProfileScreen(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     viewModel: UpdateProfileViewModel = hiltViewModel(),
-    onBackClick: () -> Unit = {},
-    onAvatarClick: () -> Unit = {}
+    onBackClick: () -> Unit = {}
 ) {
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    var showAvatarDialog by rememberSaveable { mutableStateOf(false) }
+    var avatarDraft by rememberSaveable { mutableStateOf("") }
+    val avatarPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            runCatching { copyAvatarToAppStorage(context, uri) }
+                .onSuccess { avatarDraft = it }
+                .onFailure { Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show() }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(UpdateProfileIntent.LoadProfile)
@@ -68,6 +86,19 @@ fun UpdateProfileScreen(
         }
     }
 
+    if (showAvatarDialog) {
+        AvatarSourceDialog(
+            avatarValue = avatarDraft,
+            onAvatarValueChange = { avatarDraft = it },
+            onPickLocal = { avatarPicker.launch("image/*") },
+            onDismiss = { showAvatarDialog = false },
+            onSave = {
+                viewModel.onIntent(UpdateProfileIntent.UpdateAvatar(it))
+                showAvatarDialog = false
+            }
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -78,7 +109,13 @@ fun UpdateProfileScreen(
     ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            AvatarEditor(onAvatarClick = onAvatarClick)
+            AvatarEditor(
+                avatarPath = state.avatarPath,
+                onAvatarClick = {
+                    avatarDraft = state.avatarPath.orEmpty()
+                    showAvatarDialog = true
+                }
+            )
             
             Spacer(modifier = Modifier.height(32.dp))
 

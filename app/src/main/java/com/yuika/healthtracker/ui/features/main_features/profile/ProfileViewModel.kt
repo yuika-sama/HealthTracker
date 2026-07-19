@@ -2,6 +2,7 @@ package com.yuika.healthtracker.ui.features.main_features.profile
 
 import com.yuika.healthtracker.data.datastore.AppSettingsStore
 import com.yuika.healthtracker.domain.usecase.main_use_cases.profile.GetProfileDataUseCase
+import com.yuika.healthtracker.domain.usecase.main_use_cases.profile.UpdateUserAvatarUseCase
 import com.yuika.healthtracker.service.notification.ReminderNotificationService
 import com.yuika.healthtracker.service.widget.WidgetService
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
@@ -16,6 +17,7 @@ import kotlinx.coroutines.delay
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val getProfileDataUseCase: GetProfileDataUseCase,
+    private val updateUserAvatarUseCase: UpdateUserAvatarUseCase,
     private val appSettingsStore: AppSettingsStore,
     private val reminderNotificationService: ReminderNotificationService,
     private val widgetService: WidgetService
@@ -47,6 +49,7 @@ class ProfileViewModel @Inject constructor(
             is ProfileIntent.ChangeFontSize -> saveSetting { appSettingsStore.setFontSize(intent.value) }
             is ProfileIntent.ChangeNotificationEnabled -> changeNotificationEnabled(intent.value)
             is ProfileIntent.ChangeTestNotificationEnabled -> changeTestNotificationEnabled(intent.value)
+            is ProfileIntent.SaveAvatar -> saveAvatar(intent.avatarPath)
         }
     }
 
@@ -109,6 +112,19 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun saveAvatar(avatarPath: String)
+    {
+        launchSafe(
+            onError = { error ->
+                updateState { it.copy(errorMessage = error.message ?: "Can't save avatar") }
+            }
+        ) {
+            val path = avatarPath.trim()
+            updateUserAvatarUseCase(path)
+            updateState { it.copy(avatarPath = path, errorMessage = null, isSuccess = true) }
+        }
+    }
+
     private var fetchJob: Job? = null
 
     private fun handleLoadProfile()
@@ -144,6 +160,7 @@ class ProfileViewModel @Inject constructor(
                         weight = profileData.weight,
                         height = profileData.height,
                         bmi = profileData.bmi,
+                        avatarPath = profileData.avatarPath,
                         goalTitle = profileData.goalTitle,
                         goalDescription = profileData.goalDescription,
                         isLoading = false,

@@ -12,6 +12,7 @@ data class ProfileData(
     val weight: String,
     val height: String,
     val bmi: String,
+    val avatarPath: String?,
     val goalTitle: String,
     val goalDescription: String
 )
@@ -61,6 +62,7 @@ class GetProfileDataUseCase @Inject constructor(
                     bmi = "${
                         String.format("%.1f", stats.bmi).replace(',', '.')
                     } (${stats.bmiCategory})",
+                    avatarPath = user.avatarPath,
                     goalTitle = "Current goal",
                     goalDescription = goalDesc
                 )

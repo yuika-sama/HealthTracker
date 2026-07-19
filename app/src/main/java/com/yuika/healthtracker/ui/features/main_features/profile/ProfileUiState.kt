@@ -12,6 +12,7 @@ data class ProfileUiState(
     val weight: String = "",
     val height: String = "",
     val bmi: String = "",
+    val avatarPath: String? = null,
     val goalTitle: String = "Current Goal",
     val goalDescription: String = "",
     val language: AppLanguage = AppLanguage.EN,

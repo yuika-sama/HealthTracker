@@ -12,4 +12,5 @@ sealed class UpdateProfileIntent : UiIntent {
     data class UpdateActivityLevel(val level: Float) : UpdateProfileIntent()
     data class UpdateGoal(val goal: String) : UpdateProfileIntent()
     object SaveProfile : UpdateProfileIntent()
+    data class UpdateAvatar(val avatarPath: String): UpdateProfileIntent()
 }

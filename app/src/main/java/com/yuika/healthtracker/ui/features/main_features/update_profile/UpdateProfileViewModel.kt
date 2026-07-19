@@ -42,6 +42,7 @@ class UpdateProfileViewModel @Inject constructor(
 
             is UpdateProfileIntent.UpdateGoal -> updateState { it.copy(goal = intent.goal, goalError = null, isSuccess = false) }
             is UpdateProfileIntent.SaveProfile -> handleSaveProfile()
+            is UpdateProfileIntent.UpdateAvatar -> updateState { it.copy(avatarPath = intent.avatarPath, isSuccess = false) }
         }
     }
 

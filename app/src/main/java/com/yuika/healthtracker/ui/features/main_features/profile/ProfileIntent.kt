@@ -22,4 +22,5 @@ sealed class ProfileIntent : UiIntent{
     data class ChangeFontSize(val value: AppFontSize):  ProfileIntent()
     data class ChangeNotificationEnabled(val value: Boolean): ProfileIntent()
     data class ChangeTestNotificationEnabled(val value: Boolean): ProfileIntent()
+    data class SaveAvatar(val avatarPath: String): ProfileIntent()
 }
