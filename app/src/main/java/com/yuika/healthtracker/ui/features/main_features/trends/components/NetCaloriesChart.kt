@@ -20,14 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.ui.features.main_features.trends.ChartDataPoint
-import com.yuika.healthtracker.ui.theme.Emerald
 
 @Composable
 fun NetCaloriesChart(
@@ -40,53 +38,84 @@ fun NetCaloriesChart(
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.1f), RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(16.dp)
     ) {
-        Text(
-            text = "Net Calories Trend",
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        Column {
+            Text(
+                text = "Net Calories Trend",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = "Intake minus burned calories",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
         
         Spacer(modifier = Modifier.height(16.dp))
+
+        val lineColor = MaterialTheme.colorScheme.secondary
+        val surfaceColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.72f)
+        val dotColor = MaterialTheme.colorScheme.surfaceVariant
+        val gridColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.14f)
+        val zeroLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.35f)
         
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(140.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.White)
+                .height(180.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .background(surfaceColor)
+                .padding(12.dp)
         ) {
-            Canvas(modifier = Modifier.fillMaxWidth().height(140.dp)) {
+            Canvas(modifier = Modifier.fillMaxWidth().height(156.dp)) {
                 if (dataPoints.isEmpty()) return@Canvas
                 
                 val width = size.width
                 val height = size.height
+                val chartPadding = 10.dp.toPx()
                 
-                val maxVal = dataPoints.maxOfOrNull { it.value }?.coerceAtLeast(100f) ?: 100f
+                val maxVal = dataPoints.maxOfOrNull { it.value }?.coerceAtLeast(0f) ?: 0f
                 val minVal = dataPoints.minOfOrNull { it.value }?.coerceAtMost(0f) ?: 0f
                 val range = (maxVal - minVal).coerceAtLeast(1f)
+                val zeroY = chartPadding + (height - chartPadding * 2) * (1f - ((0f - minVal) / range))
+
+                repeat(4) { index ->
+                    val y = chartPadding + (height - chartPadding * 2) * index / 3f
+                    drawLine(
+                        color = gridColor,
+                        start = Offset(0f, y),
+                        end = Offset(width, y),
+                        strokeWidth = 1.dp.toPx()
+                    )
+                }
+
+                drawLine(
+                    color = zeroLineColor,
+                    start = Offset(0f, zeroY),
+                    end = Offset(width, zeroY),
+                    strokeWidth = 1.dp.toPx()
+                )
                 
                 val points = dataPoints.mapIndexed { index, dataPoint ->
                     val x = if (dataPoints.size > 1) {
-                        (width / (dataPoints.size - 1)) * index
+                        chartPadding + ((width - chartPadding * 2) / (dataPoints.size - 1)) * index
                     } else {
                         width / 2f
                     }
                     val normalizedY = 1f - ((dataPoint.value - minVal) / range)
-                    val y = height * normalizedY
+                    val y = chartPadding + (height - chartPadding * 2) * normalizedY
                     Offset(x, y)
                 }
 
-                // If we only have 1 point, just draw a line in the middle
                 if (points.size == 1) {
                     val p = points.first()
-                    drawCircle(color = Emerald, radius = 6.dp.toPx(), center = p)
+                    drawCircle(color = lineColor, radius = 5.dp.toPx(), center = p)
                     return@Canvas
                 }
 
-                // Create smooth path using cubic bezier curves
                 val strokePath = Path().apply {
                     moveTo(points.first().x, points.first().y)
                     for (i in 0 until points.size - 1) {
@@ -99,8 +128,8 @@ fun NetCaloriesChart(
 
                 val fillPath = Path().apply {
                     addPath(strokePath)
-                    lineTo(width, height)
-                    lineTo(0f, height)
+                    lineTo(points.last().x, zeroY)
+                    lineTo(points.first().x, zeroY)
                     close()
                 }
 
@@ -108,8 +137,8 @@ fun NetCaloriesChart(
                     path = fillPath,
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            Emerald.copy(alpha = 0.2f),
-                            Emerald.copy(alpha = 0.0f)
+                            lineColor.copy(alpha = 0.24f),
+                            lineColor.copy(alpha = 0.02f)
                         ),
                         startY = 0f,
                         endY = height
@@ -118,20 +147,22 @@ fun NetCaloriesChart(
 
                 drawPath(
                     path = strokePath,
-                    color = Emerald,
+                    color = lineColor,
                     style = Stroke(width = 3.dp.toPx())
                 )
 
-                // Draw Dots on intermediate points
-                points.forEach { point ->
+                points.forEachIndexed { index, point ->
+                    if (dataPoints.size > 12 && index != 0 && index != points.lastIndex && index % 3 != 0) {
+                        return@forEachIndexed
+                    }
                     drawCircle(
-                        color = Color.White,
-                        radius = 6.dp.toPx(),
+                        color = dotColor,
+                        radius = 5.dp.toPx(),
                         center = point
                     )
                     drawCircle(
-                        color = Emerald,
-                        radius = 6.dp.toPx(),
+                        color = lineColor,
+                        radius = 5.dp.toPx(),
                         center = point,
                         style = Stroke(width = 2.dp.toPx())
                     )
@@ -143,14 +174,18 @@ fun NetCaloriesChart(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            dataPoints.forEach { point ->
+            dataPoints.forEachIndexed { index, point ->
+                val showLabel = dataPoints.size <= 8 ||
+                    index == 0 ||
+                    index == dataPoints.lastIndex ||
+                    index == dataPoints.lastIndex / 2
                 Text(
-                    text = point.label,
+                    text = if (showLabel) point.label else "",
                     modifier = Modifier
                         .weight(1f)
                         .clickable{onPointClick(point)},
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

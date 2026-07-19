@@ -1,6 +1,7 @@
 package com.yuika.healthtracker.ui.features.main_features.trends
 
 import com.yuika.healthtracker.ui.core.base.UiState
+import java.time.LocalDate
 
 data class ChartDataPoint(
     val label: String,
@@ -25,6 +26,9 @@ data class TrendDetail(
 }
 
 data class TrendsUiState(
+    val startDate: LocalDate = LocalDate.now().minusDays(6),
+    val endDate: LocalDate = LocalDate.now(),
+
     val avgIntake: String = "0",
     val avgBurned: String = "0",
     val daysMeetingGoal: String = "0",

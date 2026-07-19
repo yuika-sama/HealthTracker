@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,8 +26,13 @@ class TrendsViewModel @Inject constructor(
         {
             is TrendsIntent.LoadTrendsData ->
             {
-                handleFetchTrends()
+                handleFetchTrends(state.value.startDate, state.value.endDate)
             }
+
+            is TrendsIntent.ChangeDateRange -> handleDateRangeChange(
+                intent.startDate,
+                intent.endDate
+            )
 
             is TrendsIntent.PointClick -> updateState {
                 it.copy(
@@ -46,6 +52,14 @@ class TrendsViewModel @Inject constructor(
         }
     }
 
+    private fun handleDateRangeChange(startDate: LocalDate, endDate: LocalDate)
+    {
+        val start = minOf(startDate, endDate)
+        val end = maxOf(startDate, endDate)
+        updateState { it.copy(startDate = start, endDate = end, selectedDetail = null) }
+        handleFetchTrends(start, end)
+    }
+
     private fun exportWeeklyReport()
     {
         launchSafe(
@@ -53,13 +67,13 @@ class TrendsViewModel @Inject constructor(
                 updateState {
                     it.copy(
                         isExportingReport = false,
-                        errorMessage = error.message ?: "Can't export weekly report"
+                        errorMessage = error.message ?: "Can't export report"
                     )
                 }
             }
         ) {
             updateState { it.copy(isExportingReport = true, errorMessage = null) }
-            val uri = weeklyReportService.exportCurrentWeek()
+            val uri = weeklyReportService.exportRange(state.value.startDate, state.value.endDate)
             updateState { it.copy(isExportingReport = false) }
             sendEffect(TrendsEffect.ShareWeeklyReport(uri))
         }
@@ -67,7 +81,7 @@ class TrendsViewModel @Inject constructor(
 
     private var fetchJob: Job? = null
 
-    private fun handleFetchTrends()
+    private fun handleFetchTrends(startDate: LocalDate, endDate: LocalDate)
     {
         updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
 
@@ -84,7 +98,7 @@ class TrendsViewModel @Inject constructor(
                 }
             }
         ) {
-            getTrendsDataUseCase().collectLatest { trendsData ->
+            getTrendsDataUseCase(startDate, endDate).collectLatest { trendsData ->
                 if (trendsData == null)
                 {
                     updateState {

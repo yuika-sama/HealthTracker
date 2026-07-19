@@ -34,12 +34,11 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.ErrorText
+import com.yuika.healthtracker.ui.core.components.DateSelector
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
-import com.yuika.healthtracker.ui.core.components.SuccessText
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityItem
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivitySummaryCard
 import com.yuika.healthtracker.ui.theme.LocalSpacing
-import com.yuika.healthtracker.utils.DATE_FORMATTER
 
 @Composable
 fun ActivityScreen(
@@ -111,20 +110,27 @@ fun ActivityScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Today's Activity",
+                    text = "Activity History",
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = state.selectedDate.format(DATE_FORMATTER),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                DateSelector(
+                    selectedDate = state.selectedDate,
+                    onPreviousDayClick = {
+                        viewModel.onIntent(ActivityIntent.LoadActivityData(state.selectedDate.minusDays(1)))
+                    },
+                    onNextDayClick = {
+                        viewModel.onIntent(ActivityIntent.LoadActivityData(state.selectedDate.plusDays(1)))
+                    },
+                    onDateSelected = {
+                        viewModel.onIntent(ActivityIntent.LoadActivityData(it))
+                    }
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 if (state.errorMessage != null)
                 {
@@ -184,7 +190,7 @@ fun ActivityScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "No activity today",
+                                text = "No activity logged",
                                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                             )
                         }
@@ -202,7 +208,7 @@ fun ActivityScreen(
                 .padding(spacing.large),
             shape = CircleShape,
             containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.background
+            contentColor = MaterialTheme.colorScheme.onSecondary
         ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "Add Activity")
         }

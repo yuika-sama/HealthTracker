@@ -32,16 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.yuika.healthtracker.ui.features.main_features.diary.components.DailyStats
-import com.yuika.healthtracker.ui.features.main_features.diary.components.DateSelector
 import com.yuika.healthtracker.ui.features.main_features.diary.components.MealCard
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.ui.core.components.DateSelector
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
-import com.yuika.healthtracker.ui.core.components.SuccessText
-import com.yuika.healthtracker.utils.DATE_FORMATTER
 
 @Composable
 fun DiaryScreen(
@@ -118,7 +116,7 @@ fun DiaryScreen(
 
             item {
                 DateSelector(
-                    dateText = state.selectedDate.format(DATE_FORMATTER),
+                    selectedDate = state.selectedDate,
                     onPreviousDayClick = {
                         viewModel.onIntent(
                             DiaryIntent.ChangeDate(
@@ -136,7 +134,8 @@ fun DiaryScreen(
                                 )
                             )
                         )
-                    }
+                    },
+                    onDateSelected = { viewModel.onIntent(DiaryIntent.ChangeDate(it)) }
                 )
             }
 
@@ -225,7 +224,7 @@ fun DiaryScreen(
                 .padding(spacing.large),
             shape = CircleShape,
             containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.background
+            contentColor = MaterialTheme.colorScheme.onSecondary
         ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
         }

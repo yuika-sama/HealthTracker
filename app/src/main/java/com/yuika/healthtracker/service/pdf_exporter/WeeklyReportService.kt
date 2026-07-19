@@ -36,7 +36,15 @@ class WeeklyReportService @Inject constructor(
     {
         val start = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
         val end = minOf(LocalDate.now(), start.plusDays(6))
-        return exportWeekOrNull(start, end)
+        return exportRangeOrNull(start, end)
+            ?: throw IllegalArgumentException("Can't find user information")
+    }
+
+    suspend fun exportRange(start: LocalDate, end: LocalDate): Uri
+    {
+        val rangeStart = minOf(start, end)
+        val rangeEnd = maxOf(start, end)
+        return exportRangeOrNull(rangeStart, rangeEnd)
             ?: throw IllegalArgumentException("Can't find user information")
     }
 
@@ -45,10 +53,10 @@ class WeeklyReportService @Inject constructor(
         val start = LocalDate.now()
             .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
             .minusWeeks(1)
-        return exportWeekOrNull(start, start.plusDays(6))
+        return exportRangeOrNull(start, start.plusDays(6))
     }
 
-    private suspend fun exportWeekOrNull(
+    private suspend fun exportRangeOrNull(
         start: LocalDate,
         end: LocalDate
     ): Uri?
@@ -110,7 +118,7 @@ class WeeklyReportService @Inject constructor(
                 y += size + 10f
             }
 
-            text("Weekly Health Report", 22f, true)
+            text("Health Report", 22f, true)
             text("${report.startDate} to ${report.endDate}")
             text("User: ${report.userName}")
             text("Goal: ${report.goalCalories} kcal/day")
@@ -140,7 +148,7 @@ class WeeklyReportService @Inject constructor(
     private fun reportFile(start: LocalDate, end: LocalDate): File
     {
         val root = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) ?: context.filesDir
-        return File(root, "weekly_reports/weekly_report_${start}_${end}.pdf").apply {
+        return File(root, "weekly_reports/health_report_${start}_${end}.pdf").apply {
             parentFile?.mkdirs()
         }
     }
