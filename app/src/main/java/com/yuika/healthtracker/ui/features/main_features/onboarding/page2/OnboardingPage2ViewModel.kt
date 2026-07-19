@@ -30,15 +30,17 @@ class OnboardingPage2ViewModel @Inject constructor(
         launchSafe(
             onError = { throwable ->
                 val message = throwable.message ?: "Error saving information"
-                updateState { it.copy(isLoading = false, errorMessage = message) }
+                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
             }
         ) {
             val user = getLatestUserUseCase().firstOrNull()
             if (user != null) {
                 val updatedUser = user.copy(activityLevel = currentLevel)
                 updateUserUseCase(updatedUser)
-                widgetService.refresh()
-                updateState { it.copy(isLoading = false, isSuccess = true) }
+                runCatching {
+                    widgetService.refresh()
+                }
+                updateState { it.copy(isLoading = false, isSuccess = true, errorMessage = null) }
                 sendEffect(OnboardingPage2Effect.NavigateToPage3)
             } else {
                 val message = "User not found"

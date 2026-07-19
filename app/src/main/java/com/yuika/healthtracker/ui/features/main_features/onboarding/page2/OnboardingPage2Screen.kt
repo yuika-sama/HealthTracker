@@ -26,6 +26,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.ui.core.components.ErrorText
+import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.ActivityLevelCard
 
 data class ActivityLevelOption(
@@ -168,6 +170,10 @@ fun OnboardingPage2Screen(
             
             Spacer(modifier = Modifier.height(24.dp))
 
+            state.errorMessage?.let {
+                ErrorText(it)
+            }
+
             Button(
                 onClick = { viewModel.onIntent(OnboardingPage2Intent.Submit) },
                 modifier = Modifier
@@ -177,9 +183,14 @@ fun OnboardingPage2Screen(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.background
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                enabled = !state.isLoading
             ) {
-                Text("Continue", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                if (state.isLoading){
+                    LoadingIndicator()
+                } else {
+                    Text("Continue", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))

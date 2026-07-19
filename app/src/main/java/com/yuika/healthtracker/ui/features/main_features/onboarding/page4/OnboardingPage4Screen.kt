@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
+import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.MacroCard
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.NutritionCard
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.TargetOverviewCard
@@ -102,7 +103,7 @@ fun OnboardingPage4Screen(
                 .padding(contentPadding),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            LoadingIndicator()
         }
     } else {
         Column(

@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.navigation.components
 
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardTopBar
@@ -12,13 +13,15 @@ fun AppTopBar(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val safeModifier = modifier.statusBarsPadding()
+
     when {
-        showMainBar -> DashboardTopBar(modifier = modifier)
+        showMainBar -> DashboardTopBar(modifier = safeModifier)
         title != null -> DetailTopBar(
             title = title,
             showBackButton = showBackButton,
             onBackClick = onBackClick,
-            modifier = modifier
+            modifier = safeModifier
         )
     }
 }

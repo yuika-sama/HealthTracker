@@ -32,7 +32,7 @@ class OnboardingPage1ViewModel @Inject constructor(
         launchSafe(
             onError = { throwable ->
                 val errorMsg = throwable.message ?: "Error saving information"
-                updateState { it.copy(isLoading = false, errorMessage = errorMsg) }
+                updateState { it.copy(isLoading = false, errorMessage = errorMsg, isSuccess = false) }
             }
         ) {
             validateAndSaveOnboardingUseCase(
@@ -42,8 +42,10 @@ class OnboardingPage1ViewModel @Inject constructor(
                 weightStr = currentState.weight,
                 heightStr = currentState.height
             )
-            widgetService.refresh()
-            updateState { it.copy(isLoading = false, isSuccess = true) }
+            runCatching{
+                widgetService.refresh()
+            }
+            updateState { it.copy(isLoading = false, isSuccess = true, errorMessage = null) }
             sendEffect(OnboardingPage1Effect.NavigateToPage2)
         }
     }

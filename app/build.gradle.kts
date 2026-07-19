@@ -7,17 +7,6 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-configurations.configureEach {
-    resolutionStrategy.force(
-        "androidx.core:core:1.18.0",
-        "androidx.core:core-ktx:1.18.0",
-        "org.jetbrains.kotlin:kotlin-stdlib:2.2.20",
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.20",
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.20",
-        "org.jetbrains.kotlin:kotlin-stdlib-common:2.2.20"
-    )
-}
-
 android {
     namespace = "com.yuika.healthtracker"
     compileSdk {
@@ -28,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId = "com.yuika.healthtracker"
-        minSdk = 31
+        minSdk = 28
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"

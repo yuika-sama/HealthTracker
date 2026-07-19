@@ -28,6 +28,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.BasicInputField
+import com.yuika.healthtracker.ui.core.components.ErrorText
+import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SegmentedSelector
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.OnboardingField
 import com.yuika.healthtracker.ui.theme.*
@@ -231,6 +233,10 @@ fun OnboardingPage1Screen(
         
         Spacer(modifier = Modifier.height(32.dp))
 
+        state.errorMessage?.let {
+            ErrorText(it)
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -245,9 +251,14 @@ fun OnboardingPage1Screen(
                     contentColor = MaterialTheme.colorScheme.onBackground
                 ),
                 shape = RoundedCornerShape(12.dp),
-                elevation = ButtonDefaults.buttonElevation(0.dp)
+                elevation = ButtonDefaults.buttonElevation(0.dp),
+                enabled = !state.isLoading
             ) {
-                Text("Continue", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                if(state.isLoading){
+                    LoadingIndicator()
+                } else {
+                    Text("Continue", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
             }
         }
         

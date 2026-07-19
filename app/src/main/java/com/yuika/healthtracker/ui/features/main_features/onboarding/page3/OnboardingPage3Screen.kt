@@ -29,6 +29,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
+import com.yuika.healthtracker.ui.core.components.ErrorText
+import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.GoalCard
 
 data class HealthGoalOption(
@@ -186,6 +188,10 @@ fun OnboardingPage3Screen(
             
             Spacer(modifier = Modifier.height(24.dp))
 
+            state.errorMessage?.let {
+                ErrorText(it)
+            }
+
             Button(
                 onClick = { viewModel.onIntent(OnboardingPage3Intent.Submit) },
                 modifier = Modifier
@@ -196,12 +202,17 @@ fun OnboardingPage3Screen(
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
                 shape = RoundedCornerShape(12.dp),
-                elevation = ButtonDefaults.buttonElevation(0.dp)
+                elevation = ButtonDefaults.buttonElevation(0.dp),
+                enabled = !state.isLoading
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                    Text("Continue to Final Step", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null)
+                if (!state.isLoading){
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                        Text("Continue to Final Step", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null)
+                    }
+                } else {
+                    LoadingIndicator()
                 }
             }
 
