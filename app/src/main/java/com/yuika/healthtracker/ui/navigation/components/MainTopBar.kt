@@ -1,6 +1,5 @@
-package com.yuika.healthtracker.ui.features.main_features.dashboard.components
+package com.yuika.healthtracker.ui.navigation.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -11,10 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DashboardTopBar(
-    modifier: Modifier = Modifier,
-    onCalendarClick: () -> Unit = {}
+fun MainTopBar(
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -36,7 +32,6 @@ fun DashboardTopBar(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Profile Placeholder
         Box(
             modifier = Modifier
                 .size(40.dp)
@@ -59,13 +54,5 @@ fun DashboardTopBar(
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f)
         )
-        
-        IconButton(onClick = onCalendarClick) {
-            Icon(
-                imageVector = Icons.Outlined.CalendarMonth,
-                contentDescription = "Calendar",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
     }
 }
