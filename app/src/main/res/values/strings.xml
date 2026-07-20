@@ -15,11 +15,8 @@
     <string name="content_description_selected">Selected</string>
 
     <string name="unit_bowl">bowl</string>
-    <string name="unit_bowl_small">Bowl (Small)</string>
     <string name="unit_cm">cm</string>
-    <string name="unit_cup">cup</string>
     <string name="unit_g">g</string>
-    <string name="unit_gram">Gram</string>
     <string name="unit_kcal">kcal</string>
     <string name="unit_kcal_day">kcal / day</string>
     <string name="unit_kg">kg</string>
@@ -28,10 +25,7 @@
     <string name="unit_ml">ml</string>
     <string name="unit_piece">piece</string>
     <string name="unit_plate">plate</string>
-    <string name="unit_plate_med">Plate (Med)</string>
-    <string name="unit_serving">Serving</string>
-    <string name="unit_slice">slice</string>
-    <string name="unit_tbsp">tbsp</string>
+    <string name="unit_serving">serving</string>
     <string name="value_with_unit">%1$s %2$s</string>
     <string name="label_calories">Calories</string>
     <string name="calories_balance_kcal">Balance: %1$d kcal</string>

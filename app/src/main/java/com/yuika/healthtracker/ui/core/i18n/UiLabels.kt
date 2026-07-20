@@ -8,6 +8,7 @@ import com.yuika.healthtracker.domain.model.AppFontSize
 import com.yuika.healthtracker.domain.model.AppLanguage
 import com.yuika.healthtracker.domain.model.ThemeColorPreset
 import com.yuika.healthtracker.domain.model.ThemeMode
+import com.yuika.healthtracker.domain.model.canonicalFoodUnit
 import com.yuika.healthtracker.ui.core.model.IntensityLevel
 import java.util.Locale
 
@@ -130,21 +131,15 @@ fun bmiCategoryLabel(value: String): String = when (value.trim().lowercase(Local
 }
 
 @Composable
-fun unitLabel(value: String): String = when (value.trim().lowercase(Locale.ROOT)) {
-    "plate (med)" -> stringResource(R.string.unit_plate_med)
-    "bowl (smol)", "bowl (small)" -> stringResource(R.string.unit_bowl_small)
+fun unitLabel(value: String): String = when (canonicalFoodUnit(value)) {
+    "plate" -> stringResource(R.string.unit_plate)
+    "bowl" -> stringResource(R.string.unit_bowl)
     "serving" -> stringResource(R.string.unit_serving)
-    "gram", "grams" -> stringResource(R.string.unit_gram)
     "g" -> stringResource(R.string.unit_g)
     "kg" -> stringResource(R.string.unit_kg)
     "cm" -> stringResource(R.string.unit_cm)
     "ml" -> stringResource(R.string.unit_ml)
     "piece" -> stringResource(R.string.unit_piece)
-    "bowl" -> stringResource(R.string.unit_bowl)
-    "plate" -> stringResource(R.string.unit_plate)
-    "cup" -> stringResource(R.string.unit_cup)
-    "slice" -> stringResource(R.string.unit_slice)
-    "tbsp" -> stringResource(R.string.unit_tbsp)
     else -> value
 }
 

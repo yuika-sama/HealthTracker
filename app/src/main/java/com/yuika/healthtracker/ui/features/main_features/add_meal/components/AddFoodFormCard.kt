@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.model.FoodCatalog
+import com.yuika.healthtracker.domain.model.supportedFoodUnits
 import com.yuika.healthtracker.ui.core.components.FormTextField
 import com.yuika.healthtracker.ui.core.i18n.foodCatalogLabel
 import com.yuika.healthtracker.ui.core.i18n.mealTypeLabel
@@ -57,7 +58,7 @@ fun AddFoodFormCard(
     onFoodCatalogClick: (FoodCatalog) -> Unit
 ) {
     var unitExpanded by rememberSaveable() { mutableStateOf(false) }
-    val units = listOf("plate", "bowl", "serving", "g")
+    val units = supportedFoodUnits
 
     val mealTypes = listOf("Breakfast", "Lunch", "Dinner", "Snack")
 

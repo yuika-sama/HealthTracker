@@ -2,6 +2,7 @@ package com.yuika.healthtracker.ui.features.main_features.add_meal
 
 import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.model.FoodCatalog
+import com.yuika.healthtracker.domain.model.canonicalFoodUnit
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.SearchFoodCatalogUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.ValidateAndSaveMealUseCase
 import com.yuika.healthtracker.service.widget.WidgetService
@@ -42,7 +43,7 @@ class AddMealViewModel @Inject constructor(
 
             is AddMealIntent.OnUnitChange ->
             {
-                updateState { it.copy(unit = intent.unit) }
+                updateState { it.copy(unit = canonicalFoodUnit(intent.unit)) }
             }
 
             is AddMealIntent.OnCaloriesChange ->
@@ -143,7 +144,7 @@ class AddMealViewModel @Inject constructor(
                 selectedDefaultQuantity = food.defaultQuantity,
                 foodName = food.name,
                 quantity = food.defaultQuantity.toString().removeSuffix(".0"),
-                unit = food.unit,
+                unit = canonicalFoodUnit(food.unit),
                 calories = food.caloriesPerServing.toString(),
                 searchResults = emptyList(),
                 foodNameErrorRes = null,
@@ -197,7 +198,7 @@ class AddMealViewModel @Inject constructor(
                 foodCatalogId = currentState.selectedFoodCatalogId,
                 foodName = foodName,
                 quantity = validQuantity,
-                unit = currentState.unit,
+                unit = canonicalFoodUnit(currentState.unit),
                 calories = validCalories,
                 caloriesPerServing = if (currentState.selectedFoodCatalogId != null) currentState.selectedCategoriesPerServing
                 else validCalories
