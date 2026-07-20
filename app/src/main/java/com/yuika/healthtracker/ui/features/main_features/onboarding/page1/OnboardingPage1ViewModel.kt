@@ -7,10 +7,13 @@ import com.yuika.healthtracker.domain.usecase.main_use_cases.user.validateDateOf
 import com.yuika.healthtracker.service.widget.WidgetService
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import android.content.Context
 import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingPage1ViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val validateAndSaveOnboardingUseCase: ValidateAndSaveOnboardingUseCase,
     private val widgetService: WidgetService
 ) : BaseViewModel<OnboardingPage1UiState, OnboardingPage1Intent, OnboardingPage1Effect>(
@@ -109,7 +112,7 @@ class OnboardingPage1ViewModel @Inject constructor(
     @StringRes
     private fun validateDateField(value: String): Int? {
         if (value.isBlank()) return R.string.error_select_date_of_birth
-        return runCatching { validateDateOfBirth(value) }.exceptionOrNull()
+        return runCatching { validateDateOfBirth(context, value) }.exceptionOrNull()
             ?.let { R.string.error_enter_valid_dob }
     }
 

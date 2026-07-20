@@ -9,12 +9,15 @@ import com.yuika.healthtracker.service.widget.WidgetService
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
 import com.yuika.healthtracker.utils.NETWORK_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
+import android.content.Context
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
 @HiltViewModel
 class UpdateProfileViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val getProfileFormDataUseCase: GetProfileFormDataUseCase,
     private val validateAndSaveProfileUseCase: ValidateAndSaveProfileUseCase,
     private val widgetService: WidgetService
@@ -106,7 +109,7 @@ class UpdateProfileViewModel @Inject constructor(
         val dateOfBirthErrorRes = when
         {
             currentState.dateOfBirth.isBlank() -> R.string.error_select_date_of_birth
-            else -> runCatching { validateDateOfBirth(currentState.dateOfBirth) }.exceptionOrNull()
+            else -> runCatching { validateDateOfBirth(context, currentState.dateOfBirth) }.exceptionOrNull()
                 ?.let { R.string.error_enter_valid_dob }
         }
         val genderErrorRes = if (currentState.gender.isBlank()) R.string.error_select_gender else null

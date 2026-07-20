@@ -1,5 +1,7 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.user
 
+import android.content.Context
+import com.yuika.healthtracker.R
 import java.time.LocalDate
 import java.time.Period
 
@@ -14,9 +16,9 @@ fun calculateYearsOldFromDateOfBirth(dateOfBirth: String?): Int? {
     return Period.between(birthDate, LocalDate.now()).years.takeIf { it in MIN_YEARS_OLD..MAX_YEARS_OLD }
 }
 
-fun validateDateOfBirth(value: String): Pair<String, Int> {
+fun validateDateOfBirth(context: Context, value: String): Pair<String, Int> {
     val trimmedValue = value.trim()
     val yearsOld = calculateYearsOldFromDateOfBirth(trimmedValue)
-        ?: throw IllegalArgumentException("Please enter a valid date of birth (yyyy-MM-dd, 10-120 years old)")
+        ?: throw IllegalArgumentException(context.getString(R.string.error_enter_valid_dob))
     return trimmedValue to yearsOld
 }

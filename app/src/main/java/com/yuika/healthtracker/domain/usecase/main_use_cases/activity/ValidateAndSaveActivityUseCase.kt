@@ -1,5 +1,8 @@
 package com.yuika.healthtracker.domain.usecase.main_use_cases.activity
 
+import android.content.Context
+import com.yuika.healthtracker.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.yuika.healthtracker.domain.model.Activity
 import com.yuika.healthtracker.domain.model.ActivityCatalog
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
@@ -8,6 +11,7 @@ import javax.inject.Inject
 import kotlin.math.roundToInt
 
 class ValidateAndSaveActivityUseCase @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val getLatestUserUseCase: GetLatestUserUseCase,
     private val saveActivityUseCase: SaveActivityUseCase,
     private val validateActivityInputUseCase: ValidateActivityInputUseCase
@@ -19,7 +23,7 @@ class ValidateAndSaveActivityUseCase @Inject constructor(
     ) {
         val input = validateActivityInputUseCase(selectedActivity, durationStr)
         val user = getLatestUserUseCase().firstOrNull()
-            ?: throw IllegalArgumentException("Can't find user information")
+            ?: throw IllegalArgumentException(context.getString(R.string.error_cannot_find_user_info))
 
         val kcal = (input.activity.met * user.weight * (input.durationMins / 60.0)).roundToInt()
 

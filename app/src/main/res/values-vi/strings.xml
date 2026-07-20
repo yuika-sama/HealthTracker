@@ -254,6 +254,7 @@
     <string name="onboarding_vitality_active">ĐỘNG CƠ SỨC KHỎE ĐANG HOẠT ĐỘNG</string>
 
     <string name="error_activity_level_invalid">Mức vận động không hợp lệ</string>
+    <string name="error_let_me_know_information">Vui lòng cho tôi biết thông tin của bạn.</string>
     <string name="error_calculate_target">Không thể tính mục tiêu</string>
     <string name="error_cannot_find_user_data">Không tìm thấy dữ liệu người dùng</string>
     <string name="error_cannot_find_user_info">Không tìm thấy thông tin người dùng</string>

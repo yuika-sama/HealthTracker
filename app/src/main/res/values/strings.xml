@@ -253,6 +253,7 @@
     <string name="onboarding_vitality_active">VITALITY ENGINE ACTIVE</string>
 
     <string name="error_activity_level_invalid">Activity level is not valid</string>
+    <string name="error_let_me_know_information">Please let me know your information.</string>
     <string name="error_calculate_target">Error calculating target</string>
     <string name="error_cannot_find_user_data">Cannot find user data</string>
     <string name="error_cannot_find_user_info">Cannot find user information</string>
