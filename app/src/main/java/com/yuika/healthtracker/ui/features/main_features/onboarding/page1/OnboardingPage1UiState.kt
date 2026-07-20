@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.onboarding.page1
 
+import androidx.annotation.StringRes
 import com.yuika.healthtracker.ui.core.base.UiState
 
 data class OnboardingPage1UiState( 
@@ -9,12 +10,11 @@ data class OnboardingPage1UiState(
     val gender: String = "Male",
     val weight: String = "",
     val height: String = "",
-    val nameError: String? = null,
-    val dateOfBirthError: String? = null,
-    val genderError: String? = null,
-    val weightError: String? = null,
-    val heightError: String? = null,
-    val errorMessage: String? = null,
+    @StringRes val nameErrorRes: Int? = null,
+    @StringRes val dateOfBirthErrorRes: Int? = null,
+    @StringRes val genderErrorRes: Int? = null,
+    @StringRes val weightErrorRes: Int? = null,
+    @StringRes val heightErrorRes: Int? = null,
+    @StringRes val errorMessageRes: Int? = null,
     val isSuccess: Boolean = false
 ) : UiState
-

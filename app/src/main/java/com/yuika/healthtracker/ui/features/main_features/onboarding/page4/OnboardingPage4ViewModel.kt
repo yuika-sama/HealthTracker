@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.onboarding.page4
 
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.CalculateUserStatsUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
@@ -28,11 +29,16 @@ class OnboardingPage4ViewModel @Inject constructor(
     }
 
     private fun calculateMetrics() {
-        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
+        updateState { it.copy(isLoading = true, errorMessageRes = null, isSuccess = false) }
         launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "Error calculating target"
-                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+            onError = {
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        errorMessageRes = R.string.error_calculate_target,
+                        isSuccess = false
+                    )
+                }
             }
         ) {
             val user = getLatestUserUseCase().firstOrNull()
@@ -63,11 +69,17 @@ class OnboardingPage4ViewModel @Inject constructor(
                         carbsGrams = carbsGrams,
                         activityMultiplierText = user.activityLevel,
                         isSuccess = true,
-                        errorMessage = null
+                        errorMessageRes = null
                     )
                 }
             } else {
-                updateState { it.copy(isLoading = false, errorMessage = "User not found", isSuccess = false) }
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        errorMessageRes = R.string.error_cannot_find_user_info,
+                        isSuccess = false
+                    )
+                }
             }
         }
     }

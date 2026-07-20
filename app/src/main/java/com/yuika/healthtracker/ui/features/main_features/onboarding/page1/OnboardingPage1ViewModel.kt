@@ -1,5 +1,7 @@
 package com.yuika.healthtracker.ui.features.main_features.onboarding.page1
 
+import androidx.annotation.StringRes
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.ValidateAndSaveOnboardingUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.validateDateOfBirth
 import com.yuika.healthtracker.service.widget.WidgetService
@@ -16,13 +18,13 @@ class OnboardingPage1ViewModel @Inject constructor(
 ) {
     override fun onIntent(intent: OnboardingPage1Intent) {
         when (intent) {
-            is OnboardingPage1Intent.NameChanged -> updateState { it.copy(name = intent.name, nameError = null) }
+            is OnboardingPage1Intent.NameChanged -> updateState { it.copy(name = intent.name, nameErrorRes = null) }
             is OnboardingPage1Intent.DateOfBirthChanged -> updateState {
-                it.copy(dateOfBirth = intent.dateOfBirth, dateOfBirthError = null)
+                it.copy(dateOfBirth = intent.dateOfBirth, dateOfBirthErrorRes = null)
             }
-            is OnboardingPage1Intent.GenderChanged -> updateState { it.copy(gender = intent.gender, genderError = null) }
-            is OnboardingPage1Intent.WeightChanged -> updateState { it.copy(weight = intent.weight, weightError = null) }
-            is OnboardingPage1Intent.HeightChanged -> updateState { it.copy(height = intent.height, heightError = null) }
+            is OnboardingPage1Intent.GenderChanged -> updateState { it.copy(gender = intent.gender, genderErrorRes = null) }
+            is OnboardingPage1Intent.WeightChanged -> updateState { it.copy(weight = intent.weight, weightErrorRes = null) }
+            is OnboardingPage1Intent.HeightChanged -> updateState { it.copy(height = intent.height, heightErrorRes = null) }
             is OnboardingPage1Intent.Submit -> validateAndSave()
         }
     }
@@ -32,27 +34,32 @@ class OnboardingPage1ViewModel @Inject constructor(
         val validatedState = currentState.withFieldErrors()
 
         if (validatedState.hasFieldErrors()) {
-            updateState { validatedState.copy(errorMessage = null, isLoading = false, isSuccess = false) }
+            updateState { validatedState.copy(errorMessageRes = null, isLoading = false, isSuccess = false) }
             return
         }
 
         updateState {
             it.copy(
                 isLoading = true,
-                errorMessage = null,
+                errorMessageRes = null,
                 isSuccess = false,
-                nameError = null,
-                dateOfBirthError = null,
-                genderError = null,
-                weightError = null,
-                heightError = null
+                nameErrorRes = null,
+                dateOfBirthErrorRes = null,
+                genderErrorRes = null,
+                weightErrorRes = null,
+                heightErrorRes = null
             )
         }
 
         launchSafe(
-            onError = { throwable ->
-                val errorMsg = throwable.message ?: "Error saving information"
-                updateState { it.copy(isLoading = false, errorMessage = errorMsg, isSuccess = false) }
+            onError = {
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        errorMessageRes = R.string.error_save_information,
+                        isSuccess = false
+                    )
+                }
             }
         ) {
             validateAndSaveOnboardingUseCase(
@@ -65,39 +72,58 @@ class OnboardingPage1ViewModel @Inject constructor(
             runCatching{
                 widgetService.refresh()
             }
-            updateState { it.copy(isLoading = false, isSuccess = true, errorMessage = null) }
+            updateState { it.copy(isLoading = false, isSuccess = true, errorMessageRes = null) }
             sendEffect(OnboardingPage1Effect.NavigateToPage2)
         }
     }
 
     private fun OnboardingPage1UiState.withFieldErrors(): OnboardingPage1UiState {
         return copy(
-            nameError = if (name.trim().isBlank()) "Please enter your full name" else null,
-            dateOfBirthError = validateDateField(dateOfBirth),
-            genderError = if (gender.isBlank()) "Please select your gender" else null,
-            weightError = validateNumberField(weight, "Weight", 20.0, 300.0, "kg"),
-            heightError = validateNumberField(height, "Height", 80.0, 250.0, "cm")
+            nameErrorRes = if (name.trim().isBlank()) R.string.error_enter_full_name else null,
+            dateOfBirthErrorRes = validateDateField(dateOfBirth),
+            genderErrorRes = if (gender.isBlank()) R.string.error_select_gender else null,
+            weightErrorRes = validateNumberField(
+                weight,
+                R.string.error_enter_weight,
+                R.string.error_weight_number,
+                R.string.error_weight_between,
+                20.0,
+                300.0
+            ),
+            heightErrorRes = validateNumberField(
+                height,
+                R.string.error_enter_height,
+                R.string.error_height_number,
+                R.string.error_height_between,
+                80.0,
+                250.0
+            )
         )
     }
 
     private fun OnboardingPage1UiState.hasFieldErrors(): Boolean {
-        return listOf(nameError, dateOfBirthError, genderError, weightError, heightError).any { it != null }
+        return listOf(nameErrorRes, dateOfBirthErrorRes, genderErrorRes, weightErrorRes, heightErrorRes)
+            .any { it != null }
     }
 
-    private fun validateDateField(value: String): String? {
-        if (value.isBlank()) return "Please select your date of birth"
-        return runCatching { validateDateOfBirth(value) }.exceptionOrNull()?.message
+    @StringRes
+    private fun validateDateField(value: String): Int? {
+        if (value.isBlank()) return R.string.error_select_date_of_birth
+        return runCatching { validateDateOfBirth(value) }.exceptionOrNull()
+            ?.let { R.string.error_enter_valid_dob }
     }
 
+    @StringRes
     private fun validateNumberField(
         value: String,
-        label: String,
+        @StringRes blankErrorRes: Int,
+        @StringRes numberErrorRes: Int,
+        @StringRes rangeErrorRes: Int,
         min: Double,
-        max: Double,
-        unit: String
-    ): String? {
-        if (value.isBlank()) return "Please enter your ${label.lowercase()}"
-        val number = value.toDoubleOrNull() ?: return "$label must be a number"
-        return if (number in min..max) null else "$label must be between ${min.toInt()} and ${max.toInt()} $unit"
+        max: Double
+    ): Int? {
+        if (value.isBlank()) return blankErrorRes
+        val number = value.toDoubleOrNull() ?: return numberErrorRes
+        return if (number in min..max) null else rangeErrorRes
     }
 }

@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.onboarding.page3
 
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.UpdateUserUseCase
 import com.yuika.healthtracker.service.widget.WidgetService
@@ -18,7 +19,7 @@ class OnboardingPage3ViewModel @Inject constructor(
 ) {
     override fun onIntent(intent: OnboardingPage3Intent) {
         when (intent) {
-            is OnboardingPage3Intent.GoalChanged -> updateState { it.copy(goal = intent.goal, goalError = null) }
+            is OnboardingPage3Intent.GoalChanged -> updateState { it.copy(goal = intent.goal, goalErrorRes = null) }
             is OnboardingPage3Intent.Submit -> saveAndNavigate()
         }
     }
@@ -29,8 +30,8 @@ class OnboardingPage3ViewModel @Inject constructor(
             updateState {
                 it.copy(
                     isLoading = false,
-                    goalError = "Please select your goal",
-                    errorMessage = null,
+                    goalErrorRes = R.string.error_select_goal,
+                    errorMessageRes = null,
                     isSuccess = false
                 )
             }
@@ -40,16 +41,21 @@ class OnboardingPage3ViewModel @Inject constructor(
         updateState {
             it.copy(
                 isLoading = true,
-                goalError = null,
-                errorMessage = null,
+                goalErrorRes = null,
+                errorMessageRes = null,
                 isSuccess = false
             )
         }
 
         launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "Error saving information"
-                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+            onError = {
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        errorMessageRes = R.string.error_save_information,
+                        isSuccess = false
+                    )
+                }
             }
         ) {
             val user = getLatestUserUseCase().firstOrNull()
@@ -59,10 +65,16 @@ class OnboardingPage3ViewModel @Inject constructor(
                 runCatching {
                     widgetService.refresh()
                 }
-                updateState { it.copy(isLoading = false, isSuccess = true, errorMessage = null) }
+                updateState { it.copy(isLoading = false, isSuccess = true, errorMessageRes = null) }
                 sendEffect(OnboardingPage3Effect.NavigateToPage4)
             } else {
-                updateState { it.copy(isLoading = false, errorMessage = "User not found", isSuccess = false) }
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        errorMessageRes = R.string.error_cannot_find_user_info,
+                        isSuccess = false
+                    )
+                }
             }
         }
     }

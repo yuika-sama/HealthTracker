@@ -131,11 +131,11 @@ fun OnboardingPage1Screen(
             BasicInputField(
                 value = state.name, 
                 onValueChange = { viewModel.onIntent(OnboardingPage1Intent.NameChanged(it)) },
-                isError = state.nameError != null
+                isError = state.nameErrorRes != null
             )
-            state.nameError?.let {
+            state.nameErrorRes?.let {
                 Spacer(modifier = Modifier.height(8.dp))
-                ErrorText(it)
+                ErrorText(stringResource(it))
             }
         }
         
@@ -147,12 +147,12 @@ fun OnboardingPage1Screen(
         ) {
             DateOfBirthInput(
                 value = state.dateOfBirth,
-                isError = state.dateOfBirthError != null,
+                isError = state.dateOfBirthErrorRes != null,
                 onDateSelected = { viewModel.onIntent(OnboardingPage1Intent.DateOfBirthChanged(it)) }
             )
-            state.dateOfBirthError?.let {
+            state.dateOfBirthErrorRes?.let {
                 Spacer(modifier = Modifier.height(8.dp))
-                ErrorText(it)
+                ErrorText(stringResource(it))
             }
         }
         
@@ -169,9 +169,9 @@ fun OnboardingPage1Screen(
                 onOptionSelected = { viewModel.onIntent(OnboardingPage1Intent.GenderChanged(it)) },
                 labelProvider = { genderLabel(it) }
             )
-            state.genderError?.let {
+            state.genderErrorRes?.let {
                 Spacer(modifier = Modifier.height(8.dp))
-                ErrorText(it)
+                ErrorText(stringResource(it))
             }
         }
         
@@ -183,12 +183,12 @@ fun OnboardingPage1Screen(
                     BasicInputField(
                         value = state.weight,
                         onValueChange = { viewModel.onIntent(OnboardingPage1Intent.WeightChanged(it)) },
-                        suffix = "kg",
-                        isError = state.weightError != null
+                        suffix = stringResource(R.string.unit_kg),
+                        isError = state.weightErrorRes != null
                     )
-                    state.weightError?.let {
+                    state.weightErrorRes?.let {
                         Spacer(modifier = Modifier.height(8.dp))
-                        ErrorText(it)
+                        ErrorText(stringResource(it))
                     }
                 }
             }
@@ -197,12 +197,12 @@ fun OnboardingPage1Screen(
                     BasicInputField(
                         value = state.height,
                         onValueChange = { viewModel.onIntent(OnboardingPage1Intent.HeightChanged(it)) },
-                        suffix = "cm",
-                        isError = state.heightError != null
+                        suffix = stringResource(R.string.unit_cm),
+                        isError = state.heightErrorRes != null
                     )
-                    state.heightError?.let {
+                    state.heightErrorRes?.let {
                         Spacer(modifier = Modifier.height(8.dp))
-                        ErrorText(it)
+                        ErrorText(stringResource(it))
                     }
                 }
             }
@@ -263,8 +263,8 @@ fun OnboardingPage1Screen(
         
         Spacer(modifier = Modifier.height(32.dp))
 
-        state.errorMessage?.let {
-            ErrorText(it)
+        state.errorMessageRes?.let {
+            ErrorText(stringResource(it))
         }
 
         Row(
