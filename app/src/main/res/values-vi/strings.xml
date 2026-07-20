@@ -186,6 +186,9 @@
     <string name="trends_intake_kcal">Nạp vào: %1$d kcal</string>
     <string name="trends_net_description">Calo nạp trừ calo đốt</string>
     <string name="trends_net_title">Xu hướng calo ròng</string>
+    <string name="trends_preset_7_days">7 ng&#224;y</string>
+    <string name="trends_preset_month">Th&#225;ng</string>
+    <string name="trends_preset_week">Tu&#7847;n</string>
     <string name="trends_share_report">Chia sẻ báo cáo tuần</string>
     <string name="trends_subtitle">Theo dõi tiến độ và phân tích thói quen.</string>
     <string name="trends_title">Thống kê &amp; xu hướng</string>

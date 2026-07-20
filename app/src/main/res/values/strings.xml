@@ -185,6 +185,9 @@
     <string name="trends_intake_kcal">Intake: %1$d kcal</string>
     <string name="trends_net_description">Intake minus burned calories</string>
     <string name="trends_net_title">Net Calories Trend</string>
+    <string name="trends_preset_7_days">7 days</string>
+    <string name="trends_preset_month">Month</string>
+    <string name="trends_preset_week">Week</string>
     <string name="trends_share_report">Share weekly report</string>
     <string name="trends_subtitle">Track your progress and analyze your habits.</string>
     <string name="trends_title">Statistics &amp; Trends</string>

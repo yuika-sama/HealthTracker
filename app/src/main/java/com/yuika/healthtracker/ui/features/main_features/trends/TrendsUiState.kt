@@ -2,7 +2,9 @@ package com.yuika.healthtracker.ui.features.main_features.trends
 
 import androidx.annotation.StringRes
 import com.yuika.healthtracker.ui.core.base.UiState
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 
 data class ChartDataPoint(
     val label: String,
@@ -26,7 +28,23 @@ data class TrendDetail(
     val balance: Int get() = intake - burned
 }
 
+enum class TrendsRangePreset {
+    LAST_7_DAYS,
+    WEEK,
+    MONTH;
+
+    fun dateRange(today: LocalDate = LocalDate.now()): Pair<LocalDate, LocalDate> {
+        val start = when (this) {
+            LAST_7_DAYS -> today.minusDays(6)
+            WEEK -> today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+            MONTH -> today.withDayOfMonth(1)
+        }
+        return start to today
+    }
+}
+
 data class TrendsUiState(
+    val rangePreset: TrendsRangePreset? = TrendsRangePreset.LAST_7_DAYS,
     val startDate: LocalDate = LocalDate.now().minusDays(6),
     val endDate: LocalDate = LocalDate.now(),
 

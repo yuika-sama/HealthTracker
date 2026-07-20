@@ -30,6 +30,7 @@ import com.yuika.healthtracker.R
 import com.yuika.healthtracker.service.pdf_exporter.WeeklyReportService
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.components.SegmentedSelector
 import com.yuika.healthtracker.ui.core.components.StatCard
 import com.yuika.healthtracker.ui.features.main_features.trends.components.CalorieIntakeChart
 import com.yuika.healthtracker.ui.features.main_features.trends.components.NetCaloriesChart
@@ -94,6 +95,20 @@ fun TrendsScreen(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
             }
+
+            SegmentedSelector<TrendsRangePreset>(
+                options = TrendsRangePreset.entries,
+                selectedOption = state.rangePreset,
+                onOptionSelected = { viewModel.onIntent(TrendsIntent.ChangeRangePreset(it)) },
+                labelProvider = {
+                    when (it) {
+                        TrendsRangePreset.LAST_7_DAYS -> stringResource(R.string.trends_preset_7_days)
+                        TrendsRangePreset.WEEK -> stringResource(R.string.trends_preset_week)
+                        TrendsRangePreset.MONTH -> stringResource(R.string.trends_preset_month)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
 
             DateRangeSelector(
                 startDate = state.startDate,

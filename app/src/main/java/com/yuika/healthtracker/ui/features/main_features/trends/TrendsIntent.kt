@@ -6,6 +6,7 @@ import java.time.LocalDate
 sealed class TrendsIntent : UiIntent
 {
     object LoadTrendsData : TrendsIntent()
+    data class ChangeRangePreset(val preset: TrendsRangePreset) : TrendsIntent()
     data class ChangeDateRange(val startDate: LocalDate, val endDate: LocalDate) : TrendsIntent()
     data class PointClick(val title: String, val point: ChartDataPoint) : TrendsIntent()
     object DismissDetail: TrendsIntent()

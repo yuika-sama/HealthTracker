@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 fun <T> SegmentedSelector(
     modifier: Modifier = Modifier,
     options: List<T>,
-    selectedOption: T,
+    selectedOption: T?,
     onOptionSelected: (T) -> Unit,
     labelProvider: @Composable (T) -> String = { it.toString() }
 ) {

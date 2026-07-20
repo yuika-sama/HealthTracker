@@ -30,6 +30,8 @@ class TrendsViewModel @Inject constructor(
                 handleFetchTrends(state.value.startDate, state.value.endDate)
             }
 
+            is TrendsIntent.ChangeRangePreset -> handleRangePresetChange(intent.preset)
+
             is TrendsIntent.ChangeDateRange -> handleDateRangeChange(
                 intent.startDate,
                 intent.endDate
@@ -53,11 +55,18 @@ class TrendsViewModel @Inject constructor(
         }
     }
 
+    private fun handleRangePresetChange(preset: TrendsRangePreset)
+    {
+        val (start, end) = preset.dateRange()
+        updateState { it.copy(rangePreset = preset, startDate = start, endDate = end, selectedDetail = null) }
+        handleFetchTrends(start, end)
+    }
+
     private fun handleDateRangeChange(startDate: LocalDate, endDate: LocalDate)
     {
         val start = minOf(startDate, endDate)
         val end = maxOf(startDate, endDate)
-        updateState { it.copy(startDate = start, endDate = end, selectedDetail = null) }
+        updateState { it.copy(rangePreset = null, startDate = start, endDate = end, selectedDetail = null) }
         handleFetchTrends(start, end)
     }
 
