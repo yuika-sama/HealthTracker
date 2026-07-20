@@ -3,6 +3,7 @@ package com.yuika.healthtracker.service.notification
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.data.datastore.AppSettingsStore
 import kotlinx.coroutines.flow.first
 
@@ -35,8 +36,8 @@ class ReminderWorker(
             if (!enabled) return Result.success()
 
             NotificationHelper(applicationContext).showNotification(
-                title = "Diary reminder",
-                message = "Don't forget to update your meal diary."
+                title = applicationContext.getString(R.string.notification_diary_reminder_title),
+                message = applicationContext.getString(R.string.notification_diary_reminder_message)
             )
 
             if (type == TYPE_TEST) {

@@ -29,10 +29,10 @@ class NotificationHelper @Inject constructor(
 
         val channel = NotificationChannel(
             channelId,
-            "Diary reminder channel",
+            context.getString(R.string.notification_diary_reminder_channel_name),
             NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
-            description = "Channel for diary reminder notifications"
+            description = context.getString(R.string.notification_diary_reminder_channel_description)
         }
 
         context.getSystemService(NotificationManager::class.java)
@@ -44,7 +44,7 @@ class NotificationHelper @Inject constructor(
         if (!canPostNotification()) return
 
         val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_app_logo)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

@@ -195,6 +195,10 @@
     <string name="profile_current_goal">Current goal</string>
     <string name="profile_diary_reminders">Diary reminders</string>
     <string name="profile_diary_reminders_subtitle">7 AM, 12 PM, 7 PM</string>
+    <string name="notification_diary_reminder_channel_description">Channel for diary reminder notifications</string>
+    <string name="notification_diary_reminder_channel_name">Diary reminder channel</string>
+    <string name="notification_diary_reminder_message">Don\'t forget to update your meal diary.</string>
+    <string name="notification_diary_reminder_title">Diary reminder</string>
     <string name="profile_edit_profile">Edit Profile</string>
     <string name="profile_edit_profile_subtitle">Name, weight, height, activity, goals</string>
     <string name="profile_font_size">Font size</string>

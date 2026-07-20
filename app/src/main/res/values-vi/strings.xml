@@ -196,6 +196,10 @@
     <string name="profile_current_goal">Mục tiêu hiện tại</string>
     <string name="profile_diary_reminders">Nhắc ghi nhật ký</string>
     <string name="profile_diary_reminders_subtitle">7 giờ, 12 giờ, 19 giờ</string>
+    <string name="notification_diary_reminder_channel_description">K&#234;nh th&#244;ng b&#225;o nh&#7855;c ghi nh&#7853;t k&#253;</string>
+    <string name="notification_diary_reminder_channel_name">Nh&#7855;c ghi nh&#7853;t k&#253;</string>
+    <string name="notification_diary_reminder_message">&#272;&#7915;ng qu&#234;n c&#7853;p nh&#7853;t nh&#7853;t k&#253; b&#7919;a &#259;n.</string>
+    <string name="notification_diary_reminder_title">Nh&#7855;c ghi nh&#7853;t k&#253;</string>
     <string name="profile_edit_profile">Chỉnh sửa hồ sơ</string>
     <string name="profile_edit_profile_subtitle">Tên, cân nặng, chiều cao, vận động, mục tiêu</string>
     <string name="profile_font_size">Cỡ chữ</string>
