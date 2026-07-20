@@ -230,12 +230,9 @@ fun ProfileScreen(
                 )
             }
 
-            if (state.errorMessage != null)
-            {
-                ErrorText(state.errorMessage!!)
-            }
+            state.errorMessageRes?.let { ErrorText(stringResource(it)) }
 
-            if (state.isSuccess && !state.isLoading && state.errorMessage == null)
+            if (state.isSuccess && !state.isLoading && state.errorMessageRes == null)
             {
                 SuccessText(stringResource(R.string.profile_loaded))
             }
@@ -259,9 +256,9 @@ fun ProfileScreen(
                 ProfileHeaderCard(
                     name = state.name,
                     subtitle = activityLevelTitle(state.activityLevel),
-                    weight = state.weight,
-                    height = state.height,
-                    bmi = "${state.bmi} (${bmiCategoryLabel(state.bmiCategory)})",
+                    weight = stringResource(R.string.value_with_unit, state.weight, stringResource(R.string.unit_kg)),
+                    height = stringResource(R.string.value_with_unit, state.height, stringResource(R.string.unit_cm)),
+                    bmi = stringResource(R.string.profile_bmi_value, state.bmi, bmiCategoryLabel(state.bmiCategory)),
                     avatarPath = state.avatarPath,
                     onAvatarClick = {
                         avatarDraft = state.avatarPath.orEmpty()

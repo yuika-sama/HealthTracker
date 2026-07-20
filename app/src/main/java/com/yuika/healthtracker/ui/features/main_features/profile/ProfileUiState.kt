@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.profile
 
+import androidx.annotation.StringRes
 import com.yuika.healthtracker.domain.model.AppFontSize
 import com.yuika.healthtracker.domain.model.AppLanguage
 import com.yuika.healthtracker.domain.model.ThemeColorPreset
@@ -24,7 +25,7 @@ data class ProfileUiState(
     val testNotificationEnabled: Boolean = false,
     val activeSettingsDialog: ProfileSettingsDialog? = null,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
+    @StringRes val errorMessageRes: Int? = null,
     val isSuccess: Boolean = false
 ) : UiState {
     val bmiText get() = "$bmi ($bmiCategory)"

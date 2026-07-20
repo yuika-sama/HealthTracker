@@ -32,10 +32,13 @@
     <string name="unit_serving">Serving</string>
     <string name="unit_slice">slice</string>
     <string name="unit_tbsp">tbsp</string>
+    <string name="value_with_unit">%1$s %2$s</string>
+    <string name="label_calories">Calories</string>
+    <string name="calories_balance_kcal">Balance: %1$d kcal</string>
+    <string name="calories_burned_kcal">Burned: %1$d kcal</string>
 
     <string name="date_range">Date range</string>
     <string name="date_range_placeholder">Select start and end dates</string>
-    <string name="date_today">Today</string>
     <string name="date_today_caps">TODAY</string>
     <string name="previous_day">Previous day</string>
     <string name="next_day">Next day</string>
@@ -48,7 +51,6 @@
     <string name="title_add_activity">Add an activity</string>
     <string name="title_add_meal">Add a meal</string>
     <string name="title_goal_calculated">Goal Calculated</string>
-    <string name="title_health_tracker">Health Tracker</string>
     <string name="title_update_profile">Update profile</string>
     <string name="title_your_health_goals">Your Health Goals</string>
 
@@ -100,9 +102,7 @@
     <string name="bmi_underweight">Underweight</string>
     <string name="bmi_unknown">Unknown</string>
 
-    <string name="dashboard_balance_kcal">Balance: %1$d kcal</string>
     <string name="dashboard_breakdown_title">Today breakdown</string>
-    <string name="dashboard_burned_kcal">Burned: %1$d kcal</string>
     <string name="dashboard_close_to_target">You are close to today target.</string>
     <string name="dashboard_daily_summary">Daily Summary</string>
     <string name="dashboard_eaten_kcal">Eaten: %1$d kcal</string>
@@ -132,12 +132,12 @@
     <string name="stat_weight">WEIGHT</string>
 
     <string name="diary_add_food">Add Food</string>
+    <string name="diary_food_detail_line">%1$s - %2$s - %3$d %4$s</string>
     <string name="diary_food_total">Total: %1$d kcal</string>
     <string name="diary_no_foods">No foods logged yet</string>
     <string name="diary_recommended_kcal">Recommended: %1$d kcal</string>
     <string name="diary_snacks_drinks">Snacks &amp; Drinks</string>
 
-    <string name="add_meal_calories">Calories</string>
     <string name="add_meal_catalog_food_detail">%1$d kcal / %2$s %3$s</string>
     <string name="add_meal_enter_food_name">Enter food name</string>
     <string name="add_meal_food_details">FOOD DETAILS</string>
@@ -162,13 +162,11 @@
     <string name="activity_percent_daily_goal">%1$d%% of %2$d kcal daily goal</string>
     <string name="activity_save">Save activity</string>
     <string name="activity_saved">Activity saved</string>
-    <string name="activity_saved_toast">Saved activity</string>
     <string name="activity_total_burned">Total Burned</string>
     <string name="activity_training_time">Training time</string>
     <string name="activity_weight_detail">Weight: %1$s kg</string>
 
     <string name="widget_balance">Balance</string>
-    <string name="widget_calories">Calories</string>
     <string name="widget_kcal_left">%1$d kcal left</string>
     <string name="widget_kcal_over">%1$d kcal over</string>
     <string name="widget_kcal_target">%1$d%% of %2$d kcal target</string>
@@ -178,9 +176,8 @@
     <string name="widget_setup_profile">Set up your profile to see today\'s calories.</string>
     <string name="widget_target">Target</string>
 
-    <string name="trends_balance_kcal">Balance: %1$d kcal</string>
-    <string name="trends_burned_kcal">Burned: %1$d kcal</string>
     <string name="trends_calorie_intake">Calorie Intake</string>
+    <string name="trends_date_range_value">%1$s - %2$s</string>
     <string name="trends_day_detail">Day detail</string>
     <string name="trends_export_pdf">Export selected range PDF</string>
     <string name="trends_exporting">Exporting...</string>
@@ -196,6 +193,7 @@
     <string name="profile_avatar_invalid">Use a valid http/https URL or choose a local image</string>
     <string name="profile_bmr">Basal Metabolic Rate</string>
     <string name="profile_choose_local_image">Choose local image</string>
+    <string name="profile_bmi_value">%1$s (%2$s)</string>
     <string name="profile_config_display">CONFIG DISPLAY</string>
     <string name="profile_current_goal">Current goal</string>
     <string name="profile_diary_reminders">Diary reminders</string>
@@ -219,6 +217,7 @@
     <string name="profile_language">Language</string>
 
     <string name="update_profile_activity_level">Activity level</string>
+    <string name="update_profile_activity_level_value">%1$d/5</string>
     <string name="update_profile_change_avatar">Change avatar</string>
     <string name="update_profile_date_of_birth">Date of birth</string>
     <string name="update_profile_full_name">Full name</string>
@@ -276,7 +275,6 @@
     <string name="error_height_number">Height must be a number</string>
     <string name="error_invalid_date">Invalid date</string>
     <string name="error_invalid_meal_type">Invalid meal type</string>
-    <string name="error_meal_type_not_valid">Meal type is not valid</string>
     <string name="error_need_one_food">Please add at least one food to the meal</string>
     <string name="error_profile_loading">Error loading profile</string>
     <string name="error_profile_saving">Error saving profile</string>
@@ -286,6 +284,7 @@
     <string name="error_save_meal">Error saving meal</string>
     <string name="error_select_activity">Please select an activity</string>
     <string name="error_select_activity_level">Please select your activity level</string>
+    <string name="error_select_avatar">Please select avatar</string>
     <string name="error_select_date_of_birth">Please select your date of birth</string>
     <string name="error_select_food_unit">Please select food unit</string>
     <string name="error_select_gender">Please select your gender</string>

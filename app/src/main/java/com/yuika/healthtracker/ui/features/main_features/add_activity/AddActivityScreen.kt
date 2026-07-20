@@ -59,7 +59,7 @@ fun AddActivityScreen(
     val scrollState = rememberScrollState()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val activitySavedToast = stringResource(R.string.activity_saved_toast)
+    val activitySavedToast = stringResource(R.string.activity_saved)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     LaunchedEffect(dateText) {

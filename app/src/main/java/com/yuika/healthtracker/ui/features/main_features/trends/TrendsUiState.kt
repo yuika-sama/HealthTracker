@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.trends
 
+import androidx.annotation.StringRes
 import com.yuika.healthtracker.ui.core.base.UiState
 import java.time.LocalDate
 
@@ -39,7 +40,7 @@ data class TrendsUiState(
     val selectedDetail: TrendDetail? = null,
 
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
+    @StringRes val errorMessageRes: Int? = null,
     val isSuccess: Boolean = false,
     val isExportingReport: Boolean = false
 ) : UiState

@@ -15,7 +15,8 @@ data class DiaryFoodItem(
     val id: Int,
     val mealType: String,
     val name: String,
-    val description: String,
+    val quantityText: String,
+    val unit: String,
     val kcal: Int
 )
 
@@ -70,7 +71,8 @@ class GetDiaryDataUseCase @Inject constructor(
                             id = it.id,
                             mealType = it.mealType,
                             name = it.foodName,
-                            description = "${it.quantity} ${it.unit}",
+                            quantityText = it.quantity.toString(),
+                            unit = it.unit,
                             kcal = it.calories
                         )
                     }

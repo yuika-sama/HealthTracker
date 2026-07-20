@@ -140,7 +140,10 @@ class DiaryViewModel @Inject constructor(
 
                 fun List<DiaryFoodItem>.toUiModels() = this.map {
                     FoodItem(
-                        name = it.name, description = it.description, kcal = it.kcal,
+                        name = it.name,
+                        quantityText = it.quantityText,
+                        unit = it.unit,
+                        kcal = it.kcal,
                         id = it.id,
                         mealType = it.mealType
                     )

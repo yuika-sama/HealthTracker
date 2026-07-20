@@ -107,8 +107,8 @@ fun DashboardScreen(
                     Text(stringResource(R.string.dashboard_target_kcal, state.goalCalories))
                     Text("${stringResource(R.string.stat_tdee)}: ${state.tdeeCalories} ${stringResource(R.string.unit_kcal)}")
                     Text(stringResource(R.string.dashboard_eaten_kcal, state.intakeCalories))
-                    Text(stringResource(R.string.dashboard_burned_kcal, state.burnedCalories))
-                    Text(stringResource(R.string.dashboard_balance_kcal, state.netBalance))
+                    Text(stringResource(R.string.calories_burned_kcal, state.burnedCalories))
+                    Text(stringResource(R.string.calories_balance_kcal, state.netBalance))
                     Text(
                         if (state.remainingCalories < 0)
                             stringResource(R.string.dashboard_over_kcal, -state.remainingCalories)

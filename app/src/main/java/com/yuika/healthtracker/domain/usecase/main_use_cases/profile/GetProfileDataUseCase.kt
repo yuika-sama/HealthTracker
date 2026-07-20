@@ -37,8 +37,8 @@ class GetProfileDataUseCase @Inject constructor(
                 ProfileData(
                     name = user.name,
                     activityLevel = user.activityLevel,
-                    weight = "${user.weight} kg",
-                    height = "${user.height} cm",
+                    weight = user.weight.toString(),
+                    height = user.height.toString(),
                     bmi = "${
                         String.format("%.1f", stats.bmi).replace(',', '.')
                     }",

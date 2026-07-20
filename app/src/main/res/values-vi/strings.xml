@@ -33,10 +33,13 @@
     <string name="unit_serving">Khẩu phần</string>
     <string name="unit_slice">lát</string>
     <string name="unit_tbsp">muỗng canh</string>
+    <string name="value_with_unit">%1$s %2$s</string>
+    <string name="label_calories">Calo</string>
+    <string name="calories_balance_kcal">Cân bằng: %1$d kcal</string>
+    <string name="calories_burned_kcal">Đã đốt: %1$d kcal</string>
 
     <string name="date_range">Khoảng ngày</string>
     <string name="date_range_placeholder">Chọn ngày bắt đầu và kết thúc</string>
-    <string name="date_today">Hôm nay</string>
     <string name="date_today_caps">HÔM NAY</string>
     <string name="previous_day">Ngày trước</string>
     <string name="next_day">Ngày sau</string>
@@ -49,7 +52,6 @@
     <string name="title_add_activity">Thêm vận động</string>
     <string name="title_add_meal">Thêm bữa ăn</string>
     <string name="title_goal_calculated">Đã tính mục tiêu</string>
-    <string name="title_health_tracker">Health Tracker</string>
     <string name="title_update_profile">Cập nhật hồ sơ</string>
     <string name="title_your_health_goals">Mục tiêu sức khỏe</string>
 
@@ -101,9 +103,7 @@
     <string name="bmi_underweight">Thiếu cân</string>
     <string name="bmi_unknown">Không rõ</string>
 
-    <string name="dashboard_balance_kcal">Cân bằng: %1$d kcal</string>
     <string name="dashboard_breakdown_title">Chi tiết hôm nay</string>
-    <string name="dashboard_burned_kcal">Đã đốt: %1$d kcal</string>
     <string name="dashboard_close_to_target">Bạn đang gần đạt mục tiêu hôm nay.</string>
     <string name="dashboard_daily_summary">Tóm tắt ngày</string>
     <string name="dashboard_eaten_kcal">Đã ăn: %1$d kcal</string>
@@ -133,12 +133,12 @@
     <string name="stat_weight">CÂN NẶNG</string>
 
     <string name="diary_add_food">Thêm món</string>
+    <string name="diary_food_detail_line">%1$s - %2$s - %3$d %4$s</string>
     <string name="diary_food_total">Tổng: %1$d kcal</string>
     <string name="diary_no_foods">Chưa ghi món ăn</string>
     <string name="diary_recommended_kcal">Gợi ý: %1$d kcal</string>
     <string name="diary_snacks_drinks">Bữa phụ &amp; đồ uống</string>
 
-    <string name="add_meal_calories">Calo</string>
     <string name="add_meal_catalog_food_detail">%1$d kcal / %2$s %3$s</string>
     <string name="add_meal_enter_food_name">Nhập tên món ăn</string>
     <string name="add_meal_food_details">CHI TIẾT MÓN ĂN</string>
@@ -163,13 +163,11 @@
     <string name="activity_percent_daily_goal">%1$d%% của mục tiêu %2$d kcal/ngày</string>
     <string name="activity_save">Lưu vận động</string>
     <string name="activity_saved">Đã lưu vận động</string>
-    <string name="activity_saved_toast">Đã lưu vận động</string>
     <string name="activity_total_burned">Tổng đã đốt</string>
     <string name="activity_training_time">Thời gian tập</string>
     <string name="activity_weight_detail">Cân nặng: %1$s kg</string>
 
     <string name="widget_balance">Cân bằng</string>
-    <string name="widget_calories">Calo</string>
     <string name="widget_kcal_left">%1$d kcal còn lại</string>
     <string name="widget_kcal_over">%1$d kcal vượt mức</string>
     <string name="widget_kcal_target">%1$d%% của mục tiêu %2$d kcal</string>
@@ -179,9 +177,8 @@
     <string name="widget_setup_profile">Thiết lập hồ sơ để xem calo hôm nay.</string>
     <string name="widget_target">Mục tiêu</string>
 
-    <string name="trends_balance_kcal">Cân bằng: %1$d kcal</string>
-    <string name="trends_burned_kcal">Đã đốt: %1$d kcal</string>
     <string name="trends_calorie_intake">Calo nạp vào</string>
+    <string name="trends_date_range_value">%1$s - %2$s</string>
     <string name="trends_day_detail">Chi tiết ngày</string>
     <string name="trends_export_pdf">Xuất PDF khoảng đã chọn</string>
     <string name="trends_exporting">Đang xuất...</string>
@@ -197,6 +194,7 @@
     <string name="profile_avatar_invalid">Dùng URL http/https hợp lệ hoặc chọn ảnh trong máy</string>
     <string name="profile_bmr">Tỷ lệ trao đổi chất cơ bản</string>
     <string name="profile_choose_local_image">Chọn ảnh trong máy</string>
+    <string name="profile_bmi_value">%1$s (%2$s)</string>
     <string name="profile_config_display">HIỂN THỊ</string>
     <string name="profile_current_goal">Mục tiêu hiện tại</string>
     <string name="profile_diary_reminders">Nhắc ghi nhật ký</string>
@@ -220,6 +218,7 @@
     <string name="profile_language">Ngôn ngữ</string>
 
     <string name="update_profile_activity_level">Mức vận động</string>
+    <string name="update_profile_activity_level_value">%1$d/5</string>
     <string name="update_profile_change_avatar">Đổi ảnh đại diện</string>
     <string name="update_profile_date_of_birth">Ngày sinh</string>
     <string name="update_profile_full_name">Họ tên</string>
@@ -277,7 +276,6 @@
     <string name="error_height_number">Chiều cao phải là số</string>
     <string name="error_invalid_date">Ngày không hợp lệ</string>
     <string name="error_invalid_meal_type">Loại bữa ăn không hợp lệ</string>
-    <string name="error_meal_type_not_valid">Loại bữa ăn không hợp lệ</string>
     <string name="error_need_one_food">Vui lòng thêm ít nhất một món vào bữa ăn</string>
     <string name="error_profile_loading">Không tải được hồ sơ</string>
     <string name="error_profile_saving">Không lưu được hồ sơ</string>
@@ -287,6 +285,7 @@
     <string name="error_save_meal">Không lưu được bữa ăn</string>
     <string name="error_select_activity">Vui lòng chọn hoạt động</string>
     <string name="error_select_activity_level">Vui lòng chọn mức vận động</string>
+    <string name="error_select_avatar">Vui lòng chọn ảnh đại diện</string>
     <string name="error_select_date_of_birth">Vui lòng chọn ngày sinh</string>
     <string name="error_select_food_unit">Vui lòng chọn đơn vị món ăn</string>
     <string name="error_select_gender">Vui lòng chọn giới tính</string>

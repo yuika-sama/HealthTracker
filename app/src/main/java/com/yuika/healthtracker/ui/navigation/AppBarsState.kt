@@ -16,7 +16,7 @@ fun appBarsStateFor(route: String?): AppBarsState {
         route.contains("AddMeal") -> AppBarsState(titleRes = R.string.title_add_meal, showBackButton = true)
         route.contains("AddActivity") -> AppBarsState(titleRes = R.string.title_add_activity, showBackButton = true)
         route.contains("ProfileUpdate") -> AppBarsState(titleRes = R.string.title_update_profile, showBackButton = true)
-        route.contains("Onboarding2") -> AppBarsState(titleRes = R.string.title_health_tracker, showBackButton = true)
+        route.contains("Onboarding2") -> AppBarsState(titleRes = R.string.app_name, showBackButton = true)
         route.contains("Onboarding3") -> AppBarsState(titleRes = R.string.title_your_health_goals, showBackButton = true)
         route.contains("Onboarding4") -> AppBarsState(titleRes = R.string.title_goal_calculated)
         route.contains("Dashboard") -> AppBarsState(mainTab = "home")

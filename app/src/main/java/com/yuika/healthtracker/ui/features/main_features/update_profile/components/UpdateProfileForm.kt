@@ -52,7 +52,7 @@ fun UpdateProfileForm(
             value = state.name,
             onValueChange = { onIntent(UpdateProfileIntent.UpdateName(it)) },
             label = stringResource(R.string.update_profile_full_name),
-            errorMessage = state.nameError,
+            errorMessage = state.nameErrorRes?.let { stringResource(it) },
             enabled = !state.isSaving,
             modifier = Modifier.fillMaxWidth()
         )
@@ -65,11 +65,11 @@ fun UpdateProfileForm(
             )
             DateOfBirthInput(
                 value = state.dateOfBirth,
-                isError = state.dateOfBirthError != null,
+                isError = state.dateOfBirthErrorRes != null,
                 enabled = !state.isSaving,
                 onDateSelected = { onIntent(UpdateProfileIntent.UpdateDateOfBirth(it)) }
             )
-            FieldErrorText(state.dateOfBirthError)
+            FieldErrorText(state.dateOfBirthErrorRes?.let { stringResource(it) })
         }
 
         Column {
@@ -85,7 +85,7 @@ fun UpdateProfileForm(
                 onOptionSelected = { onIntent(UpdateProfileIntent.UpdateGender(it)) },
                 labelProvider = { genderLabel(it) }
             )
-            FieldErrorText(state.genderError)
+            FieldErrorText(state.genderErrorRes?.let { stringResource(it) })
         }
 
         Row(
@@ -96,7 +96,7 @@ fun UpdateProfileForm(
                 value = state.weight,
                 onValueChange = { onIntent(UpdateProfileIntent.UpdateWeight(it)) },
                 label = stringResource(R.string.stat_weight),
-                errorMessage = state.weightError,
+                errorMessage = state.weightErrorRes?.let { stringResource(it) },
                 keyboardType = KeyboardType.Decimal,
                 modifier = Modifier.weight(1f),
                 enabled = !state.isSaving,
@@ -107,7 +107,7 @@ fun UpdateProfileForm(
                 value = state.height,
                 onValueChange = { onIntent(UpdateProfileIntent.UpdateHeight(it)) },
                 label = stringResource(R.string.stat_height),
-                errorMessage = state.heightError,
+                errorMessage = state.heightErrorRes?.let { stringResource(it) },
                 keyboardType = KeyboardType.Decimal,
                 modifier = Modifier.weight(1f),
                 enabled = !state.isSaving,
@@ -126,7 +126,7 @@ fun UpdateProfileForm(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
                 Text(
-                    text = "${state.activityLevel.toInt()}/5",
+                    text = stringResource(R.string.update_profile_activity_level_value, state.activityLevel.toInt()),
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -153,7 +153,7 @@ fun UpdateProfileForm(
                 Text(activityLevelTitle("sedentary"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
                 Text(activityLevelTitle("moderately_active"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
             }
-            FieldErrorText(state.activityLevelError)
+            FieldErrorText(state.activityLevelErrorRes?.let { stringResource(it) })
         }
 
         OutlinedDropdownField(
@@ -161,7 +161,7 @@ fun UpdateProfileForm(
             selectedOption = state.goal,
             options = goals,
             onOptionSelected = { onIntent(UpdateProfileIntent.UpdateGoal(it)) },
-            errorMessage = state.goalError,
+            errorMessage = state.goalErrorRes?.let { stringResource(it) },
             enabled = !state.isSaving,
             labelProvider = { goalTitle(it) }
         )

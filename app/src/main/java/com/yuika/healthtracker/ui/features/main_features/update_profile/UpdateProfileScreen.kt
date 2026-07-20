@@ -78,7 +78,7 @@ fun UpdateProfileScreen(
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is UpdateProfileEffect.ShowSuccess -> {
+                    UpdateProfileEffect.ShowSuccess -> {
                         Toast.makeText(context, updateSuccess, Toast.LENGTH_SHORT).show()
                     }
                     is UpdateProfileEffect.NavigateBack -> {
@@ -122,12 +122,12 @@ fun UpdateProfileScreen(
             
             Spacer(modifier = Modifier.height(32.dp))
 
-            if (state.errorMessage != null){
-                ErrorText(state.errorMessage!!)
+            state.errorMessageRes?.let {
+                ErrorText(stringResource(it))
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            if (state.isSuccess && !state.isLoading && !state.isSaving && state.errorMessage == null) {
+            if (state.isSuccess && !state.isLoading && !state.isSaving && state.errorMessageRes == null) {
                 SuccessText(stringResource(R.string.profile_updated))
             }
 

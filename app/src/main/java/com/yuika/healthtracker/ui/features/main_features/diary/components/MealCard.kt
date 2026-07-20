@@ -33,12 +33,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.i18n.foodCatalogLabel
+import com.yuika.healthtracker.ui.core.i18n.unitLabel
 
 data class FoodItem(
     val id: Int,
     val mealType: String,
     val name: String,
-    val description: String,
+    val quantityText: String,
+    val unit: String,
     val kcal: Int
 )
 
@@ -162,14 +164,18 @@ fun MealCard(
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
-                                text = food.description,
+                                text = stringResource(
+                                    R.string.value_with_unit,
+                                    food.quantityText,
+                                    unitLabel(food.unit)
+                                ),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.tertiary
                             )
                         }
 
                         Text(
-                            text = "${food.kcal} kcal",
+                            text = stringResource(R.string.widget_kcal_value, food.kcal),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onBackground
                         )

@@ -65,7 +65,7 @@ internal fun caloriesWidgetStrings(
         appName = context.getString(R.string.app_name),
         setupProfile = context.getString(R.string.widget_setup_profile),
         today = context.getString(R.string.date_today_caps),
-        calories = context.getString(R.string.widget_calories),
+        calories = context.getString(R.string.label_calories),
         status = context.getString(if (isOverTarget) R.string.widget_over_target else R.string.widget_on_track),
         headline = context.getString(
             if (isOverTarget) R.string.widget_kcal_over else R.string.widget_kcal_left,

@@ -111,9 +111,9 @@ fun DailySummaryCard(
 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(stringResource(R.string.dashboard_eaten_kcal, eatenKcal))
-            Text(stringResource(R.string.dashboard_burned_kcal, burnedKcal))
+            Text(stringResource(R.string.calories_burned_kcal, burnedKcal))
         }
         Spacer(Modifier.height(8.dp))
-        Text(stringResource(R.string.dashboard_balance_kcal, balanceKcal), fontWeight = FontWeight.Medium)
+        Text(stringResource(R.string.calories_balance_kcal, balanceKcal), fontWeight = FontWeight.Medium)
     }
 }

@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.trends
 
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.usecase.main_use_cases.trends.GetTrendsDataUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.trends.TrendsChartDataPoint
 import com.yuika.healthtracker.service.pdf_exporter.WeeklyReportService
@@ -63,16 +64,16 @@ class TrendsViewModel @Inject constructor(
     private fun exportWeeklyReport()
     {
         launchSafe(
-            onError = {error ->
+            onError = {
                 updateState {
                     it.copy(
                         isExportingReport = false,
-                        errorMessage = error.message ?: "Can't export report"
+                        errorMessageRes = R.string.error_export_report
                     )
                 }
             }
         ) {
-            updateState { it.copy(isExportingReport = true, errorMessage = null) }
+            updateState { it.copy(isExportingReport = true, errorMessageRes = null) }
             val uri = weeklyReportService.exportRange(state.value.startDate, state.value.endDate)
             updateState { it.copy(isExportingReport = false) }
             sendEffect(TrendsEffect.ShareWeeklyReport(uri))
@@ -83,16 +84,15 @@ class TrendsViewModel @Inject constructor(
 
     private fun handleFetchTrends(startDate: LocalDate, endDate: LocalDate)
     {
-        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
+        updateState { it.copy(isLoading = true, errorMessageRes = null, isSuccess = false) }
 
         fetchJob?.cancel()
         fetchJob = launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "Can't get data"
+            onError = {
                 updateState {
                     it.copy(
                         isLoading = false,
-                        errorMessage = message,
+                        errorMessageRes = R.string.error_cannot_get_data,
                         isSuccess = false
                     )
                 }
@@ -104,7 +104,7 @@ class TrendsViewModel @Inject constructor(
                     updateState {
                         it.copy(
                             isLoading = false,
-                            errorMessage = "Can't find user information"
+                            errorMessageRes = R.string.error_cannot_find_user_info
                         )
                     }
                     return@collectLatest
@@ -126,7 +126,7 @@ class TrendsViewModel @Inject constructor(
                         weeklyTrendChartData = trendsData.weeklyTrendChartData.toUiModels(),
                         isLoading = false,
                         isSuccess = true,
-                        errorMessage = null
+                        errorMessageRes = null
                     )
                 }
             }

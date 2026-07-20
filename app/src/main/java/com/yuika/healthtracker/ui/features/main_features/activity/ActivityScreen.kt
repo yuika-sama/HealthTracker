@@ -82,7 +82,7 @@ fun ActivityScreen(
                     Text(stringResource(R.string.activity_duration_detail, activity.durationMins))
                     Text(stringResource(R.string.activity_met_detail, activity.met.toString()))
                     Text(stringResource(R.string.activity_weight_detail, activity.weightKg.toString()))
-                    Text(stringResource(R.string.dashboard_burned_kcal, activity.kcal), fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.calories_burned_kcal, activity.kcal), fontWeight = FontWeight.Bold)
                 }
             },
             confirmButton = {

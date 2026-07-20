@@ -22,13 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.yuika.healthtracker.ui.theme.Emerald
 
 @Composable
 fun CurrentGoalBanner(
     modifier: Modifier = Modifier,
-    title: String = "Current Goal",
-    description: String = "Lose fat, build muscle. Maintain a daily caloric intake of 2,200 kcal."
+    title: String,
+    description: String
 ) {
     Row(
         modifier = modifier

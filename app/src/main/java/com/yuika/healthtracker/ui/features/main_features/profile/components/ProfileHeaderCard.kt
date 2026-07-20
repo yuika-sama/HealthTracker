@@ -39,11 +39,11 @@ import java.io.File
 @Composable
 fun ProfileHeaderCard(
     modifier: Modifier = Modifier,
-    name: String = "Yuika",
-    subtitle: String = "Pro vip",
-    weight: String = "65 kg",
-    height: String = "170 cm",
-    bmi: String = "22.5",
+    name: String,
+    subtitle: String,
+    weight: String,
+    height: String,
+    bmi: String,
     avatarPath: String? = null,
     onAvatarClick: () -> Unit = {}
 ) {

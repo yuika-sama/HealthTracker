@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.profile
 
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.data.datastore.AppSettingsStore
 import com.yuika.healthtracker.domain.usecase.main_use_cases.profile.GetProfileDataUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.profile.UpdateUserAvatarUseCase
@@ -76,52 +77,52 @@ class ProfileViewModel @Inject constructor(
 
     private fun saveSetting(block: suspend () -> Unit){
         launchSafe(
-            onError = {error ->
-                updateState { it.copy(errorMessage = error.message ?: "Can't save settings") }
+            onError = {
+                updateState { it.copy(errorMessageRes = R.string.error_cannot_save_settings) }
             }
         ) {
             block()
             widgetService.refresh()
-            updateState { it.copy(activeSettingsDialog = null, errorMessage = null) }
+            updateState { it.copy(activeSettingsDialog = null, errorMessageRes = null) }
         }
     }
 
     private fun changeNotificationEnabled(enabled: Boolean)
     {
         launchSafe(
-            onError = { error ->
-                updateState { it.copy(errorMessage = error.message ?: "Can't save notification settings") }
+            onError = {
+                updateState { it.copy(errorMessageRes = R.string.error_cannot_save_notification_settings) }
             }
         ) {
             appSettingsStore.setNotificationEnabled(enabled)
             reminderNotificationService.setDailyReminderEnabled(enabled)
-            updateState { it.copy(errorMessage = null) }
+            updateState { it.copy(errorMessageRes = null) }
         }
     }
 
     private fun changeTestNotificationEnabled(enabled: Boolean)
     {
         launchSafe(
-            onError = { error ->
-                updateState { it.copy(errorMessage = error.message ?: "Can't save test notification settings") }
+            onError = {
+                updateState { it.copy(errorMessageRes = R.string.error_cannot_save_test_notification_settings) }
             }
         ) {
             appSettingsStore.setTestNotificationEnabled(enabled)
             reminderNotificationService.setTestReminderEnabled(enabled)
-            updateState { it.copy(errorMessage = null) }
+            updateState { it.copy(errorMessageRes = null) }
         }
     }
 
     private fun saveAvatar(avatarPath: String)
     {
         launchSafe(
-            onError = { error ->
-                updateState { it.copy(errorMessage = error.message ?: "Can't save avatar") }
+            onError = {
+                updateState { it.copy(errorMessageRes = R.string.error_cannot_save_avatar) }
             }
         ) {
             val path = avatarPath.trim()
             updateUserAvatarUseCase(path)
-            updateState { it.copy(avatarPath = path, errorMessage = null, isSuccess = true) }
+            updateState { it.copy(avatarPath = path, errorMessageRes = null, isSuccess = true) }
         }
     }
 
@@ -129,13 +130,12 @@ class ProfileViewModel @Inject constructor(
 
     private fun handleLoadProfile()
     {
-        updateState { it.copy(isLoading = true, errorMessage = null, isSuccess = false) }
+        updateState { it.copy(isLoading = true, errorMessageRes = null, isSuccess = false) }
 
         fetchJob?.cancel()
         fetchJob = launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "Error loading information"
-                updateState { it.copy(isLoading = false, errorMessage = message) }
+            onError = {
+                updateState { it.copy(isLoading = false, errorMessageRes = R.string.error_profile_loading) }
             }
         ) {
             getProfileDataUseCase().collectLatest { profileData ->
@@ -144,7 +144,7 @@ class ProfileViewModel @Inject constructor(
                     updateState {
                         it.copy(
                             isLoading = false,
-                            errorMessage = "Can't find user information",
+                            errorMessageRes = R.string.error_cannot_find_user_info,
                             isSuccess = false
                         )
                     }
@@ -166,7 +166,7 @@ class ProfileViewModel @Inject constructor(
                         goalCalories = profileData.goalCalories,
                         isLoading = false,
                         isSuccess = true,
-                        errorMessage = null
+                        errorMessageRes = null
                     )
                 }
             }

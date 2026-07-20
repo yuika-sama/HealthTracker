@@ -5,5 +5,5 @@ import com.yuika.healthtracker.ui.core.base.UiEffect
 sealed class UpdateProfileEffect : UiEffect
 {
     object NavigateBack : UpdateProfileEffect()
-    data class ShowSuccess(val message: String) : UpdateProfileEffect()
+    object ShowSuccess : UpdateProfileEffect()
 }

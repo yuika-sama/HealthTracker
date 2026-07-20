@@ -44,6 +44,7 @@ import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.i18n.foodCatalogLabel
 import com.yuika.healthtracker.ui.core.i18n.mealTypeLabel
+import com.yuika.healthtracker.ui.core.i18n.unitLabel
 
 @Composable
 fun DiaryScreen(
@@ -79,7 +80,20 @@ fun DiaryScreen(
             text = {
                 Column {
                     detail.foods.forEach { food ->
-                        Text("${foodCatalogLabel(food.name)} - ${food.description} - ${food.kcal} ${stringResource(R.string.unit_kcal)}")
+                        val quantityInfo = stringResource(
+                            R.string.value_with_unit,
+                            food.quantityText,
+                            unitLabel(food.unit)
+                        )
+                        Text(
+                            stringResource(
+                                R.string.diary_food_detail_line,
+                                foodCatalogLabel(food.name),
+                                quantityInfo,
+                                food.kcal,
+                                stringResource(R.string.unit_kcal)
+                            )
+                        )
                     }
                     Text(stringResource(R.string.diary_food_total, detail.totalKcal), fontWeight = FontWeight.Bold)
                 }

@@ -121,8 +121,8 @@ fun TrendsScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(detail.dateText)
                             Text(stringResource(R.string.trends_intake_kcal, detail.intake))
-                            Text(stringResource(R.string.trends_burned_kcal, detail.burned))
-                            Text(stringResource(R.string.trends_balance_kcal, detail.balance))
+                            Text(stringResource(R.string.calories_burned_kcal, detail.burned))
+                            Text(stringResource(R.string.calories_balance_kcal, detail.balance))
                         }
                     },
                     confirmButton = {
@@ -133,10 +133,7 @@ fun TrendsScreen(
                 )
             }
 
-            if (state.errorMessage != null)
-            {
-                ErrorText(msg = state.errorMessage!!)
-            }
+            state.errorMessageRes?.let { ErrorText(msg = stringResource(it)) }
 
             if (state.isLoading)
             {
@@ -155,7 +152,7 @@ fun TrendsScreen(
                     title = stringResource(R.string.stat_avg_intake_day),
                     value = state.avgIntake,
                     valueColor = MaterialTheme.colorScheme.secondary,
-                    unit = "kcal",
+                    unit = stringResource(R.string.unit_kcal),
                     bgColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
                 )
 
@@ -163,7 +160,7 @@ fun TrendsScreen(
                     title = stringResource(R.string.stat_avg_burned_day),
                     value = state.avgBurned,
                     valueColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
-                    unit = "kcal",
+                    unit = stringResource(R.string.unit_kcal),
                     bgColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
                 )
 
@@ -180,7 +177,11 @@ fun TrendsScreen(
             {
                 CalorieIntakeChart(
                     dataPoints = state.intakeChartData,
-                    periodLabel = "${state.startDate} - ${state.endDate}",
+                    periodLabel = stringResource(
+                        R.string.trends_date_range_value,
+                        state.startDate.toString(),
+                        state.endDate.toString()
+                    ),
                     onPointClick = { viewModel.onIntent(TrendsIntent.PointClick(dayDetailTitle, it)) }
                 )
             }
