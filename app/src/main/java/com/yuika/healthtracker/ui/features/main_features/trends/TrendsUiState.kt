@@ -39,7 +39,8 @@ enum class TrendsRangePreset {
             WEEK -> today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
             MONTH -> today.withDayOfMonth(1)
         }
-        return start to today
+        val end = if (this == WEEK) start.plusDays(6) else today
+        return start to end
     }
 }
 

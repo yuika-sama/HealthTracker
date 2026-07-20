@@ -23,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yuika.healthtracker.R
@@ -68,7 +70,9 @@ fun CalorieIntakeChart(
                 Text(
                     text = periodLabel,
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -125,13 +129,18 @@ fun CalorieIntakeChart(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            dataPoints.forEach { point ->
+            dataPoints.forEachIndexed { index, point ->
+                val showLabel = dataPoints.size <= 8 ||
+                    index == 0 ||
+                    index == dataPoints.lastIndex ||
+                    index == dataPoints.lastIndex / 2
                 Text(
-                    text = point.label,
+                    text = if (showLabel) point.label else "",
                     fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                     modifier = Modifier.weight(1f),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    maxLines = 1
                 )
             }
         }

@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.features.main_features.trends.ChartDataPoint
@@ -187,7 +188,9 @@ fun NetCaloriesChart(
                         .weight(1f)
                         .clickable{onPointClick(point)},
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip
                 )
             }
         }
