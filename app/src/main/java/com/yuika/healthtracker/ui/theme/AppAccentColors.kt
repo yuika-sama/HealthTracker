@@ -12,6 +12,6 @@ data class AppAccentColors(
 fun ThemeColorPreset.accentColors(): AppAccentColors = when(this){
     ThemeColorPreset.GREEN -> AppAccentColors(VitalityGreen, Emerald, InfoBlue)
     ThemeColorPreset.BLUE -> AppAccentColors(AccentBluePrimary, AccentBlueSecondary, EnergyAmber)
-    ThemeColorPreset.PURPLE -> AppAccentColors(AccentPurpleSecondary, AccentPurpleSecondary, InfoBlue)
+    ThemeColorPreset.PURPLE -> AppAccentColors(AccentPurplePrimary, AccentPurpleSecondary, InfoBlue)
     ThemeColorPreset.ORANGE -> AppAccentColors(AccentOrangePrimary, AccentOrangeSecondary, InfoBlue)
 }
