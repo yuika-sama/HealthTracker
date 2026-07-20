@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -42,6 +43,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.model.AppFontSize
 import com.yuika.healthtracker.domain.model.AppLanguage
 import com.yuika.healthtracker.domain.model.ThemeColorPreset
@@ -50,6 +52,13 @@ import com.yuika.healthtracker.ui.core.components.AvatarSourceDialog
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SuccessText
+import com.yuika.healthtracker.ui.core.i18n.activityLevelTitle
+import com.yuika.healthtracker.ui.core.i18n.appLanguageLabel
+import com.yuika.healthtracker.ui.core.i18n.bmiCategoryLabel
+import com.yuika.healthtracker.ui.core.i18n.fontSizeLabel
+import com.yuika.healthtracker.ui.core.i18n.goalTitle
+import com.yuika.healthtracker.ui.core.i18n.themeColorLabel
+import com.yuika.healthtracker.ui.core.i18n.themeModeLabel
 import com.yuika.healthtracker.ui.features.main_features.profile.components.CurrentGoalBanner
 import com.yuika.healthtracker.ui.features.main_features.profile.components.NotificationSwitchItem
 import com.yuika.healthtracker.ui.features.main_features.profile.components.ProfileHeaderCard
@@ -160,37 +169,37 @@ fun ProfileScreen(
         when (dialog)
         {
             ProfileSettingsDialog.LANGUAGE -> SettingsChoiceDialog(
-                title = "Language",
+                title = stringResource(R.string.profile_language),
                 options = AppLanguage.entries,
                 selectedOption = state.language,
-                labelProvider = { it.label },
+                labelProvider = { appLanguageLabel(it) },
                 onSelect = { viewModel.onIntent(ProfileIntent.ChangeLanguage(it)) },
                 onDismiss = { viewModel.onIntent(ProfileIntent.DismissSettingsDialog) }
             )
 
             ProfileSettingsDialog.THEME_MODE -> SettingsChoiceDialog(
-                title = "Theme",
+                title = stringResource(R.string.profile_theme),
                 options = ThemeMode.entries,
                 selectedOption = state.themeMode,
-                labelProvider = { it.label },
+                labelProvider = { themeModeLabel(it) },
                 onSelect = { viewModel.onIntent(ProfileIntent.ChangeThemeMode(it)) },
                 onDismiss = { viewModel.onIntent(ProfileIntent.DismissSettingsDialog) }
             )
 
             ProfileSettingsDialog.THEME_COLOR -> SettingsChoiceDialog(
-                title = "Theme color",
+                title = stringResource(R.string.profile_theme_color),
                 options = ThemeColorPreset.entries,
                 selectedOption = state.themeColorPreset,
-                labelProvider = { it.label },
+                labelProvider = { themeColorLabel(it) },
                 onSelect = { viewModel.onIntent(ProfileIntent.ChangeThemeColor(it)) },
                 onDismiss = { viewModel.onIntent(ProfileIntent.DismissSettingsDialog) }
             )
 
             ProfileSettingsDialog.FONT_SIZE -> SettingsChoiceDialog(
-                title = "Font size",
+                title = stringResource(R.string.profile_font_size),
                 options = AppFontSize.entries,
                 selectedOption = state.fontSize,
-                labelProvider = { it.label },
+                labelProvider = { fontSizeLabel(it) },
                 onSelect = { viewModel.onIntent(ProfileIntent.ChangeFontSize(it)) },
                 onDismiss = { viewModel.onIntent(ProfileIntent.DismissSettingsDialog) }
             )
@@ -209,13 +218,13 @@ fun ProfileScreen(
 
             Column {
                 Text(
-                    text = "Profile & settings",
+                    text = stringResource(R.string.profile_title),
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Config your information & your experiences.",
+                    text = stringResource(R.string.profile_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
@@ -228,7 +237,7 @@ fun ProfileScreen(
 
             if (state.isSuccess && !state.isLoading && state.errorMessage == null)
             {
-                SuccessText("Profile loaded")
+                SuccessText(stringResource(R.string.profile_loaded))
             }
 
             if (state.isLoading)
@@ -249,10 +258,10 @@ fun ProfileScreen(
             {
                 ProfileHeaderCard(
                     name = state.name,
-                    subtitle = state.subtitle,
+                    subtitle = activityLevelTitle(state.activityLevel),
                     weight = state.weight,
                     height = state.height,
-                    bmi = state.bmi,
+                    bmi = "${state.bmi} (${bmiCategoryLabel(state.bmiCategory)})",
                     avatarPath = state.avatarPath,
                     onAvatarClick = {
                         avatarDraft = state.avatarPath.orEmpty()
@@ -261,30 +270,34 @@ fun ProfileScreen(
                 )
 
                 CurrentGoalBanner(
-                    title = state.goalTitle,
-                    description = state.goalDescription
+                    title = stringResource(R.string.profile_current_goal),
+                    description = stringResource(
+                        R.string.profile_goal_description,
+                        goalTitle(state.goal),
+                        state.goalCalories
+                    )
                 )
             }
 
-            SettingsGroup(title = "PROFILE") {
+            SettingsGroup(title = stringResource(R.string.profile_group_profile)) {
                 SettingsItem(
                     icon = Icons.Outlined.PersonOutline,
                     iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
                     iconTintColor = MaterialTheme.colorScheme.tertiary,
-                    title = "Edit Profile",
-                    subtitle = "Name, Weight, Height, Activities, Goals",
+                    title = stringResource(R.string.profile_edit_profile),
+                    subtitle = stringResource(R.string.profile_edit_profile_subtitle),
                     showDivider = false,
                     onClick = { viewModel.onIntent(ProfileIntent.EditProfile) }
                 )
             }
 
-            SettingsGroup(title = "CONFIG DISPLAY") {
+            SettingsGroup(title = stringResource(R.string.profile_config_display)) {
                 SettingsItem(
                     icon = Icons.Outlined.Language,
                     iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
                     iconTintColor = MaterialTheme.colorScheme.tertiary,
-                    title = "Language",
-                    value = state.languageLabel,
+                    title = stringResource(R.string.profile_language),
+                    value = appLanguageLabel(state.language),
                     onClick = { viewModel.onIntent(ProfileIntent.LanguageClick) }
                 )
 
@@ -292,8 +305,8 @@ fun ProfileScreen(
                     icon = Icons.Outlined.DarkMode,
                     iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
                     iconTintColor = MaterialTheme.colorScheme.tertiary,
-                    title = "Theme",
-                    value = state.themeModeLabel,
+                    title = stringResource(R.string.profile_theme),
+                    value = themeModeLabel(state.themeMode),
                     onClick = { viewModel.onIntent(ProfileIntent.ThemeModeClick) }
                 )
 
@@ -301,8 +314,8 @@ fun ProfileScreen(
                     icon = Icons.Outlined.Palette,
                     iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
                     iconTintColor = MaterialTheme.colorScheme.tertiary,
-                    title = "Theme color",
-                    value = state.themeColorLabel,
+                    title = stringResource(R.string.profile_theme_color),
+                    value = themeColorLabel(state.themeColorPreset),
                     onClick = { viewModel.onIntent(ProfileIntent.ThemeColorClick) }
                 )
 
@@ -310,22 +323,22 @@ fun ProfileScreen(
                     icon = Icons.Outlined.TextFields,
                     iconBgColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
                     iconTintColor = MaterialTheme.colorScheme.tertiary,
-                    title = "Font size",
-                    value = state.fontSizeLabel,
+                    title = stringResource(R.string.profile_font_size),
+                    value = fontSizeLabel(state.fontSize),
                     onClick = { viewModel.onIntent(ProfileIntent.FontSizeClick) }
                 )
             }
 
-            SettingsGroup(title = "REMINDERS") {
+            SettingsGroup(title = stringResource(R.string.profile_reminders)) {
                 NotificationSwitchItem(
-                    title = "Diary reminders",
-                    subtitle = "7 AM, 12 PM, 7 PM",
+                    title = stringResource(R.string.profile_diary_reminders),
+                    subtitle = stringResource(R.string.profile_diary_reminders_subtitle),
                     checked = state.notificationEnabled,
                     onCheckedChange = onNotificationToggle
                 )
                 NotificationSwitchItem(
-                    title = "Test reminders",
-                    subtitle = "Every 1 minute",
+                    title = stringResource(R.string.profile_test_reminders),
+                    subtitle = stringResource(R.string.profile_test_reminders_subtitle),
                     checked = state.testNotificationEnabled,
                     onCheckedChange = onTestNotificationToggle
                 )

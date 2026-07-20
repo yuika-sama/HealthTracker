@@ -22,10 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.FormTextField
 import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityIntent
 import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityUiState
@@ -48,14 +50,14 @@ fun TrainingDetailsCard(
         FormTextField(
             value = state.duration,
             onValueChange = { onIntent(AddActivityIntent.OnDurationChange(it)) },
-            label = "Training time",
+            label = stringResource(R.string.activity_training_time),
             placeholder = "0",
             errorMessage = state.durationError,
             keyboardType = KeyboardType.Number,
             compact = true,
             suffix = {
                 Text(
-                    text = "minutes",
+                    text = stringResource(R.string.unit_minutes),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -88,7 +90,7 @@ fun TrainingDetailsCard(
 
             Column {
                 Text(
-                    text = "Estimated calories burned",
+                    text = stringResource(R.string.activity_estimated_burned),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -101,7 +103,7 @@ fun TrainingDetailsCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "kcal",
+                        text = stringResource(R.string.unit_kcal),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 2.dp)

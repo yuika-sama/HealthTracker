@@ -16,8 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.yuika.healthtracker.R
 import java.io.File
 
 @Composable
@@ -71,7 +73,7 @@ fun AvatarEditor(
         ) {
             Icon(
                 imageVector = Icons.Default.CameraAlt,
-                contentDescription = "Change Avatar",
+                contentDescription = stringResource(R.string.update_profile_change_avatar),
                 tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(16.dp)
             )

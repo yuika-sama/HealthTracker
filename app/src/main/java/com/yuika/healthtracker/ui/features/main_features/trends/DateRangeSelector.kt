@@ -28,14 +28,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.R
+import com.yuika.healthtracker.ui.core.i18n.currentLocale
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +47,8 @@ fun DateRangeSelector(
     onRangeSelected: (LocalDate, LocalDate) -> Unit
 ) {
     var showPicker by remember { mutableStateOf(false) }
-    val labelFormatter = remember { DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ENGLISH) }
+    val locale = currentLocale()
+    val labelFormatter = remember(locale) { DateTimeFormatter.ofPattern("dd/MM/yyyy", locale) }
     val startMillis = remember(startDate) {
         startDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
     }
@@ -80,12 +83,12 @@ fun DateRangeSelector(
                         showPicker = false
                     }
                 ) {
-                    Text("Select")
+                    Text(stringResource(R.string.action_select))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showPicker = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         ) {
@@ -93,7 +96,7 @@ fun DateRangeSelector(
                 state = rangeState,
                 title = {
                     Text(
-                        text = "Date range",
+                        text = stringResource(R.string.date_range),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 18.dp)
@@ -111,7 +114,7 @@ fun DateRangeSelector(
                             selectedStart != null && selectedEnd != null ->
                                 "${selectedStart.format(labelFormatter)} - ${selectedEnd.format(labelFormatter)}"
                             selectedStart != null -> "${selectedStart.format(labelFormatter)} - ..."
-                            else -> "Select start and end dates"
+                            else -> stringResource(R.string.date_range_placeholder)
                         },
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.onSurface,
@@ -145,7 +148,7 @@ fun DateRangeSelector(
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Date range",
+                text = stringResource(R.string.date_range),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

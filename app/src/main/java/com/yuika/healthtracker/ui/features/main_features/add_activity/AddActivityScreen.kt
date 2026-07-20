@@ -29,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +39,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SuccessText
@@ -68,7 +70,7 @@ fun AddActivityScreen(
             viewModel.effect.collect { effect ->
                 when (effect){
                     is AddActivityEffect.NavigateToActivity -> {
-                        Toast.makeText(context, "Saved activity", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.activity_saved_toast), Toast.LENGTH_SHORT).show()
                         onSaveClick()
                     }
                 }
@@ -94,7 +96,7 @@ fun AddActivityScreen(
             state.errorMessage?.let { ErrorText(msg = it) }
 
             if (state.isSuccess && !state.isLoading && state.errorMessage == null) {
-                SuccessText(msg = "Activity saved")
+                SuccessText(msg = stringResource(R.string.activity_saved))
             }
 
             ActivityDetailsCard(
@@ -144,7 +146,7 @@ fun AddActivityScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Save activity",
+                                text = stringResource(R.string.activity_save),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )

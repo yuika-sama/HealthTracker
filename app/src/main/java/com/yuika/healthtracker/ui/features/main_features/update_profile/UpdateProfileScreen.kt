@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +34,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.AvatarSourceDialog
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
@@ -54,6 +56,7 @@ fun UpdateProfileScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val updateSuccess = stringResource(R.string.update_profile_success)
 
     var showAvatarDialog by rememberSaveable { mutableStateOf(false) }
     var avatarDraft by rememberSaveable { mutableStateOf("") }
@@ -76,7 +79,7 @@ fun UpdateProfileScreen(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is UpdateProfileEffect.ShowSuccess -> {
-                        Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, updateSuccess, Toast.LENGTH_SHORT).show()
                     }
                     is UpdateProfileEffect.NavigateBack -> {
                         onBackClick()
@@ -125,7 +128,7 @@ fun UpdateProfileScreen(
             }
 
             if (state.isSuccess && !state.isLoading && !state.isSaving && state.errorMessage == null) {
-                SuccessText("Profile updated")
+                SuccessText(stringResource(R.string.profile_updated))
             }
 
             if (state.isLoading) {
@@ -154,7 +157,7 @@ fun UpdateProfileScreen(
                         LoadingIndicator()
                     } else {
                         Text(
-                            text = "Save changes",
+                            text = stringResource(R.string.update_profile_save_changes),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground

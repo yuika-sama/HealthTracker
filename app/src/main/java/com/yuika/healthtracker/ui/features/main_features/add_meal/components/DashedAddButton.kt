@@ -23,8 +23,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.R
 
 @Composable
 fun DashedAddButton(
@@ -58,12 +60,12 @@ fun DashedAddButton(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Add food",
+                contentDescription = stringResource(R.string.diary_add_food),
                 tint = accentColor
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Add food",
+                text = stringResource(R.string.diary_add_food),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
                 color = accentColor
             )

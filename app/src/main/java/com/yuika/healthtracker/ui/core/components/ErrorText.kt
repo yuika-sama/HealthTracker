@@ -7,13 +7,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.yuika.healthtracker.ui.core.i18n.localizedMessage
 import com.yuika.healthtracker.ui.theme.LocalSpacing
 
 @Composable
 fun ErrorText(msg: String = ""){
     val spacing = LocalSpacing.current
     Text(
-        text = msg,
+        text = localizedMessage(msg),
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
         modifier = Modifier.padding(bottom = spacing.medium)

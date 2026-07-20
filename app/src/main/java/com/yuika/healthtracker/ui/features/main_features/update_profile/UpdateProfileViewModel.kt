@@ -100,7 +100,7 @@ class UpdateProfileViewModel @Inject constructor(
     private fun handleSaveProfile()
     {
         val currentState = state.value
-        val validGoals = listOf("Lose weight", "Maintain weight", "Weight gain")
+        val validGoals = listOf("lose_weight", "maintain_weight", "gain_weight")
         val weightValue = currentState.weight.toDoubleOrNull()
         val heightValue = currentState.height.toDoubleOrNull()
         val nameError = if (currentState.name.trim().isBlank()) "Please enter your full name" else null

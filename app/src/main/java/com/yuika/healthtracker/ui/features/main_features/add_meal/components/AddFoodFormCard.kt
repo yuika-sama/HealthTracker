@@ -31,12 +31,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.model.FoodCatalog
 import com.yuika.healthtracker.ui.core.components.FormTextField
+import com.yuika.healthtracker.ui.core.i18n.foodCatalogLabel
+import com.yuika.healthtracker.ui.core.i18n.mealTypeLabel
+import com.yuika.healthtracker.ui.core.i18n.unitLabel
 import com.yuika.healthtracker.ui.features.main_features.add_meal.AddMealUiState
 
 @Composable
@@ -52,7 +57,7 @@ fun AddFoodFormCard(
     onFoodCatalogClick: (FoodCatalog) -> Unit
 ) {
     var unitExpanded by rememberSaveable() { mutableStateOf(false) }
-    val units = listOf("Plate (Med)", "Bowl (Smol)", "Serving", "Gram")
+    val units = listOf("plate", "bowl", "serving", "g")
 
     val mealTypes = listOf("Breakfast", "Lunch", "Dinner", "Snack")
 
@@ -66,7 +71,7 @@ fun AddFoodFormCard(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         Text(
-            text = "FOOD DETAILS",
+            text = stringResource(R.string.add_meal_food_details),
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -74,8 +79,8 @@ fun AddFoodFormCard(
         FormTextField(
             value = state.foodName,
             onValueChange = onFoodNameChange,
-            label = "Food name",
-            placeholder = "Enter food name",
+            label = stringResource(R.string.add_meal_food_name),
+            placeholder = stringResource(R.string.add_meal_enter_food_name),
             errorMessage = state.foodNameError,
             compact = true,
             trailingIcon = {
@@ -86,7 +91,7 @@ fun AddFoodFormCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
-                            contentDescription = "Clear",
+                            contentDescription = stringResource(R.string.action_clear),
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(18.dp)
                         )
@@ -97,7 +102,7 @@ fun AddFoodFormCard(
 
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
-                text = "Portion",
+                text = stringResource(R.string.add_meal_portion),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -118,7 +123,7 @@ fun AddFoodFormCard(
                 Column(modifier = Modifier.weight(0.65f)) {
                     Box {
                         FormTextField(
-                            value = state.unit,
+                            value = unitLabel(state.unit),
                             onValueChange = {},
                             readOnly = true,
                             compact = true,
@@ -145,7 +150,7 @@ fun AddFoodFormCard(
                     ) {
                         units.forEach { option ->
                             DropdownMenuItem(
-                                text = { Text(option) },
+                                text = { Text(unitLabel(option)) },
                                 onClick = {
                                     onUnitChange(option)
                                     unitExpanded = false
@@ -174,7 +179,7 @@ fun AddFoodFormCard(
                 )
             )
             Text(
-                text = "Manual",
+                text = stringResource(R.string.add_meal_manual),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -197,12 +202,12 @@ fun AddFoodFormCard(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = food.name,
+                            text = foodCatalogLabel(food.name),
                             color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Medium
                         )
                         Text(
-                            text = "${food.caloriesPerServing} kcal / ${food.defaultQuantity} ${food.unit}",
+                            text = "${food.caloriesPerServing} ${stringResource(R.string.unit_kcal)} / ${food.defaultQuantity} ${unitLabel(food.unit)}",
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -222,7 +227,7 @@ fun AddFoodFormCard(
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "Calories",
+                        text = stringResource(R.string.add_meal_calories),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -236,7 +241,7 @@ fun AddFoodFormCard(
                         compact = true,
                         suffix = {
                             Text(
-                                text = "kcal",
+                                text = stringResource(R.string.unit_kcal),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -246,7 +251,7 @@ fun AddFoodFormCard(
 
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "Meal type",
+                        text = stringResource(R.string.add_meal_meal_type),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -277,7 +282,7 @@ fun AddFoodFormCard(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = option,
+                                    text = mealTypeLabel(option),
                                     fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
                                     color = if (isSelected) {
                                         MaterialTheme.colorScheme.secondary

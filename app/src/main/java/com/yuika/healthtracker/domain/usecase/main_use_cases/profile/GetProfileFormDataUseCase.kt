@@ -35,14 +35,6 @@ class GetProfileFormDataUseCase @Inject constructor(
             else -> 3f
         }
 
-        val goalStr = when (user.goal)
-        {
-            "lose_weight" -> "Lose weight"
-            "gain_weight" -> "Weight gain"
-            "maintain_weight" -> "Maintain weight"
-            else -> "Lose weight"
-        }
-
         return ProfileFormData(
             id = user.id,
             name = user.name,
@@ -51,7 +43,7 @@ class GetProfileFormDataUseCase @Inject constructor(
             weight = user.weight.toString(),
             height = user.height.toString(),
             activityLevel = levelFloat,
-            goal = goalStr,
+            goal = user.goal,
             avatarPath = user.avatarPath,
             createdAt = user.createdAt
         )

@@ -19,7 +19,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.R
 import java.io.File
 
 @Composable
@@ -45,7 +47,7 @@ fun AvatarSourceDialog(
         shape = RoundedCornerShape(24.dp),
         title = {
             Text(
-                text = "Update avatar",
+                text = stringResource(R.string.profile_update_avatar),
                 style = MaterialTheme.typography.titleLarge
             )
         },
@@ -57,14 +59,14 @@ fun AvatarSourceDialog(
                 OutlinedTextField(
                     value = avatarValue,
                     onValueChange = onAvatarValueChange,
-                    label = { Text("Image URL or selected file") },
+                    label = { Text(stringResource(R.string.profile_image_url_label)) },
                     placeholder = { Text("https://...") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     isError = showAvatarError,
                     supportingText = {
                         if (showAvatarError) {
-                            Text("Use a valid http/https URL or choose a local image")
+                            Text(stringResource(R.string.profile_avatar_invalid))
                         }
                     },
                     colors = OutlinedTextFieldDefaults.colors(
@@ -86,7 +88,7 @@ fun AvatarSourceDialog(
                         contentDescription = null,
                         modifier = Modifier.padding(end = 8.dp)
                     )
-                    Text("Choose local image")
+                    Text(stringResource(R.string.profile_choose_local_image))
                 }
             }
         },
@@ -102,7 +104,7 @@ fun AvatarSourceDialog(
                 ),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text("Save")
+                Text(stringResource(R.string.action_save))
             }
         },
         dismissButton = {
@@ -112,7 +114,7 @@ fun AvatarSourceDialog(
                     contentColor = MaterialTheme.colorScheme.error
                 )
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.action_cancel))
             }
         }
     )

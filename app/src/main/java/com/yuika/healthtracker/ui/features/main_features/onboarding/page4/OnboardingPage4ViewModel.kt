@@ -39,15 +39,6 @@ class OnboardingPage4ViewModel @Inject constructor(
             if (user != null) {
                 val stats = calculateUserStatsUseCase(user)
                 
-                val activityText = when (user.activityLevel) {
-                    "sedentary" -> "1.2x Sedentary"
-                    "lightly_active" -> "1.375x Lightly Active"
-                    "moderately_active" -> "1.55x Active"
-                    "very_active" -> "1.725x Very Active"
-                    "extra_active" -> "1.9x Extra Active"
-                    else -> "1.55x Active"
-                }
-                
                 val tdee = stats.tdee
                 
                 // Macros
@@ -70,7 +61,7 @@ class OnboardingPage4ViewModel @Inject constructor(
                         proteinGrams = proteinGrams,
                         fatGrams = fatGrams,
                         carbsGrams = carbsGrams,
-                        activityMultiplierText = activityText,
+                        activityMultiplierText = user.activityLevel,
                         isSuccess = true,
                         errorMessage = null
                     )

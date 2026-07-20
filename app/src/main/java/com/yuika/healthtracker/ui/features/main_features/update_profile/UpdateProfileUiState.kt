@@ -10,7 +10,7 @@ data class UpdateProfileUiState(
     val weight: String = "",
     val height: String = "",
     val activityLevel: Float = 3f,
-    val goal: String = "Lose weight",
+    val goal: String = "lose_weight",
     val avatarPath: String? = null,
     val createdAt: Long = 0L,
     val nameError: String? = null,

@@ -14,14 +14,16 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.R
 
 @Composable
 fun <T> SettingsChoiceDialog(
     title: String,
     options: List<T>,
     selectedOption: T,
-    labelProvider: (T) -> String,
+    labelProvider: @Composable (T) -> String,
     onSelect: (T) -> Unit,
     onDismiss: () -> Unit
 )
@@ -51,7 +53,7 @@ fun <T> SettingsChoiceDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Close")
+                Text(stringResource(R.string.action_close))
             }
         }
     )

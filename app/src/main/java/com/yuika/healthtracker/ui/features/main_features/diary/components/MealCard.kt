@@ -27,9 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.R
+import com.yuika.healthtracker.ui.core.i18n.foodCatalogLabel
 
 data class FoodItem(
     val id: Int,
@@ -107,7 +110,7 @@ fun MealCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "kcal",
+                    text = stringResource(R.string.unit_kcal),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     modifier = Modifier.padding(bottom = 2.dp)
@@ -134,7 +137,7 @@ fun MealCard(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "No foods logged yet",
+                    text = stringResource(R.string.diary_no_foods),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.outline,
                     textAlign = TextAlign.Center
@@ -154,7 +157,7 @@ fun MealCard(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = food.name,
+                                text = foodCatalogLabel(food.name),
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                                 color = MaterialTheme.colorScheme.onBackground
                             )
@@ -200,7 +203,7 @@ fun MealCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Add Food",
+                    text = stringResource(R.string.diary_add_food),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.secondary
                 )

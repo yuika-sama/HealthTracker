@@ -156,13 +156,14 @@ class ProfileViewModel @Inject constructor(
                 updateState {
                     it.copy(
                         name = profileData.name,
-                        subtitle = profileData.subtitle,
+                        activityLevel = profileData.activityLevel,
                         weight = profileData.weight,
                         height = profileData.height,
                         bmi = profileData.bmi,
+                        bmiCategory = profileData.bmiCategory,
                         avatarPath = profileData.avatarPath,
-                        goalTitle = profileData.goalTitle,
-                        goalDescription = profileData.goalDescription,
+                        goal = profileData.goal,
+                        goalCalories = profileData.goalCalories,
                         isLoading = false,
                         isSuccess = true,
                         errorMessage = null

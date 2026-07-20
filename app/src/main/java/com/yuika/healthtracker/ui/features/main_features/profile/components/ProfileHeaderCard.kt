@@ -28,9 +28,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.StatCard
 import java.io.File
 
@@ -102,7 +104,7 @@ fun ProfileHeaderCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit Profile",
+                    contentDescription = stringResource(R.string.profile_edit_profile),
                     tint = MaterialTheme.colorScheme.background,
                     modifier = Modifier.size(14.dp)
                 )
@@ -140,7 +142,7 @@ fun ProfileHeaderCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             StatCard(
-                title = "WEIGHT",
+                title = stringResource(R.string.stat_weight),
                 value = weight,
                 unit = null,
                 valueColor = MaterialTheme.colorScheme.onBackground,
@@ -157,7 +159,7 @@ fun ProfileHeaderCard(
             )
             
             StatCard(
-                title = "HEIGHT",
+                title = stringResource(R.string.stat_height),
                 value = height,
                 unit = null,
                 valueColor = MaterialTheme.colorScheme.onBackground,
@@ -174,7 +176,7 @@ fun ProfileHeaderCard(
             )
 
             StatCard(
-                title = "BMI",
+                title = stringResource(R.string.stat_bmi),
                 value = bmi,
                 unit = null,
                 valueColor = MaterialTheme.colorScheme.secondary,

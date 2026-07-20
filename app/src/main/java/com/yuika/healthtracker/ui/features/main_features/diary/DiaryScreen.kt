@@ -27,10 +27,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.features.main_features.diary.components.DailyStats
 import com.yuika.healthtracker.ui.features.main_features.diary.components.MealCard
 import com.yuika.healthtracker.ui.theme.LocalSpacing
@@ -40,6 +42,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.yuika.healthtracker.ui.core.components.DateSelector
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.i18n.foodCatalogLabel
+import com.yuika.healthtracker.ui.core.i18n.mealTypeLabel
 
 @Composable
 fun DiaryScreen(
@@ -71,30 +75,30 @@ fun DiaryScreen(
     state.selectedDetail?.let { detail ->
         AlertDialog(
             onDismissRequest = { viewModel.onIntent(DiaryIntent.DismissDetail) },
-            title = { Text(detail.title) },
+            title = { Text(mealTypeLabel(detail.title)) },
             text = {
                 Column {
                     detail.foods.forEach { food ->
-                        Text("${food.name} - ${food.description} - ${food.kcal} kcal")
+                        Text("${foodCatalogLabel(food.name)} - ${food.description} - ${food.kcal} ${stringResource(R.string.unit_kcal)}")
                     }
-                    Text("Total: ${detail.totalKcal} kcal", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.diary_food_total, detail.totalKcal), fontWeight = FontWeight.Bold)
                 }
             },
             confirmButton = {
                 if (detail.canDelete && detail.foods.isNotEmpty()) {
                     TextButton(onClick = { viewModel.onIntent(DiaryIntent.DeleteFoodClick(detail.foods.first().id)) }) {
-                        Text("Delete")
+                        Text(stringResource(R.string.action_delete))
                     }
                 } else {
                     TextButton(onClick = { viewModel.onIntent(DiaryIntent.DismissDetail) }) {
-                        Text("OK")
+                        Text(stringResource(R.string.action_ok))
                     }
                 }
             },
             dismissButton = {
                 if (detail.canDelete) {
                     TextButton(onClick = { viewModel.onIntent(DiaryIntent.DismissDetail) }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.action_cancel))
                     }
                 }
             }
@@ -163,8 +167,8 @@ fun DiaryScreen(
 
                 item {
                     MealCard(
-                        title = "Breakfast",
-                        recommendedKcal = "Recommended: ${(state.totalKcalGoal * 0.25).toInt()} kcal",
+                        title = stringResource(R.string.meal_breakfast),
+                        recommendedKcal = stringResource(R.string.diary_recommended_kcal, (state.totalKcalGoal * 0.25).toInt()),
                         totalKcal = state.breakfastTotalKcal,
                         icon = Icons.Outlined.WbSunny,
                         foods = state.breakfastFoods,
@@ -176,8 +180,8 @@ fun DiaryScreen(
 
                 item {
                     MealCard(
-                        title = "Lunch",
-                        recommendedKcal = "Recommended: ${(state.totalKcalGoal * 0.35).toInt()} kcal",
+                        title = stringResource(R.string.meal_lunch),
+                        recommendedKcal = stringResource(R.string.diary_recommended_kcal, (state.totalKcalGoal * 0.35).toInt()),
                         totalKcal = state.lunchTotalKcal,
                         icon = Icons.Outlined.WbSunny,
                         foods = state.lunchFoods,
@@ -189,8 +193,8 @@ fun DiaryScreen(
 
                 item {
                     MealCard(
-                        title = "Dinner",
-                        recommendedKcal = "Recommended: ${(state.totalKcalGoal * 0.30).toInt()} kcal",
+                        title = stringResource(R.string.meal_dinner),
+                        recommendedKcal = stringResource(R.string.diary_recommended_kcal, (state.totalKcalGoal * 0.30).toInt()),
                         totalKcal = state.dinnerTotalKcal,
                         icon = Icons.Outlined.DarkMode,
                         foods = state.dinnerFoods,
@@ -202,8 +206,8 @@ fun DiaryScreen(
 
                 item {
                     MealCard(
-                        title = "Snack",
-                        recommendedKcal = "Snacks & Drinks",
+                        title = stringResource(R.string.meal_snack),
+                        recommendedKcal = stringResource(R.string.diary_snacks_drinks),
                         totalKcal = state.snackTotalKcal,
                         icon = Icons.Outlined.Coffee,
                         foods = state.snackFoods,
@@ -226,7 +230,7 @@ fun DiaryScreen(
             containerColor = MaterialTheme.colorScheme.secondary,
             contentColor = MaterialTheme.colorScheme.onSecondary
         ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+            Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.action_add))
         }
     }
 }

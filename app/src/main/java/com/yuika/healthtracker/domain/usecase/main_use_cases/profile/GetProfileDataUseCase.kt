@@ -8,13 +8,14 @@ import javax.inject.Inject
 
 data class ProfileData(
     val name: String,
-    val subtitle: String,
+    val activityLevel: String,
     val weight: String,
     val height: String,
     val bmi: String,
+    val bmiCategory: String,
     val avatarPath: String?,
-    val goalTitle: String,
-    val goalDescription: String
+    val goal: String,
+    val goalCalories: Int
 )
 
 class GetProfileDataUseCase @Inject constructor(
@@ -33,38 +34,18 @@ class GetProfileDataUseCase @Inject constructor(
             {
                 val stats = calculateUserStatsUseCase(user)
 
-                val goalTitle = when (user.goal)
-                {
-                    "lose_weight" -> "Lose weight"
-                    "gain_weight" -> "Gain weight"
-                    else -> "Maintain weight"
-                }
-
-                val activityStr = when (user.activityLevel)
-                {
-                    "sedentary" -> "Sedentary"
-                    "lightly_active" -> "Lightly active"
-                    "moderately_active" -> "Moderately active"
-                    "very_active" -> "Very active"
-                    "extra_active" -> "Extra active"
-                    else -> "Active"
-                }
-
-                val goalDesc = "$goalTitle. Gain goal: ${
-                    String.format("%,d", stats.goalKcal).replace(',', '.')
-                } kcal per day."
-
                 ProfileData(
                     name = user.name,
-                    subtitle = activityStr,
+                    activityLevel = user.activityLevel,
                     weight = "${user.weight} kg",
                     height = "${user.height} cm",
                     bmi = "${
                         String.format("%.1f", stats.bmi).replace(',', '.')
-                    } (${stats.bmiCategory})",
+                    }",
+                    bmiCategory = stats.bmiCategory,
                     avatarPath = user.avatarPath,
-                    goalTitle = "Current goal",
-                    goalDescription = goalDesc
+                    goal = user.goal,
+                    goalCalories = stats.goalKcal
                 )
             }
         }

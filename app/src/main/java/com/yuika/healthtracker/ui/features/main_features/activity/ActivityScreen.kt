@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -33,9 +34,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.DateSelector
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.i18n.activityCatalogLabel
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivityItem
 import com.yuika.healthtracker.ui.features.main_features.activity.components.ActivitySummaryCard
 import com.yuika.healthtracker.ui.theme.LocalSpacing
@@ -73,23 +76,23 @@ fun ActivityScreen(
     state.selectedDetail?.let { activity ->
         AlertDialog(
             onDismissRequest = { viewModel.onIntent(ActivityIntent.DismissDetail) },
-            title = { Text(activity.title) },
+            title = { Text(activityCatalogLabel(activity.title)) },
             text = {
                 Column {
-                    Text("Duration: ${activity.durationMins} mins")
-                    Text("MET: ${activity.met}")
-                    Text("Weight: ${activity.weightKg} kg")
-                    Text("Burned: ${activity.kcal} kcal", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.activity_duration_detail, activity.durationMins))
+                    Text(stringResource(R.string.activity_met_detail, activity.met.toString()))
+                    Text(stringResource(R.string.activity_weight_detail, activity.weightKg.toString()))
+                    Text(stringResource(R.string.dashboard_burned_kcal, activity.kcal), fontWeight = FontWeight.Bold)
                 }
             },
             confirmButton = {
                 TextButton(onClick = { viewModel.onIntent(ActivityIntent.DeleteActivityClick(activity.id)) }) {
-                    Text("Delete")
+                    Text(stringResource(R.string.action_delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onIntent(ActivityIntent.DismissDetail) }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         )
@@ -110,7 +113,7 @@ fun ActivityScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Activity History",
+                    text = stringResource(R.string.activity_history),
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -190,7 +193,7 @@ fun ActivityScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "No activity logged",
+                                text = stringResource(R.string.activity_no_logged),
                                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                             )
                         }
@@ -210,7 +213,7 @@ fun ActivityScreen(
             containerColor = MaterialTheme.colorScheme.secondary,
             contentColor = MaterialTheme.colorScheme.onSecondary
         ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "Add Activity")
+            Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.title_add_activity))
         }
     }
 }

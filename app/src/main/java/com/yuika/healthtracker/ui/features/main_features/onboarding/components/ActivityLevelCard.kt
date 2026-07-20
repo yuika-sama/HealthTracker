@@ -17,9 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.R
 
 @Composable
 fun ActivityLevelCard(
@@ -84,14 +86,14 @@ fun ActivityLevelCard(
         if (isSelected) {
             Icon(
                 imageVector = Icons.Filled.CheckCircle,
-                contentDescription = "Selected",
+                contentDescription = stringResource(R.string.content_description_selected),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
             )
         } else {
             Icon(
                 imageVector = Icons.Outlined.Circle,
-                contentDescription = "Not selected",
+                contentDescription = stringResource(R.string.content_description_not_selected),
                 tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
                 modifier = Modifier.size(24.dp)
             )

@@ -30,7 +30,7 @@ fun <T> OutlinedDropdownField(
     onOptionSelected: (T) -> Unit,
     errorMessage: String? = null,
     enabled: Boolean = true,
-    labelProvider: (T) -> String = { it.toString() }
+    labelProvider: @Composable (T) -> String = { it.toString() }
 ) {
     var expanded by remember { mutableStateOf(false) }
 

@@ -25,9 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.R
 
 @Composable
 fun ActivitySummaryCard(
@@ -74,7 +76,7 @@ fun ActivitySummaryCard(
             
             Icon(
                 imageVector = Icons.Outlined.LocalFireDepartment,
-                contentDescription = "Burned",
+                contentDescription = stringResource(R.string.stat_burned),
                 tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(24.dp)
             )
@@ -85,7 +87,7 @@ fun ActivitySummaryCard(
         // Text Content
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Total Burned",
+                text = stringResource(R.string.activity_total_burned),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
             )
@@ -99,7 +101,7 @@ fun ActivitySummaryCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "kcal",
+                    text = stringResource(R.string.unit_kcal),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     modifier = Modifier.padding(bottom = 6.dp)
@@ -127,7 +129,7 @@ fun ActivitySummaryCard(
             Spacer(modifier = Modifier.height(6.dp))
             
             Text(
-                text = "$percentage% of $goalKcal kcal daily goal",
+                text = stringResource(R.string.activity_percent_daily_goal, percentage, goalKcal),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
             )

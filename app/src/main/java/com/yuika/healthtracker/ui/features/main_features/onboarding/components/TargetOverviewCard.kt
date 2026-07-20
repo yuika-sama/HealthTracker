@@ -13,10 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.InfoBlue
 
@@ -60,7 +62,7 @@ fun TargetOverviewCard(
                     color = Emerald
                 )
                 Text(
-                    text = "KCAL / DAY",
+                    text = stringResource(R.string.unit_kcal_day).uppercase(),
                     style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.sp),
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
@@ -70,7 +72,7 @@ fun TargetOverviewCard(
         Spacer(modifier = Modifier.height(24.dp))
         
         Text(
-            text = "Guided Vitality Target",
+            text = stringResource(R.string.onboarding_guided_target),
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.align(Alignment.Start)
@@ -79,7 +81,7 @@ fun TargetOverviewCard(
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "This plan helps you maintain consistent energy levels while reaching your peak performance.",
+            text = stringResource(R.string.onboarding_plan_description),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
             modifier = Modifier.align(Alignment.Start),
@@ -100,7 +102,7 @@ fun TargetOverviewCard(
                     .padding(12.dp)
             ) {
                 Text(
-                    text = "Basal Metabolic Rate",
+                    text = stringResource(R.string.profile_bmr),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
@@ -120,7 +122,7 @@ fun TargetOverviewCard(
                     .padding(12.dp)
             ) {
                 Text(
-                    text = "Activity Multiplier",
+                    text = stringResource(R.string.profile_activity_multiplier),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )

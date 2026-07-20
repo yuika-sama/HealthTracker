@@ -29,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,9 +39,13 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SuccessText
+import com.yuika.healthtracker.ui.core.i18n.foodCatalogLabel
+import com.yuika.healthtracker.ui.core.i18n.mealTypeLabel
+import com.yuika.healthtracker.ui.core.i18n.unitLabel
 import com.yuika.healthtracker.ui.features.main_features.add_meal.components.AddFoodFormCard
 import com.yuika.healthtracker.ui.features.main_features.add_meal.components.AddedFoodItemCard
 import com.yuika.healthtracker.ui.features.main_features.add_meal.components.DashedAddButton
@@ -70,7 +75,7 @@ fun AddMealScreen(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is AddMealEffect.NavigateBackWithSuccess -> {
-                        Toast.makeText(context, "Save success", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.save_success), Toast.LENGTH_SHORT).show()
                         onSaveClick()
                     }
                 }
@@ -96,7 +101,7 @@ fun AddMealScreen(
                 state.errorMessage?.let { ErrorText(msg = it) }
 
                 if (state.isSuccess && !state.isLoading && state.errorMessage == null) {
-                    SuccessText(msg = "Meal saved")
+                    SuccessText(msg = stringResource(R.string.meal_saved))
                 }
 
                 AddFoodFormCard(
@@ -115,9 +120,9 @@ fun AddMealScreen(
 
             items(state.addedFoods, key = { it.id }) { food ->
                 AddedFoodItemCard(
-                    foodName = food.foodName,
-                    quantityInfo = "${food.quantity} ${food.unit}",
-                    calories = "${food.calories} kcal",
+                    foodName = foodCatalogLabel(food.foodName),
+                    quantityInfo = "${food.quantity} ${unitLabel(food.unit)}",
+                    calories = "${food.calories} ${stringResource(R.string.unit_kcal)}",
                     onRemoveClick = { viewModel.onIntent(AddMealIntent.OnRemoveFoodClick(food.id)) }
                 )
             }
@@ -146,7 +151,7 @@ fun AddMealScreen(
                 ) {
                     Column {
                         Text(
-                            text = "TOTAL MEAL",
+                            text = stringResource(R.string.add_meal_total_meal),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -159,12 +164,12 @@ fun AddMealScreen(
 
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
-                            text = "MEAL",
+                            text = stringResource(R.string.add_meal_meal),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = state.mealType.ifEmpty { "Lunch" },
+                            text = mealTypeLabel(state.mealType.ifEmpty { "Lunch" }),
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -196,7 +201,7 @@ fun AddMealScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Save your meal",
+                                text = stringResource(R.string.add_meal_save),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )

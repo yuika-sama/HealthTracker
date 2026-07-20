@@ -55,9 +55,7 @@ class ValidateAndSaveProfileUseCase @Inject constructor(
         }
         
         val goalDb = when (goalStr) {
-            "Lose weight" -> "lose_weight"
-            "Weight gain" -> "gain_weight"
-            "Maintain weight" -> "maintain_weight"
+            "lose_weight", "gain_weight", "maintain_weight" -> goalStr
             else -> "lose_weight"
         }
 

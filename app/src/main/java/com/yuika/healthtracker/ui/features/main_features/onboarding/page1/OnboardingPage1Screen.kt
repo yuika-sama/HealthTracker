@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,11 +27,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.BasicInputField
 import com.yuika.healthtracker.ui.core.components.DateOfBirthInput
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SegmentedSelector
+import com.yuika.healthtracker.ui.core.i18n.genderLabel
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.OnboardingField
 import com.yuika.healthtracker.ui.theme.*
 import java.time.Instant
@@ -72,12 +75,12 @@ fun OnboardingPage1Screen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Step 1 of 4",
+                text = stringResource(R.string.onboarding_step, 1, 4),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
             Text(
-                text = "Personal Details",
+                text = stringResource(R.string.onboarding_personal_details),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.secondary
             )
@@ -104,7 +107,7 @@ fun OnboardingPage1Screen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Let's get to know you",
+            text = stringResource(R.string.onboarding_lets_get_to_know),
             style = MaterialTheme.typography.headlineMedium.copy(
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -114,7 +117,7 @@ fun OnboardingPage1Screen(
         Spacer(modifier = Modifier.height(12.dp))
         
         Text(
-            text = "Your health profile helps us create a personalized vitality plan tailored to your body's specific needs.",
+            text = stringResource(R.string.onboarding_profile_help),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
         )
@@ -123,7 +126,7 @@ fun OnboardingPage1Screen(
 
         OnboardingField(
             icon = Icons.Outlined.Person,
-            label = "Full Name"
+            label = stringResource(R.string.update_profile_full_name)
         ) {
             BasicInputField(
                 value = state.name, 
@@ -140,7 +143,7 @@ fun OnboardingPage1Screen(
 
         OnboardingField(
             icon = Icons.Outlined.CalendarToday,
-            label = "Date of birth"
+            label = stringResource(R.string.update_profile_date_of_birth)
         ) {
             DateOfBirthInput(
                 value = state.dateOfBirth,
@@ -157,13 +160,14 @@ fun OnboardingPage1Screen(
 
         OnboardingField(
             icon = Icons.Default.People,
-            label = "Gender"
+            label = stringResource(R.string.update_profile_gender)
         ) {
             val genders = listOf("Male", "Female")
             SegmentedSelector(
                 options = genders,
                 selectedOption = state.gender,
-                onOptionSelected = { viewModel.onIntent(OnboardingPage1Intent.GenderChanged(it)) }
+                onOptionSelected = { viewModel.onIntent(OnboardingPage1Intent.GenderChanged(it)) },
+                labelProvider = { genderLabel(it) }
             )
             state.genderError?.let {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -175,7 +179,7 @@ fun OnboardingPage1Screen(
         
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             Box(modifier = Modifier.weight(1f)) {
-                OnboardingField(icon = Icons.Default.MonitorWeight, label = "Weight") {
+                OnboardingField(icon = Icons.Default.MonitorWeight, label = stringResource(R.string.stat_weight)) {
                     BasicInputField(
                         value = state.weight,
                         onValueChange = { viewModel.onIntent(OnboardingPage1Intent.WeightChanged(it)) },
@@ -189,7 +193,7 @@ fun OnboardingPage1Screen(
                 }
             }
             Box(modifier = Modifier.weight(1f)) {
-                OnboardingField(icon = Icons.Default.Height, label = "Height") {
+                OnboardingField(icon = Icons.Default.Height, label = stringResource(R.string.stat_height)) {
                     BasicInputField(
                         value = state.height,
                         onValueChange = { viewModel.onIntent(OnboardingPage1Intent.HeightChanged(it)) },
@@ -230,7 +234,7 @@ fun OnboardingPage1Screen(
             }
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = "These metrics help us calculate your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE).",
+                text = stringResource(R.string.onboarding_bmr_tdee_info),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 lineHeight = 20.sp
@@ -244,7 +248,7 @@ fun OnboardingPage1Screen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "VITALITY ENGINE ACTIVE",
+                text = stringResource(R.string.onboarding_vitality_active),
                 style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp, fontWeight = FontWeight.SemiBold),
                 color = MaterialTheme.colorScheme.secondary
             )
@@ -283,7 +287,7 @@ fun OnboardingPage1Screen(
                 if(state.isLoading){
                     LoadingIndicator()
                 } else {
-                    Text("Continue", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.action_continue), fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }

@@ -25,13 +25,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.InfoBlue
 
 import com.yuika.healthtracker.ui.core.model.IntensityLevel
+import com.yuika.healthtracker.ui.core.i18n.activityCatalogLabel
+import com.yuika.healthtracker.ui.core.i18n.intensityLabel
 
 @Composable
 fun ActivityItem(
@@ -57,21 +61,18 @@ fun ActivityItem(
         )
     }
 
-    val (intensityColor, intensityBg, intensityText) = when (activity.intensity) {
-        IntensityLevel.LIGHT -> Triple(
+    val (intensityColor, intensityBg) = when (activity.intensity) {
+        IntensityLevel.LIGHT -> Pair(
             MaterialTheme.colorScheme.tertiary,
-            MaterialTheme.colorScheme.surfaceVariant,
-            "Light"
+            MaterialTheme.colorScheme.surfaceVariant
         )
-        IntensityLevel.MEDIUM -> Triple(
+        IntensityLevel.MEDIUM -> Pair(
             Emerald,
-            Emerald.copy(alpha = 0.15f),
-            "Medium"
+            Emerald.copy(alpha = 0.15f)
         )
-        IntensityLevel.STRONG -> Triple(
+        IntensityLevel.STRONG -> Pair(
             MaterialTheme.colorScheme.error,
-            MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
-            "Strong"
+            MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
         )
     }
 
@@ -103,7 +104,7 @@ fun ActivityItem(
         // Info
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = activity.title,
+                text = activityCatalogLabel(activity.title),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -119,7 +120,7 @@ fun ActivityItem(
                         .padding(horizontal = 8.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = intensityText,
+                        text = intensityLabel(activity.intensity),
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Medium,
                         color = intensityColor
@@ -137,7 +138,7 @@ fun ActivityItem(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${activity.durationMins} mins",
+                    text = "${activity.durationMins} ${stringResource(R.string.unit_mins)}",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
                 )
@@ -152,7 +153,7 @@ fun ActivityItem(
                 color = MaterialTheme.colorScheme.onBackground
             )
             Text(
-                text = "kcal",
+                text = stringResource(R.string.unit_kcal),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
             )

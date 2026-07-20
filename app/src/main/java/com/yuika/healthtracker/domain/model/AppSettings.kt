@@ -9,9 +9,9 @@ data class AppSettingsState(
     val testNotificationEnabled: Boolean = false
 )
 
-enum class AppLanguage(val label: String){
-    EN("English"),
-    VI("Vietnamese")
+enum class AppLanguage(val label: String, val localeTag: String){
+    EN("English", "en"),
+    VI("Vietnamese", "vi")
 }
 
 enum class ThemeMode(val label: String){

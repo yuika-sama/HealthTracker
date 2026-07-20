@@ -23,8 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.R
 
 @Composable
 fun DailySummaryCard(
@@ -54,7 +56,7 @@ fun DailySummaryCard(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Daily Summary",
+            text = stringResource(R.string.dashboard_daily_summary),
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -92,13 +94,13 @@ fun DailySummaryCard(
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = if (!isOver) "kcal remaining" else "kcal over",
+                    text = if (!isOver) stringResource(R.string.dashboard_kcal_remaining) else stringResource(R.string.dashboard_kcal_over),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Target: $targetKcal kcal",
+                    text = stringResource(R.string.dashboard_target_kcal, targetKcal),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
@@ -108,10 +110,10 @@ fun DailySummaryCard(
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Eaten: $eatenKcal kcal")
-            Text("Burned: $burnedKcal kcal")
+            Text(stringResource(R.string.dashboard_eaten_kcal, eatenKcal))
+            Text(stringResource(R.string.dashboard_burned_kcal, burnedKcal))
         }
         Spacer(Modifier.height(8.dp))
-        Text("Balance: $balanceKcal kcal", fontWeight = FontWeight.Medium)
+        Text(stringResource(R.string.dashboard_balance_kcal, balanceKcal), fontWeight = FontWeight.Medium)
     }
 }

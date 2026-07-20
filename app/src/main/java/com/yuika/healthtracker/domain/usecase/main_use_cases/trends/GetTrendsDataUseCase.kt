@@ -97,7 +97,7 @@ class GetTrendsDataUseCase @Inject constructor(
                     avgIntakeStr = "%,d".format(totalIntake / totalDays).replace(',', '.'),
                     avgBurnedStr = "%,d".format(totalBurned / totalDays).replace(',', '.'),
                     daysMeetingGoal = daysMeetingGoal.toString(),
-                    goalDays = "/ $totalDays days",
+                    goalDays = totalDays.toString(),
                     intakeChartData = dailyPoints,
                     weeklyTrendChartData = netPoints
                 )

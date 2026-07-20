@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,46 +27,37 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.i18n.activityLevelDescription
+import com.yuika.healthtracker.ui.core.i18n.activityLevelTitle
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.ActivityLevelCard
 
 data class ActivityLevelOption(
     val id: String,
-    val title: String,
-    val description: String,
     val icon: ImageVector
 )
 
 val activityLevelOptions = listOf(
     ActivityLevelOption(
         id = "sedentary",
-        title = "Sedentary",
-        description = "Little to no exercise, desk job",
         icon = Icons.Default.Chair
     ),
     ActivityLevelOption(
         id = "lightly_active",
-        title = "Lightly Active",
-        description = "Light exercise/sports 1-3 days/week",
         icon = Icons.AutoMirrored.Filled.DirectionsWalk
     ),
     ActivityLevelOption(
         id = "moderately_active",
-        title = "Moderately Active",
-        description = "Moderate exercise/sports 3-5 days/week",
         icon = Icons.Default.FitnessCenter
     ),
     ActivityLevelOption(
         id = "very_active",
-        title = "Very Active",
-        description = "Hard exercise/sports 6-7 days a week",
         icon = Icons.AutoMirrored.Filled.DirectionsRun
     ),
     ActivityLevelOption(
         id = "extra_active",
-        title = "Extra Active",
-        description = "Very hard exercise & physical job",
         icon = Icons.Default.SportsMartialArts
     )
 )
@@ -109,14 +101,14 @@ fun OnboardingPage2Screen(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = "Your Activity Level",
+                    text = stringResource(R.string.onboarding_activity_level_title),
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.ExtraBold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 )
                 Text(
-                    text = "Step 2 of 4",
+                    text = stringResource(R.string.onboarding_step, 2, 4),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     modifier = Modifier.padding(bottom = 4.dp)
@@ -146,7 +138,7 @@ fun OnboardingPage2Screen(
             
             // Subtitle
             Text(
-                text = "This helps us estimate your daily calorie burn and set accurate targets for your vitality journey.",
+                text = stringResource(R.string.onboarding_activity_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
             )
@@ -160,8 +152,8 @@ fun OnboardingPage2Screen(
                 activityLevelOptions.forEach { option ->
                     ActivityLevelCard(
                         icon = option.icon,
-                        title = option.title,
-                        description = option.description,
+                        title = activityLevelTitle(option.id),
+                        description = activityLevelDescription(option.id),
                         isSelected = state.activityLevel == option.id,
                         onClick = { viewModel.onIntent(OnboardingPage2Intent.ActivityLevelChanged(option.id)) }
                     )
@@ -193,7 +185,7 @@ fun OnboardingPage2Screen(
                 if (state.isLoading){
                     LoadingIndicator()
                 } else {
-                    Text("Continue", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.action_continue), fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
             }
 

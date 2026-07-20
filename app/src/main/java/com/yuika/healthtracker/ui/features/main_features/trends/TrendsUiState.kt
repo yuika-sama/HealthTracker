@@ -32,7 +32,7 @@ data class TrendsUiState(
     val avgIntake: String = "0",
     val avgBurned: String = "0",
     val daysMeetingGoal: String = "0",
-    val goalDays: String = " / 7 days",
+    val goalDays: String = "7",
 
     val intakeChartData: List<ChartDataPoint> = emptyList(),
     val weeklyTrendChartData: List<ChartDataPoint> = emptyList(),

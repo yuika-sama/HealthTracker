@@ -8,13 +8,14 @@ import com.yuika.healthtracker.ui.core.base.UiState
 
 data class ProfileUiState(
     val name: String = "",
-    val subtitle: String = "",
+    val activityLevel: String = "",
     val weight: String = "",
     val height: String = "",
     val bmi: String = "",
+    val bmiCategory: String = "",
     val avatarPath: String? = null,
-    val goalTitle: String = "Current Goal",
-    val goalDescription: String = "",
+    val goal: String = "",
+    val goalCalories: Int = 0,
     val language: AppLanguage = AppLanguage.EN,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val themeColorPreset: ThemeColorPreset = ThemeColorPreset.GREEN,
@@ -26,10 +27,7 @@ data class ProfileUiState(
     val errorMessage: String? = null,
     val isSuccess: Boolean = false
 ) : UiState {
-    val languageLabel get() = language.label
-    val themeModeLabel get() = themeMode.label
-    val themeColorLabel get() = themeColorPreset.label
-    val fontSizeLabel get() = fontSize.label
+    val bmiText get() = "$bmi ($bmiCategory)"
 }
 
 enum class ProfileSettingsDialog{

@@ -14,9 +14,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.FieldErrorText
+import com.yuika.healthtracker.ui.core.i18n.activityCatalogLabel
+import com.yuika.healthtracker.ui.core.i18n.intensityLabel
 import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityIntent
 import com.yuika.healthtracker.ui.features.main_features.add_activity.AddActivityUiState
 
@@ -36,7 +40,7 @@ fun ActivityDetailsCard(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = "ACTIVITY CATALOG",
+            text = stringResource(R.string.activity_catalog),
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -45,7 +49,7 @@ fun ActivityDetailsCard(
 
         if (state.activityCatalogs.isEmpty()) {
             Text(
-                text = "No activities available",
+                text = stringResource(R.string.activity_no_activities_available),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -78,12 +82,12 @@ fun ActivityDetailsCard(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = activity.name,
+                            text = activityCatalogLabel(activity.name),
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "${activity.met} MET - ${activity.intensity}",
+                            text = "${activity.met} MET - ${intensityLabel(activity.intensity)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

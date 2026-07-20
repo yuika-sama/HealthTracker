@@ -22,9 +22,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.features.main_features.trends.ChartDataPoint
 
 @Composable
@@ -43,12 +45,12 @@ fun NetCaloriesChart(
     ) {
         Column {
             Text(
-                text = "Net Calories Trend",
+                text = stringResource(R.string.trends_net_title),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "Intake minus burned calories",
+                text = stringResource(R.string.trends_net_description),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

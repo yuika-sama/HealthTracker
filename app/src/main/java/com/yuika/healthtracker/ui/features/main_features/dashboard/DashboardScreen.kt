@@ -31,9 +31,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,15 +44,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
 import com.yuika.healthtracker.ui.core.components.SuccessText
+import com.yuika.healthtracker.ui.core.i18n.bmiCategoryLabel
+import com.yuika.healthtracker.ui.core.i18n.currentLocale
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DailySummaryCard
 import com.yuika.healthtracker.ui.features.main_features.dashboard.components.InfoBanner
 import com.yuika.healthtracker.ui.core.components.StatCard
 import com.yuika.healthtracker.ui.theme.EnergyAmber
 import com.yuika.healthtracker.ui.theme.InfoBlue
 import com.yuika.healthtracker.ui.theme.LocalSpacing
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun DashboardScreen(
@@ -64,8 +71,16 @@ fun DashboardScreen(
     val spacing = LocalSpacing.current
     val scrollState = rememberScrollState()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val locale = currentLocale()
+    val dateFormatter = remember(locale) { DateTimeFormatter.ofPattern("MMM, dd", locale) }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val adviceText = when {
+        state.goalCalories <= 0 -> stringResource(R.string.dashboard_update_profile_target)
+        state.remainingCalories < 0 -> stringResource(R.string.dashboard_over_target_today, -state.remainingCalories)
+        state.remainingCalories <= 300 -> stringResource(R.string.dashboard_close_to_target)
+        else -> stringResource(R.string.dashboard_remaining_today, state.remainingCalories)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(DashboardIntent.LoadDashboardData)
@@ -86,26 +101,26 @@ fun DashboardScreen(
     if (state.isBreakdownVisible) {
         AlertDialog(
             onDismissRequest = { viewModel.onIntent(DashboardIntent.DismissBreakdown) },
-            title = { Text("Today breakdown") },
+            title = { Text(stringResource(R.string.dashboard_breakdown_title)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Target: ${state.goalCalories} kcal")
-                    Text("TDEE: ${state.tdeeCalories} kcal")
-                    Text("Eaten: ${state.intakeCalories} kcal")
-                    Text("Burned: ${state.burnedCalories} kcal")
-                    Text("Balance: ${state.netBalance} kcal")
+                    Text(stringResource(R.string.dashboard_target_kcal, state.goalCalories))
+                    Text("${stringResource(R.string.stat_tdee)}: ${state.tdeeCalories} ${stringResource(R.string.unit_kcal)}")
+                    Text(stringResource(R.string.dashboard_eaten_kcal, state.intakeCalories))
+                    Text(stringResource(R.string.dashboard_burned_kcal, state.burnedCalories))
+                    Text(stringResource(R.string.dashboard_balance_kcal, state.netBalance))
                     Text(
                         if (state.remainingCalories < 0)
-                            "Over: ${-state.remainingCalories} kcal"
+                            stringResource(R.string.dashboard_over_kcal, -state.remainingCalories)
                         else
-                            "Remaining: ${state.remainingCalories} kcal"
+                            stringResource(R.string.dashboard_remaining_kcal, state.remainingCalories)
                     )
-                    Text("BMI: ${state.bmi} ${state.bmiCategory}")
+                    Text("${stringResource(R.string.stat_bmi)}: ${state.bmi} ${bmiCategoryLabel(state.bmiCategory)}")
                 }
             },
             confirmButton = {
                 TextButton(onClick = { viewModel.onIntent(DashboardIntent.DismissBreakdown) }) {
-                    Text("Close")
+                    Text(stringResource(R.string.action_close))
                 }
             }
         )
@@ -121,7 +136,7 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = state.currentDateText.ifEmpty { "Today" },
+                text = stringResource(R.string.dashboard_today_date, LocalDate.now().format(dateFormatter)),
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -151,7 +166,7 @@ fun DashboardScreen(
             }
             else
             {
-                InfoBanner(message = state.adviceText)
+                InfoBanner(message = adviceText)
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -177,7 +192,7 @@ fun DashboardScreen(
                     ) {
                         StatCard(
                             modifier = Modifier.weight(1f),
-                            title = "TDEE",
+                            title = stringResource(R.string.stat_tdee),
                             value = "${state.tdeeCalories}",
                             icon = Icons.Outlined.LocalFireDepartment,
                             iconTint = EnergyAmber,
@@ -186,9 +201,9 @@ fun DashboardScreen(
 
                         StatCard(
                             modifier = Modifier.weight(1f),
-                            title = "BMI",
+                            title = stringResource(R.string.stat_bmi),
                             value = "${state.bmi}",
-                            unit = state.bmiCategory.ifBlank { null },
+                            unit = state.bmiCategory.takeIf { it.isNotBlank() }?.let { bmiCategoryLabel(it) },
                             icon = Icons.Outlined.Balance,
                             iconTint = InfoBlue,
                             iconBgColor = InfoBlue.copy(alpha = 0.15f)
@@ -200,7 +215,7 @@ fun DashboardScreen(
                     ) {
                         StatCard(
                             modifier = Modifier.weight(1f),
-                            title = "Intake",
+                            title = stringResource(R.string.stat_intake),
                             value = "${state.intakeCalories}",
                             icon = Icons.Outlined.LocalDining,
                             iconTint = MaterialTheme.colorScheme.tertiary,
@@ -209,7 +224,7 @@ fun DashboardScreen(
 
                         StatCard(
                             modifier = Modifier.weight(1f),
-                            title = "Burned",
+                            title = stringResource(R.string.stat_burned),
                             value = "${state.burnedCalories}",
                             icon = Icons.Outlined.LocalFireDepartment,
                             iconTint = EnergyAmber,
@@ -221,7 +236,7 @@ fun DashboardScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 StatCard(
-                    title = "Net Balance",
+                    title = stringResource(R.string.dashboard_net_balance),
                     value = "${state.netBalance}",
                     icon = Icons.Outlined.Balance,
                     iconTint = MaterialTheme.colorScheme.secondary,
@@ -252,7 +267,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "More meal",
+                            text = stringResource(R.string.dashboard_more_meal),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
                         )
@@ -283,7 +298,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "More Activity",
+                            text = stringResource(R.string.dashboard_more_activity),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
                         )

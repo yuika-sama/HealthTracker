@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,8 +34,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.i18n.activityMultiplierLabel
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.MacroCard
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.NutritionCard
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.TargetOverviewCard
@@ -73,7 +76,7 @@ fun OnboardingPage4Screen(
     }
 
     val proteinTarget = NutritionTarget(
-        title = "Protein",
+        title = stringResource(R.string.onboarding_protein),
         amount = "${state.proteinGrams}g",
         percentage = 30,
         icon = Icons.Default.Egg,
@@ -81,7 +84,7 @@ fun OnboardingPage4Screen(
     )
 
     val fatsTarget = NutritionTarget(
-        title = "Healthy Fats",
+        title = stringResource(R.string.onboarding_healthy_fats),
         amount = "${state.fatGrams}g",
         percentage = 25,
         icon = Icons.Default.WaterDrop,
@@ -89,7 +92,7 @@ fun OnboardingPage4Screen(
     )
 
     val carbsTarget = NutritionTarget(
-        title = "Complex Carbs",
+        title = stringResource(R.string.onboarding_carbs),
         amount = "${state.carbsGrams}g",
         percentage = 45,
         icon = Icons.Outlined.BreakfastDining,
@@ -123,7 +126,7 @@ fun OnboardingPage4Screen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Step 4 of 4",
+                        text = stringResource(R.string.onboarding_step, 4, 4),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -160,7 +163,7 @@ fun OnboardingPage4Screen(
 
                 // Header Section
                 Text(
-                    text = "You're Ready to Go!",
+                    text = stringResource(R.string.onboarding_ready_title),
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.ExtraBold,
                         color = MaterialTheme.colorScheme.onBackground
@@ -171,7 +174,7 @@ fun OnboardingPage4Screen(
                 
                 // Subtitle
                 Text(
-                    text = "Based on your activity level and metabolic profile, we've calculated your optimal daily maintenance and nutrition targets.",
+                    text = stringResource(R.string.onboarding_ready_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                     textAlign = TextAlign.Center,
@@ -187,8 +190,8 @@ fun OnboardingPage4Screen(
                 // Goal Cards
                 TargetOverviewCard(
                     calories = "${state.tdee}",
-                    bmr = "${state.bmr} kcal",
-                    activityMultiplier = state.activityMultiplierText
+                    bmr = "${state.bmr} ${stringResource(R.string.unit_kcal)}",
+                    activityMultiplier = activityMultiplierLabel(state.activityMultiplierText)
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -224,7 +227,7 @@ fun OnboardingPage4Screen(
                     percentage = carbsTarget.percentage,
                     icon = carbsTarget.icon,
                     color = carbsTarget.color,
-                    subtitle = "Daily Allotment"
+                    subtitle = stringResource(R.string.onboarding_daily_allotment)
                 )
                 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -263,7 +266,7 @@ fun OnboardingPage4Screen(
                             )
                     )
                     Text(
-                        text = "\"Every great journey begins with a single, calculated step.\"",
+                        text = stringResource(R.string.onboarding_quote),
                         style = MaterialTheme.typography.titleMedium.copy(fontStyle = FontStyle.Italic),
                         color = Color.White,
                         modifier = Modifier.padding(20.dp)
@@ -285,7 +288,7 @@ fun OnboardingPage4Screen(
                     elevation = ButtonDefaults.buttonElevation(0.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                        Text("Start My Journey", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.onboarding_start_journey), fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
@@ -298,7 +301,7 @@ fun OnboardingPage4Screen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "You can adjust these goals anytime in settings.",
+                    text = stringResource(R.string.onboarding_adjust_settings),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )

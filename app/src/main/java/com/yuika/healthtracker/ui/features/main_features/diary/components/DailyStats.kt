@@ -15,8 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.StatCard
 import com.yuika.healthtracker.ui.theme.Emerald
 import com.yuika.healthtracker.ui.theme.EnergyAmber
@@ -35,7 +37,7 @@ fun DailyStats(
     ) {
         StatCard(
             modifier = Modifier.weight(1f),
-            title = "Eaten",
+            title = stringResource(R.string.stat_eaten),
             value = eatenKcal.toString(),
             valueColor = MaterialTheme.colorScheme.secondary,
             bgColor = MaterialTheme.colorScheme.background,
@@ -44,7 +46,7 @@ fun DailyStats(
 
         StatCard(
             modifier = Modifier.weight(1f),
-            title = "Remaining",
+            title = stringResource(R.string.stat_remaining),
             value = remainingKcal.toString(),
             valueColor = MaterialTheme.colorScheme.onBackground,
             bgColor = MaterialTheme.colorScheme.secondary,
@@ -54,7 +56,7 @@ fun DailyStats(
 
         StatCard(
             modifier = Modifier.weight(1f),
-            title = "Burned",
+            title = stringResource(R.string.stat_burned),
             value = burnedKcal.toString(),
             valueColor = EnergyAmber,
             bgColor = MaterialTheme.colorScheme.background,

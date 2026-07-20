@@ -23,7 +23,7 @@ fun <T> SegmentedSelector(
     options: List<T>,
     selectedOption: T,
     onOptionSelected: (T) -> Unit,
-    labelProvider: (T) -> String = { it.toString() }
+    labelProvider: @Composable (T) -> String = { it.toString() }
 ) {
     Row(
         modifier = modifier

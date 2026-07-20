@@ -21,9 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.features.main_features.trends.ChartDataPoint
 
 @Composable
@@ -52,7 +54,7 @@ fun CalorieIntakeChart(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Calorie Intake",
+                text = stringResource(R.string.trends_calorie_intake),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground
             )

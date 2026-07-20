@@ -15,14 +15,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.DateOfBirthInput
 import com.yuika.healthtracker.ui.core.components.FieldErrorText
 import com.yuika.healthtracker.ui.core.components.FormTextField
 import com.yuika.healthtracker.ui.core.components.SegmentedSelector
 import com.yuika.healthtracker.ui.core.components.OutlinedDropdownField
+import com.yuika.healthtracker.ui.core.i18n.activityLevelTitle
+import com.yuika.healthtracker.ui.core.i18n.genderLabel
+import com.yuika.healthtracker.ui.core.i18n.goalTitle
 import com.yuika.healthtracker.ui.features.main_features.update_profile.UpdateProfileUiState
 import com.yuika.healthtracker.ui.features.main_features.update_profile.UpdateProfileIntent
 
@@ -32,7 +37,7 @@ fun UpdateProfileForm(
     state: UpdateProfileUiState,
     onIntent: (UpdateProfileIntent) -> Unit
 ) {
-    val goals = listOf("Lose weight", "Maintain weight", "Weight gain")
+    val goals = listOf("lose_weight", "maintain_weight", "gain_weight")
 
     Column(
         modifier = modifier
@@ -46,7 +51,7 @@ fun UpdateProfileForm(
         FormTextField(
             value = state.name,
             onValueChange = { onIntent(UpdateProfileIntent.UpdateName(it)) },
-            label = "Full name",
+            label = stringResource(R.string.update_profile_full_name),
             errorMessage = state.nameError,
             enabled = !state.isSaving,
             modifier = Modifier.fillMaxWidth()
@@ -54,7 +59,7 @@ fun UpdateProfileForm(
 
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
-                text = "Date of birth",
+                text = stringResource(R.string.update_profile_date_of_birth),
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -69,7 +74,7 @@ fun UpdateProfileForm(
 
         Column {
             Text(
-                text = "Gender",
+                text = stringResource(R.string.update_profile_gender),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -77,7 +82,8 @@ fun UpdateProfileForm(
             SegmentedSelector(
                 options = listOf("Male", "Female"),
                 selectedOption = state.gender,
-                onOptionSelected = { onIntent(UpdateProfileIntent.UpdateGender(it)) }
+                onOptionSelected = { onIntent(UpdateProfileIntent.UpdateGender(it)) },
+                labelProvider = { genderLabel(it) }
             )
             FieldErrorText(state.genderError)
         }
@@ -89,23 +95,23 @@ fun UpdateProfileForm(
             FormTextField(
                 value = state.weight,
                 onValueChange = { onIntent(UpdateProfileIntent.UpdateWeight(it)) },
-                label = "Weight",
+                label = stringResource(R.string.stat_weight),
                 errorMessage = state.weightError,
                 keyboardType = KeyboardType.Decimal,
                 modifier = Modifier.weight(1f),
                 enabled = !state.isSaving,
-                suffix = { Text("kg") }
+                suffix = { Text(stringResource(R.string.unit_kg)) }
             )
             
             FormTextField(
                 value = state.height,
                 onValueChange = { onIntent(UpdateProfileIntent.UpdateHeight(it)) },
-                label = "Height",
+                label = stringResource(R.string.stat_height),
                 errorMessage = state.heightError,
                 keyboardType = KeyboardType.Decimal,
                 modifier = Modifier.weight(1f),
                 enabled = !state.isSaving,
-                suffix = { Text("cm") }
+                suffix = { Text(stringResource(R.string.unit_cm)) }
             )
         }
 
@@ -115,7 +121,7 @@ fun UpdateProfileForm(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Activity level",
+                    text = stringResource(R.string.update_profile_activity_level),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
@@ -144,19 +150,20 @@ fun UpdateProfileForm(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Sedentary", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
-                Text("Active", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
+                Text(activityLevelTitle("sedentary"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
+                Text(activityLevelTitle("moderately_active"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
             }
             FieldErrorText(state.activityLevelError)
         }
 
         OutlinedDropdownField(
-            label = "Goal",
+            label = stringResource(R.string.update_profile_goal),
             selectedOption = state.goal,
             options = goals,
             onOptionSelected = { onIntent(UpdateProfileIntent.UpdateGoal(it)) },
             errorMessage = state.goalError,
-            enabled = !state.isSaving
+            enabled = !state.isSaving,
+            labelProvider = { goalTitle(it) }
         )
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,34 +30,29 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import coil3.compose.AsyncImage
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
+import com.yuika.healthtracker.ui.core.i18n.goalDescription
+import com.yuika.healthtracker.ui.core.i18n.goalTitle
 import com.yuika.healthtracker.ui.features.main_features.onboarding.components.GoalCard
 
 data class HealthGoalOption(
     val id: String,
-    val title: String,
-    val description: String,
     val icon: ImageVector
 )
 
 val healthGoalOptions = listOf(
     HealthGoalOption(
         id = "lose_weight",
-        title = "Lose Weight",
-        description = "Sustainable fat loss through calorie management and metabolic health optimization.",
         icon = Icons.AutoMirrored.Filled.TrendingDown
     ),
     HealthGoalOption(
         id = "maintain_weight",
-        title = "Maintain Weight",
-        description = "Fine-tune your habits and maintain your current physique with balanced vitality.",
         icon = Icons.Default.MonitorWeight
     ),
     HealthGoalOption(
         id = "gain_weight",
-        title = "Gain Weight",
-        description = "Focus on lean muscle mass growth and increased physical strength and power.",
         icon = Icons.Default.FitnessCenter
     )
 )
@@ -113,7 +109,7 @@ fun OnboardingPage3Screen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = "What's your primary focus?",
+                text = stringResource(R.string.onboarding_focus_title),
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -124,7 +120,7 @@ fun OnboardingPage3Screen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Choose the path that best matches your vision for a healthier you. We'll tailor your daily targets accordingly.",
+                text = stringResource(R.string.onboarding_focus_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
             )
@@ -137,8 +133,8 @@ fun OnboardingPage3Screen(
                 healthGoalOptions.forEach { option ->
                     GoalCard(
                         icon = option.icon,
-                        title = option.title,
-                        description = option.description,
+                        title = goalTitle(option.id),
+                        description = goalDescription(option.id),
                         isSelected = state.goal == option.id,
                         onClick = { viewModel.onIntent(OnboardingPage3Intent.GoalChanged(option.id)) }
                     )
@@ -189,13 +185,13 @@ fun OnboardingPage3Screen(
                         .padding(20.dp)
                 ) {
                     Text(
-                        text = "Your journey is unique.",
+                        text = stringResource(R.string.onboarding_journey_unique),
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                         color = Color.White
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "We help you stay on track, every day.",
+                        text = stringResource(R.string.onboarding_stay_on_track),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.9f)
                     )
@@ -223,7 +219,7 @@ fun OnboardingPage3Screen(
             ) {
                 if (!state.isLoading){
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                        Text("Continue to Final Step", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.onboarding_continue_final), fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null)
                     }

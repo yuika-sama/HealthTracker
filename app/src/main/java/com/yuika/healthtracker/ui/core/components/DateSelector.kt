@@ -32,24 +32,35 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.yuika.healthtracker.utils.DATE_FORMATTER
+import com.yuika.healthtracker.R
+import com.yuika.healthtracker.ui.core.i18n.currentLocale
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateSelector(
     modifier: Modifier = Modifier,
     selectedDate: LocalDate,
-    title: String = if (selectedDate == LocalDate.now()) "TODAY" else selectedDate.dayOfWeek.name,
+    title: String? = null,
     onPreviousDayClick: () -> Unit = {},
     onNextDayClick: () -> Unit = {},
     onDateSelected: (LocalDate) -> Unit = {}
 ) {
     var showPicker by remember { mutableStateOf(false) }
+    val locale = currentLocale()
+    val dateFormatter = remember(locale) { DateTimeFormatter.ofPattern("EEEE, MMM dd", locale) }
+    val resolvedTitle = title ?: if (selectedDate == LocalDate.now()) {
+        stringResource(R.string.date_today_caps)
+    } else {
+        selectedDate.dayOfWeek.getDisplayName(TextStyle.FULL, locale).uppercase(locale)
+    }
     val selectedDateMillis = remember(selectedDate) {
         selectedDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
     }
@@ -73,12 +84,12 @@ fun DateSelector(
                         showPicker = false
                     }
                 ) {
-                    Text("Select")
+                    Text(stringResource(R.string.action_select))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showPicker = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             }
         ) {
@@ -99,7 +110,7 @@ fun DateSelector(
         IconButton(onClick = onPreviousDayClick) {
             Icon(
                 imageVector = Icons.Default.ChevronLeft,
-                contentDescription = "Previous Day",
+                contentDescription = stringResource(R.string.previous_day),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -124,14 +135,14 @@ fun DateSelector(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = title,
+                    text = resolvedTitle,
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = selectedDate.format(DATE_FORMATTER),
+                text = selectedDate.format(dateFormatter),
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -140,7 +151,7 @@ fun DateSelector(
         IconButton(onClick = onNextDayClick) {
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Next Day",
+                contentDescription = stringResource(R.string.next_day),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

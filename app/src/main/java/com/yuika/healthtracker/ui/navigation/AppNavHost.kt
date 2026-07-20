@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -67,7 +68,7 @@ fun AppNavHost(
                 topBar = {
                     AppTopBar(
                         showMainBar = barsState.mainTab != null,
-                        title = barsState.title,
+                        title = barsState.titleRes?.let { stringResource(it) },
                         showBackButton = barsState.showBackButton,
                         onBackClick = { appNavigator.popBackStack() }
                     )

@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -25,6 +26,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.service.pdf_exporter.WeeklyReportService
 import com.yuika.healthtracker.ui.core.components.ErrorText
 import com.yuika.healthtracker.ui.core.components.LoadingIndicator
@@ -45,6 +47,7 @@ fun TrendsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val shareReportTitle = stringResource(R.string.trends_share_report)
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(TrendsIntent.LoadTrendsData)
@@ -57,7 +60,7 @@ fun TrendsScreen(
                     is TrendsEffect.ShareWeeklyReport -> {
                         val chooser = Intent.createChooser(
                             WeeklyReportService.shareIntent(effect.uri),
-                            "Share weekly report"
+                            shareReportTitle
                         )
                         chooser.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         context.startActivity(chooser)
@@ -79,13 +82,13 @@ fun TrendsScreen(
 
             Column {
                 Text(
-                    text = "Statistics & Trends",
+                    text = stringResource(R.string.trends_title),
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Track your progress and analyze your habits.",
+                    text = stringResource(R.string.trends_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
@@ -106,7 +109,7 @@ fun TrendsScreen(
             ){
                 Icon(imageVector = Icons.Outlined.FileDownload, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(if(state.isExportingReport) "Exporting..." else "Export selected range PDF")
+                Text(if(state.isExportingReport) stringResource(R.string.trends_exporting) else stringResource(R.string.trends_export_pdf))
             }
 
             state.selectedDetail?.let { detail ->
@@ -116,14 +119,14 @@ fun TrendsScreen(
                     text = {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(detail.dateText)
-                            Text("Intake: ${detail.intake} kcal")
-                            Text("Burned: ${detail.burned} kcal")
-                            Text("Balance: ${detail.balance} kcal")
+                            Text(stringResource(R.string.trends_intake_kcal, detail.intake))
+                            Text(stringResource(R.string.trends_burned_kcal, detail.burned))
+                            Text(stringResource(R.string.trends_balance_kcal, detail.balance))
                         }
                     },
                     confirmButton = {
                         TextButton(onClick = { viewModel.onIntent(TrendsIntent.DismissDetail) }) {
-                            Text("Close")
+                            Text(stringResource(R.string.action_close))
                         }
                     }
                 )
@@ -148,7 +151,7 @@ fun TrendsScreen(
             else
             {
                 StatCard(
-                    title = "Avg Intake / Day",
+                    title = stringResource(R.string.stat_avg_intake_day),
                     value = state.avgIntake,
                     valueColor = MaterialTheme.colorScheme.secondary,
                     unit = "kcal",
@@ -156,7 +159,7 @@ fun TrendsScreen(
                 )
 
                 StatCard(
-                    title = "Avg Burned / Day",
+                    title = stringResource(R.string.stat_avg_burned_day),
                     value = state.avgBurned,
                     valueColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
                     unit = "kcal",
@@ -164,10 +167,10 @@ fun TrendsScreen(
                 )
 
                 StatCard(
-                    title = "Days Meeting Goal",
+                    title = stringResource(R.string.stat_days_meeting_goal),
                     value = state.daysMeetingGoal,
                     valueColor = MaterialTheme.colorScheme.tertiary,
-                    unit = state.goalDays,
+                    unit = stringResource(R.string.trends_goal_days, state.goalDays.toIntOrNull() ?: 0),
                     bgColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
                 )
             }
@@ -177,7 +180,7 @@ fun TrendsScreen(
                 CalorieIntakeChart(
                     dataPoints = state.intakeChartData,
                     periodLabel = "${state.startDate} - ${state.endDate}",
-                    onPointClick = { viewModel.onIntent(TrendsIntent.PointClick("Day detail", it)) }
+                    onPointClick = { viewModel.onIntent(TrendsIntent.PointClick(context.getString(R.string.trends_day_detail), it)) }
                 )
             }
 
@@ -188,7 +191,7 @@ fun TrendsScreen(
                     onPointClick = {
                         viewModel.onIntent(
                             TrendsIntent.PointClick(
-                                "Day detail",
+                                context.getString(R.string.trends_day_detail),
                                 it
                             )
                         )

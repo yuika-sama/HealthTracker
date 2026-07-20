@@ -15,7 +15,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yuika.healthtracker.R
 
 @Composable
 fun DashboardBottomNav(
@@ -33,31 +35,31 @@ fun DashboardBottomNav(
     ) {
         DashboardBottomNavItem(
             icon = Icons.Outlined.GridView,
-            label = "Home",
+            label = stringResource(R.string.nav_home),
             isSelected = currentRoute == "home",
             onClick = { onTabClick("home") }
         )
         DashboardBottomNavItem(
             icon = Icons.Outlined.Restaurant,
-            label = "Diary",
+            label = stringResource(R.string.nav_diary),
             isSelected = currentRoute == "diary",
             onClick = { onTabClick("diary") }
         )
         DashboardBottomNavItem(
             icon = Icons.Outlined.FitnessCenter,
-            label = "Activity",
+            label = stringResource(R.string.nav_activity),
             isSelected = currentRoute == "activity",
             onClick = { onTabClick("activity") }
         )
         DashboardBottomNavItem(
             icon = Icons.Outlined.BarChart,
-            label = "Trends",
+            label = stringResource(R.string.nav_trends),
             isSelected = currentRoute == "trends",
             onClick = { onTabClick("trends") }
         )
         DashboardBottomNavItem(
             icon = Icons.Outlined.Person,
-            label = "Profile",
+            label = stringResource(R.string.nav_profile),
             isSelected = currentRoute == "profile",
             onClick = { onTabClick("profile") }
         )
