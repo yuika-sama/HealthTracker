@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.dashboard
 
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.usecase.main_use_cases.dashboard.FormatDashboardDateUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.dashboard.GetDashboardDataUseCase
 import com.yuika.healthtracker.ui.core.base.BaseViewModel
@@ -40,12 +41,11 @@ class DashboardViewModel @Inject constructor(
 
         fetchJob?.cancel()
         fetchJob = launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "An unexpected error occurred"
+            onError = {
                 updateState {
                     it.copy(
                         isLoading = false,
-                        errorMessage = message,
+                        errorMessageRes = R.string.error_cannot_get_data,
                         isSuccess = false
                     )
                 }
@@ -57,7 +57,7 @@ class DashboardViewModel @Inject constructor(
                     updateState {
                         it.copy(
                             isLoading = false,
-                            errorMessage = "Unknown user",
+                            errorMessageRes = R.string.error_unknown_user,
                             isSuccess = false
                         )
                     }
@@ -75,7 +75,7 @@ class DashboardViewModel @Inject constructor(
                         tdeeCalories = dashboardData.tdeeCalories,
                         bmi = dashboardData.bmi,
                         bmiCategory = dashboardData.bmiCategory,
-                        errorMessage = null,
+                        errorMessageRes = null,
                         isSuccess = true
                     )
                 }

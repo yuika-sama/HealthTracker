@@ -52,7 +52,7 @@ fun TrainingDetailsCard(
             onValueChange = { onIntent(AddActivityIntent.OnDurationChange(it)) },
             label = stringResource(R.string.activity_training_time),
             placeholder = "0",
-            errorMessage = state.durationError,
+            errorMessage = state.durationErrorRes?.let { stringResource(it) },
             keyboardType = KeyboardType.Number,
             compact = true,
             suffix = {

@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.add_meal
 
+import androidx.annotation.StringRes
 import com.yuika.healthtracker.domain.model.FoodCatalog
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.MealFoodInput
 import com.yuika.healthtracker.ui.core.base.UiState
@@ -10,12 +11,12 @@ data class AddMealUiState(
     val dateText: String = "",
 
     val foodName: String = "",
-    val foodNameError: String? = null,
+    @param:StringRes val foodNameErrorRes: Int? = null,
     val quantity: String = "",
-    val quantityError: String? = null,
+    @param:StringRes val quantityErrorRes: Int? = null,
     val unit: String = "serving",
     val calories: String = "",
-    val caloriesError: String? = null,
+    @param:StringRes val caloriesErrorRes: Int? = null,
 
     val addedFoods: List<AddedFoodItem> = emptyList(),
     val totalCalories: Int = 0,
@@ -27,7 +28,7 @@ data class AddMealUiState(
     val searchResults: List<FoodCatalog> = emptyList(),
 
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
+    @param:StringRes val errorMessageRes: Int? = null,
     val isSuccess: Boolean = false
 ) : UiState
 

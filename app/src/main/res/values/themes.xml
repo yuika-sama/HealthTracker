@@ -2,7 +2,5 @@
 <resources>
 
     <style name="Theme.HealthTracker" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_app_logo</item>
-        <item name="android:windowSplashScreenBackground">@drawable/ic_app_logo</item>
     </style>
 </resources>

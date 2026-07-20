@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.activity
 
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.DeleteActivityUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.GetActivityDataUseCase
 import com.yuika.healthtracker.service.widget.WidgetService
@@ -12,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,7 +52,7 @@ class ActivityViewModel @Inject constructor(
         updateState {
             it.copy(
                 isLoading = true,
-                errorMessage = null,
+                errorMessageRes = null,
                 selectedDate = date,
                 isSuccess = false
             )
@@ -58,12 +60,11 @@ class ActivityViewModel @Inject constructor(
 
         fetchJob?.cancel()
         fetchJob = launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "Can't get activity data"
+            onError = {
                 updateState {
                     it.copy(
                         isLoading = false,
-                        errorMessage = message,
+                        errorMessageRes = R.string.error_cannot_get_activity_data,
                         isSuccess = false
                     )
                 }
@@ -77,7 +78,7 @@ class ActivityViewModel @Inject constructor(
                     updateState {
                         it.copy(
                             isLoading = false,
-                            errorMessage = "Can't find user data",
+                            errorMessageRes = R.string.error_cannot_find_user_data,
                             isSuccess = false
                         )
                     }
@@ -115,12 +116,6 @@ class ActivityViewModel @Inject constructor(
     }
 
     private fun parseIntensity(value: String): IntensityLevel =
-        runCatching { IntensityLevel.valueOf(value.uppercase()) }.getOrNull()
-            ?: IntensityLevel.entries.firstOrNull {
-                it.displayName.equals(
-                    value,
-                    ignoreCase = true
-                )
-            }
-            ?: IntensityLevel.LIGHT
+        runCatching { IntensityLevel.valueOf(value.trim().uppercase(Locale.ROOT)) }
+            .getOrDefault(IntensityLevel.LIGHT)
 }

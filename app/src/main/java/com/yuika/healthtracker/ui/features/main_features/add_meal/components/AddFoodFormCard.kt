@@ -81,7 +81,7 @@ fun AddFoodFormCard(
             onValueChange = onFoodNameChange,
             label = stringResource(R.string.add_meal_food_name),
             placeholder = stringResource(R.string.add_meal_enter_food_name),
-            errorMessage = state.foodNameError,
+            errorMessage = state.foodNameErrorRes?.let { stringResource(it) },
             compact = true,
             trailingIcon = {
                 if (state.foodName.isNotEmpty()) {
@@ -115,7 +115,7 @@ fun AddFoodFormCard(
                     onValueChange = onQuantityChange,
                     modifier = Modifier.weight(0.35f),
                     placeholder = "1",
-                    errorMessage = state.quantityError,
+                    errorMessage = state.quantityErrorRes?.let { stringResource(it) },
                     keyboardType = KeyboardType.Decimal,
                     compact = true
                 )
@@ -207,7 +207,12 @@ fun AddFoodFormCard(
                             fontWeight = FontWeight.Medium
                         )
                         Text(
-                            text = "${food.caloriesPerServing} ${stringResource(R.string.unit_kcal)} / ${food.defaultQuantity} ${unitLabel(food.unit)}",
+                            text = stringResource(
+                                R.string.add_meal_catalog_food_detail,
+                                food.caloriesPerServing,
+                                food.defaultQuantity.toString().removeSuffix(".0"),
+                                unitLabel(food.unit)
+                            ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -236,7 +241,7 @@ fun AddFoodFormCard(
                         value = state.calories,
                         onValueChange = onCaloriesChange,
                         placeholder = "0",
-                        errorMessage = state.caloriesError,
+                        errorMessage = state.caloriesErrorRes?.let { stringResource(it) },
                         keyboardType = KeyboardType.Number,
                         compact = true,
                         suffix = {

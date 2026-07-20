@@ -135,10 +135,7 @@ fun ActivityScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (state.errorMessage != null)
-                {
-                    ErrorText(msg = state.errorMessage!!)
-                }
+                state.errorMessageRes?.let { ErrorText(msg = stringResource(it)) }
 
                 ActivitySummaryCard(
                     burnedKcal = state.burnedKcal,

@@ -31,9 +31,9 @@ import com.yuika.healthtracker.R
 @Composable
 fun AddedFoodItemCard(
     modifier: Modifier = Modifier,
-    foodName: String = "Cà phê chà trà sữa bún đá",
-    quantityInfo: String = "1 cup(200ml)",
-    calories: String = "100 kcal",
+    foodName: String,
+    quantityInfo: String,
+    calories: String,
     onRemoveClick: () -> Unit
 ) {
     Row(

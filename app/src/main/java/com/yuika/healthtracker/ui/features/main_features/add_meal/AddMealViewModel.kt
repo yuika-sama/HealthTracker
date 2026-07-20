@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.add_meal
 
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.model.FoodCatalog
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.SearchFoodCatalogUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.food.ValidateAndSaveMealUseCase
@@ -46,7 +47,7 @@ class AddMealViewModel @Inject constructor(
 
             is AddMealIntent.OnCaloriesChange ->
             {
-                updateState { it.copy(calories = intent.calories, caloriesError = null) }
+                updateState { it.copy(calories = intent.calories, caloriesErrorRes = null) }
             }
 
             is AddMealIntent.OnMealTypeChange ->
@@ -96,7 +97,7 @@ class AddMealViewModel @Inject constructor(
         updateState {
             it.copy(
                 foodName = name,
-                foodNameError = null,
+                foodNameErrorRes = null,
                 selectedFoodCatalogId = null,
                 selectedCategoriesPerServing = 0,
                 selectedDefaultQuantity = 1f,
@@ -128,7 +129,7 @@ class AddMealViewModel @Inject constructor(
             }
             else s.calories
 
-            s.copy(quantity = quantity, quantityError = null, calories = kcal, caloriesError = null)
+            s.copy(quantity = quantity, quantityErrorRes = null, calories = kcal, caloriesErrorRes = null)
         }
     }
 
@@ -145,9 +146,9 @@ class AddMealViewModel @Inject constructor(
                 unit = food.unit,
                 calories = food.caloriesPerServing.toString(),
                 searchResults = emptyList(),
-                foodNameError = null,
-                quantityError = null,
-                caloriesError = null
+                foodNameErrorRes = null,
+                quantityErrorRes = null,
+                caloriesErrorRes = null
             )
         }
     }
@@ -160,17 +161,17 @@ class AddMealViewModel @Inject constructor(
         val quantity = currentState.quantity.toFloatOrNull()
         val calories = currentState.calories.toIntOrNull()
 
-        val foodNameError = if (foodName.isEmpty()) "Food name could not be blank" else null
+        val foodNameError = if (foodName.isEmpty()) R.string.error_food_name_blank else null
         val quantityError = when
         {
-            quantity == null -> "Quantity could not be blank"
-            quantity <= 0f -> "Quantity must be greater than 0"
+            quantity == null -> R.string.error_quantity_blank
+            quantity <= 0f -> R.string.error_quantity_positive
             else -> null
         }
         val caloriesError = when
         {
-            calories == null -> "Please fill in the valid calories"
-            calories < 0 -> "Please fill in the valid calories"
+            calories == null -> R.string.error_valid_calories
+            calories < 0 -> R.string.error_valid_calories
             else -> null
         }
 
@@ -180,24 +181,26 @@ class AddMealViewModel @Inject constructor(
         {
             updateState {
                 it.copy(
-                    foodNameError = foodNameError,
-                    quantityError = quantityError,
-                    caloriesError = caloriesError,
-                    errorMessage = null
+                    foodNameErrorRes = foodNameError,
+                    quantityErrorRes = quantityError,
+                    caloriesErrorRes = caloriesError,
+                    errorMessageRes = null
                 )
             }
             return
         }
 
+        val validQuantity = quantity ?: return
+        val validCalories = calories ?: return
         val newFood =
             AddedFoodItem(
                 foodCatalogId = currentState.selectedFoodCatalogId,
                 foodName = foodName,
-                quantity = quantity ?: return,
+                quantity = validQuantity,
                 unit = currentState.unit,
-                calories = calories ?: return,
+                calories = validCalories,
                 caloriesPerServing = if (currentState.selectedFoodCatalogId != null) currentState.selectedCategoriesPerServing
-                else calories ?: return
+                else validCalories
             )
 
         val newAddedFoods = currentState.addedFoods + newFood
@@ -209,10 +212,10 @@ class AddMealViewModel @Inject constructor(
                 foodName = "",
                 quantity = "",
                 calories = "",
-                foodNameError = null,
-                quantityError = null,
-                caloriesError = null,
-                errorMessage = null
+                foodNameErrorRes = null,
+                quantityErrorRes = null,
+                caloriesErrorRes = null,
+                errorMessageRes = null
             )
         }
     }
@@ -235,19 +238,18 @@ class AddMealViewModel @Inject constructor(
 
         if (currentFoods.isEmpty())
         {
-            updateState { it.copy(errorMessage = "Please at least add one food in the meal") }
+            updateState { it.copy(errorMessageRes = R.string.error_need_one_food) }
             return
         }
 
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { it.copy(isLoading = true, errorMessageRes = null) }
 
         launchSafe(
-            onError = { throwable ->
-                val message = throwable.message ?: "Error saving meal"
+            onError = {
                 updateState {
                     it.copy(
                         isLoading = false,
-                        errorMessage = message,
+                        errorMessageRes = R.string.error_save_meal,
                         isSuccess = false
                     )
                 }
@@ -266,7 +268,8 @@ class AddMealViewModel @Inject constructor(
                     isLoading = false,
                     isSuccess = true,
                     addedFoods = emptyList(),
-                    totalCalories = 0
+                    totalCalories = 0,
+                    errorMessageRes = null
                 )
             }
 

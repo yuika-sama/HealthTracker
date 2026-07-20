@@ -29,11 +29,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -59,6 +59,7 @@ fun AddActivityScreen(
     val scrollState = rememberScrollState()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val activitySavedToast = stringResource(R.string.activity_saved_toast)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     LaunchedEffect(dateText) {
@@ -70,7 +71,7 @@ fun AddActivityScreen(
             viewModel.effect.collect { effect ->
                 when (effect){
                     is AddActivityEffect.NavigateToActivity -> {
-                        Toast.makeText(context, context.getString(R.string.activity_saved_toast), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, activitySavedToast, Toast.LENGTH_SHORT).show()
                         onSaveClick()
                     }
                 }
@@ -93,9 +94,9 @@ fun AddActivityScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            state.errorMessage?.let { ErrorText(msg = it) }
+            state.errorMessageRes?.let { ErrorText(msg = stringResource(it)) }
 
-            if (state.isSuccess && !state.isLoading && state.errorMessage == null) {
+            if (state.isSuccess && !state.isLoading && state.errorMessageRes == null) {
                 SuccessText(msg = stringResource(R.string.activity_saved))
             }
 

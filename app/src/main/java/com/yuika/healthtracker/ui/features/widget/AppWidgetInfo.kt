@@ -23,11 +23,13 @@ class AppWidgetInfo : GlanceAppWidget()
             ThemeMode.LIGHT -> false
             ThemeMode.SYSTEM -> isSystemDark
         }
+        val strings = caloriesWidgetStrings(context, state.calories)
         provideContent {
             CaloriesWidgetContent(
                 state = state.calories,
                 darkTheme = darkTheme,
-                colorPreset = state.settings.themeColorPreset
+                colorPreset = state.settings.themeColorPreset,
+                strings = strings
             )
         }
     }

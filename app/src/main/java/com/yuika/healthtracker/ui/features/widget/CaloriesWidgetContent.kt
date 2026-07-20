@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.widget
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,7 +20,7 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.model.ThemeColorPreset
 import com.yuika.healthtracker.service.widget.WidgetCaloriesState
 import com.yuika.healthtracker.ui.theme.BackgroundDark
@@ -37,11 +38,57 @@ import com.yuika.healthtracker.ui.theme.SurfaceContainerDark
 import com.yuika.healthtracker.ui.theme.SurfaceContainerLight
 import com.yuika.healthtracker.ui.theme.accentColors
 
+internal data class CaloriesWidgetStrings(
+    val appName: String,
+    val setupProfile: String,
+    val today: String,
+    val calories: String,
+    val status: String,
+    val headline: String,
+    val progress: String,
+    val eaten: String,
+    val eatenValue: String,
+    val burned: String,
+    val burnedValue: String,
+    val target: String,
+    val targetValue: String,
+    val balance: String,
+    val balanceValue: String
+)
+
+internal fun caloriesWidgetStrings(
+    context: Context,
+    state: WidgetCaloriesState
+): CaloriesWidgetStrings {
+    val isOverTarget = state.remainingCalories < 0
+    return CaloriesWidgetStrings(
+        appName = context.getString(R.string.app_name),
+        setupProfile = context.getString(R.string.widget_setup_profile),
+        today = context.getString(R.string.date_today_caps),
+        calories = context.getString(R.string.widget_calories),
+        status = context.getString(if (isOverTarget) R.string.widget_over_target else R.string.widget_on_track),
+        headline = context.getString(
+            if (isOverTarget) R.string.widget_kcal_over else R.string.widget_kcal_left,
+            kotlin.math.abs(state.remainingCalories)
+        ),
+        progress = context.getString(R.string.widget_kcal_target, state.progressPercent, state.targetCalories),
+        eaten = context.getString(R.string.stat_eaten),
+        eatenValue = context.getString(R.string.widget_kcal_value, state.eatenCalories),
+        burned = context.getString(R.string.stat_burned),
+        burnedValue = context.getString(R.string.widget_kcal_value, state.burnedCalories),
+        target = context.getString(R.string.widget_target),
+        targetValue = context.getString(R.string.widget_kcal_value, state.targetCalories),
+        balance = context.getString(R.string.widget_balance),
+        balanceValue = context.getString(R.string.widget_kcal_value, state.balanceCalories)
+    )
+}
+
 @Composable
-fun CaloriesWidgetContent(
+internal fun CaloriesWidgetContent(
     state: WidgetCaloriesState,
     darkTheme: Boolean,
-    colorPreset: ThemeColorPreset
+    colorPreset: ThemeColorPreset,
+    strings: CaloriesWidgetStrings
 ) {
     val accent = colorPreset.accentColors()
     val backgroundColor = if (darkTheme) BackgroundDark else BackgroundLight
@@ -51,16 +98,6 @@ fun CaloriesWidgetContent(
     val progressBackground = if (darkTheme) OutlineDark else OutlineLight
     val isOverTarget = state.remainingCalories < 0
     val mainColor = if (isOverTarget) ErrorRed else accent.secondary
-    val headline = if (isOverTarget) {
-        "${-state.remainingCalories} kcal over"
-    } else {
-        "${state.remainingCalories} kcal left"
-    }
-    val status = if (isOverTarget) {
-        "OVER TARGET"
-    } else {
-        "ON TRACK"
-    }
 
     Column(
         modifier = GlanceModifier
@@ -73,18 +110,18 @@ fun CaloriesWidgetContent(
     ) {
         if (!state.hasUser) {
             Text(
-                text = "Health Tracker",
+                text = strings.appName,
                 style = TextStyle(
-                    color = ColorProvider(accent.secondary),
+                    color = accent.secondary.toGlanceColorProvider(),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
             Spacer(modifier = GlanceModifier.height(8.dp))
             Text(
-                text = "Set up your profile to see today's calories.",
+                text = strings.setupProfile,
                 style = TextStyle(
-                    color = ColorProvider(mutedTextColor),
+                    color = mutedTextColor.toGlanceColorProvider(),
                     fontSize = 13.sp
                 )
             )
@@ -95,26 +132,26 @@ fun CaloriesWidgetContent(
             ) {
                 Column(modifier = GlanceModifier.defaultWeight()) {
                     Text(
-                        text = "TODAY",
+                        text = strings.today,
                         style = TextStyle(
-                            color = ColorProvider(mutedTextColor),
+                            color = mutedTextColor.toGlanceColorProvider(),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium
                         )
                     )
                     Text(
-                        text = "Calories",
+                        text = strings.calories,
                         style = TextStyle(
-                            color = ColorProvider(textColor),
+                            color = textColor.toGlanceColorProvider(),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
                         )
                     )
                 }
                 Text(
-                    text = status,
+                    text = strings.status,
                     style = TextStyle(
-                        color = ColorProvider(mainColor),
+                        color = mainColor.toGlanceColorProvider(),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -124,17 +161,17 @@ fun CaloriesWidgetContent(
             Spacer(modifier = GlanceModifier.height(10.dp))
 
             Text(
-                text = headline,
+                text = strings.headline,
                 style = TextStyle(
-                    color = ColorProvider(mainColor),
+                    color = mainColor.toGlanceColorProvider(),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
             Text(
-                text = "${state.progressPercent}% of ${state.targetCalories} kcal target",
+                text = strings.progress,
                 style = TextStyle(
-                    color = ColorProvider(mutedTextColor),
+                    color = mutedTextColor.toGlanceColorProvider(),
                     fontSize = 12.sp
                 )
             )
@@ -146,24 +183,24 @@ fun CaloriesWidgetContent(
                 modifier = GlanceModifier
                     .fillMaxWidth()
                     .height(9.dp),
-                color = ColorProvider(mainColor),
-                backgroundColor = ColorProvider(progressBackground.copy(alpha = 0.32f))
+                color = mainColor.toGlanceColorProvider(),
+                backgroundColor = progressBackground.copy(alpha = 0.32f).toGlanceColorProvider()
             )
 
             Spacer(modifier = GlanceModifier.height(12.dp))
 
             Row(modifier = GlanceModifier.fillMaxWidth()) {
-                WidgetMetricCard("Eaten", "${state.eatenCalories} kcal", InfoBlue, cardColor, textColor)
+                WidgetMetricCard(strings.eaten, strings.eatenValue, InfoBlue, cardColor, textColor)
                 Spacer(modifier = GlanceModifier.width(8.dp))
-                WidgetMetricCard("Burned", "${state.burnedCalories} kcal", EnergyAmber, cardColor, textColor)
+                WidgetMetricCard(strings.burned, strings.burnedValue, EnergyAmber, cardColor, textColor)
             }
 
             Spacer(modifier = GlanceModifier.height(8.dp))
 
             Row(modifier = GlanceModifier.fillMaxWidth()) {
-                WidgetMetricCard("Target", "${state.targetCalories} kcal", accent.secondary, cardColor, textColor)
+                WidgetMetricCard(strings.target, strings.targetValue, accent.secondary, cardColor, textColor)
                 Spacer(modifier = GlanceModifier.width(8.dp))
-                WidgetMetricCard("Balance", "${state.balanceCalories} kcal", mainColor, cardColor, textColor)
+                WidgetMetricCard(strings.balance, strings.balanceValue, mainColor, cardColor, textColor)
             }
         }
     }

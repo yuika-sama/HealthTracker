@@ -1,8 +1,8 @@
 package com.yuika.healthtracker.ui.features.main_features.add_activity
 
+import androidx.annotation.StringRes
 import com.yuika.healthtracker.domain.model.ActivityCatalog
 import com.yuika.healthtracker.ui.core.base.UiState
-import com.yuika.healthtracker.ui.core.model.IntensityLevel
 import java.time.LocalDate
 import kotlin.math.roundToInt
 
@@ -10,12 +10,12 @@ data class AddActivityUiState(
     val dateText: String = LocalDate.now().toString(),
     val activityCatalogs: List<ActivityCatalog> = emptyList(),
     val selectedActivity: ActivityCatalog? = null,
-    val activityCatalogError: String? = null,
+    @param:StringRes val activityCatalogErrorRes: Int? = null,
     val duration: String = "",
-    val durationError: String? = null,
+    @param:StringRes val durationErrorRes: Int? = null,
     val userWeightKg: Double = 0.0,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
+    @param:StringRes val errorMessageRes: Int? = null,
     val isSuccess: Boolean = false
 ) : UiState
 {

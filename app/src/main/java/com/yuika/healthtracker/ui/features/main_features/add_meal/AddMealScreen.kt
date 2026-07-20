@@ -64,6 +64,7 @@ fun AddMealScreen(
     val spacing = LocalSpacing.current
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val saveSuccessToast = stringResource(R.string.save_success)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     LaunchedEffect(mealType, dateText) {
@@ -75,7 +76,7 @@ fun AddMealScreen(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is AddMealEffect.NavigateBackWithSuccess -> {
-                        Toast.makeText(context, context.getString(R.string.save_success), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, saveSuccessToast, Toast.LENGTH_SHORT).show()
                         onSaveClick()
                     }
                 }
@@ -98,9 +99,9 @@ fun AddMealScreen(
             item {
                 Spacer(modifier = Modifier.height(8.dp))
 
-                state.errorMessage?.let { ErrorText(msg = it) }
+                state.errorMessageRes?.let { ErrorText(msg = stringResource(it)) }
 
-                if (state.isSuccess && !state.isLoading && state.errorMessage == null) {
+                if (state.isSuccess && !state.isLoading && state.errorMessageRes == null) {
                     SuccessText(msg = stringResource(R.string.meal_saved))
                 }
 

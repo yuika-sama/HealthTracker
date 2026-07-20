@@ -48,6 +48,7 @@ fun TrendsScreen(
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val shareReportTitle = stringResource(R.string.trends_share_report)
+    val dayDetailTitle = stringResource(R.string.trends_day_detail)
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(TrendsIntent.LoadTrendsData)
@@ -180,7 +181,7 @@ fun TrendsScreen(
                 CalorieIntakeChart(
                     dataPoints = state.intakeChartData,
                     periodLabel = "${state.startDate} - ${state.endDate}",
-                    onPointClick = { viewModel.onIntent(TrendsIntent.PointClick(context.getString(R.string.trends_day_detail), it)) }
+                    onPointClick = { viewModel.onIntent(TrendsIntent.PointClick(dayDetailTitle, it)) }
                 )
             }
 
@@ -191,7 +192,7 @@ fun TrendsScreen(
                     onPointClick = {
                         viewModel.onIntent(
                             TrendsIntent.PointClick(
-                                context.getString(R.string.trends_day_detail),
+                                dayDetailTitle,
                                 it
                             )
                         )

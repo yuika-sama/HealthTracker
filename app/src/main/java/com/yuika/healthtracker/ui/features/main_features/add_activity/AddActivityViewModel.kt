@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.ui.features.main_features.add_activity
 
+import com.yuika.healthtracker.R
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.GetActivityCatalogUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.activity.ValidateAndSaveActivityUseCase
 import com.yuika.healthtracker.domain.usecase.main_use_cases.user.GetLatestUserUseCase
@@ -23,10 +24,10 @@ class AddActivityViewModel @Inject constructor(
         when (intent) {
             is AddActivityIntent.Init -> loadData(intent.dateText)
             is AddActivityIntent.OnActivitySelected -> updateState {
-                it.copy(selectedActivity = intent.activity, activityCatalogError = null, isSuccess = false)
+                it.copy(selectedActivity = intent.activity, activityCatalogErrorRes = null, isSuccess = false)
             }
             is AddActivityIntent.OnDurationChange -> {
-                updateState { it.copy(duration = intent.duration, durationError = null, isSuccess = false) }
+                updateState { it.copy(duration = intent.duration, durationErrorRes = null, isSuccess = false) }
             }
             is AddActivityIntent.OnSaveClick -> {
                 handleSaveActivity()
@@ -36,11 +37,11 @@ class AddActivityViewModel @Inject constructor(
 
     private fun loadData(dateText: String)
     {
-        updateState { it.copy(dateText = dateText, errorMessage = null) }
+        updateState { it.copy(dateText = dateText, errorMessageRes = null) }
 
         launchSafe(
-            onError = { throwable ->
-                updateState { it.copy(errorMessage = throwable.message ?: "Can't load activity catalog") }
+            onError = {
+                updateState { it.copy(errorMessageRes = R.string.error_cannot_load_activity_catalog) }
             }
         ) {
             val user = getLatestUserUseCase().firstOrNull()
@@ -58,12 +59,12 @@ class AddActivityViewModel @Inject constructor(
     private fun handleSaveActivity()
     {
         val currentState = state.value
-        val activityError = if (currentState.selectedActivity == null) "Please select an activity" else null
+        val activityError = if (currentState.selectedActivity == null) R.string.error_select_activity else null
         val duration = currentState.duration.toIntOrNull()
         val durationError = when
         {
-            currentState.duration.isBlank() -> "Please fill in practice duration"
-            duration == null || duration <= 0 -> "Please fill in valid practice duration"
+            currentState.duration.isBlank() -> R.string.error_valid_duration
+            duration == null || duration <= 0 -> R.string.error_valid_duration
             else -> null
         }
 
@@ -72,9 +73,9 @@ class AddActivityViewModel @Inject constructor(
             updateState {
                 it.copy(
                     isLoading = false,
-                    errorMessage = null,
-                    activityCatalogError = activityError,
-                    durationError = durationError,
+                    errorMessageRes = null,
+                    activityCatalogErrorRes = activityError,
+                    durationErrorRes = durationError,
                     isSuccess = false
                 )
             }
@@ -84,17 +85,16 @@ class AddActivityViewModel @Inject constructor(
         updateState {
             it.copy(
                 isLoading = true,
-                errorMessage = null,
-                activityCatalogError = null,
-                durationError = null,
+                errorMessageRes = null,
+                activityCatalogErrorRes = null,
+                durationErrorRes = null,
                 isSuccess = false
             )
         }
 
         launchSafe(
-            onError = {throwable ->
-                val message = throwable.message ?: "Unknown error"
-                updateState { it.copy(isLoading = false, errorMessage = message, isSuccess = false) }
+            onError = {
+                updateState { it.copy(isLoading = false, errorMessageRes = R.string.error_unknown, isSuccess = false) }
             }
         ) {
             validateAndSaveActivityUseCase(

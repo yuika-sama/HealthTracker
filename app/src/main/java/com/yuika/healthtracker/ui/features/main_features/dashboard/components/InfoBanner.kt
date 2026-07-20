@@ -19,12 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.yuika.healthtracker.ui.theme.Emerald
 
 @Composable
 fun InfoBanner(
     modifier: Modifier = Modifier,
-    message: String = "Enough calories for today! Keep up the great work."
+    message: String
 ) {
     Row(
         modifier = modifier

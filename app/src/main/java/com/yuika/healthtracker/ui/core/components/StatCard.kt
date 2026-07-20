@@ -101,7 +101,7 @@ fun StatCard(
                     color = labelColor
                 )
             } else if (unit != null) {
-                // If centered (like in Diary's StatItem)
+                // If centered
                 Text(
                     text = value,
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),

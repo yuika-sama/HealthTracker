@@ -143,12 +143,9 @@ fun DashboardScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (state.errorMessage != null)
-            {
-                ErrorText(state.errorMessage!!)
-            }
+            state.errorMessageRes?.let { ErrorText(stringResource(it)) }
 
-//            if (state.isSuccess && !state.isLoading && state.errorMessage == null)
+//            if (state.isSuccess && !state.isLoading && state.errorMessageRes == null)
 //            {
 //                SuccessText("Dashboard loaded")
 //            }

@@ -138,6 +138,7 @@
     <string name="diary_snacks_drinks">Snacks &amp; Drinks</string>
 
     <string name="add_meal_calories">Calories</string>
+    <string name="add_meal_catalog_food_detail">%1$d kcal / %2$s %3$s</string>
     <string name="add_meal_enter_food_name">Enter food name</string>
     <string name="add_meal_food_details">FOOD DETAILS</string>
     <string name="add_meal_food_name">Food name</string>
@@ -165,6 +166,17 @@
     <string name="activity_total_burned">Total Burned</string>
     <string name="activity_training_time">Training time</string>
     <string name="activity_weight_detail">Weight: %1$s kg</string>
+
+    <string name="widget_balance">Balance</string>
+    <string name="widget_calories">Calories</string>
+    <string name="widget_kcal_left">%1$d kcal left</string>
+    <string name="widget_kcal_over">%1$d kcal over</string>
+    <string name="widget_kcal_target">%1$d%% of %2$d kcal target</string>
+    <string name="widget_kcal_value">%1$d kcal</string>
+    <string name="widget_on_track">ON TRACK</string>
+    <string name="widget_over_target">OVER TARGET</string>
+    <string name="widget_setup_profile">Set up your profile to see today\'s calories.</string>
+    <string name="widget_target">Target</string>
 
     <string name="trends_balance_kcal">Balance: %1$d kcal</string>
     <string name="trends_burned_kcal">Burned: %1$d kcal</string>

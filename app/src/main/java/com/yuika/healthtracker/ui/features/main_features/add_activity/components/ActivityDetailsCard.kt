@@ -45,7 +45,7 @@ fun ActivityDetailsCard(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        FieldErrorText(state.activityCatalogError)
+        FieldErrorText(state.activityCatalogErrorRes?.let { stringResource(it) })
 
         if (state.activityCatalogs.isEmpty()) {
             Text(
