@@ -1,6 +1,7 @@
 package com.yuika.healthtracker.ui.features.main_features.dashboard
 
 import androidx.annotation.StringRes
+import com.yuika.healthtracker.domain.model.calorieProgress
 import com.yuika.healthtracker.ui.core.base.UiState
 
 data class DashboardUiState(
@@ -20,5 +21,5 @@ data class DashboardUiState(
     val isSuccess: Boolean = false
 ) : UiState {
     val progressFraction: Float
-        get() = if (goalCalories > 0) (netBalance / goalCalories.toFloat()).coerceIn(0f, 1f) else 0f
+        get() = calorieProgress(intakeCalories, goalCalories)
 }

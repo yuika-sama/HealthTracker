@@ -1,5 +1,6 @@
 package com.yuika.healthtracker.service.widget
 
+import com.yuika.healthtracker.domain.model.calorieProgress
 import kotlin.math.roundToInt
 
 data class WidgetCaloriesState(
@@ -11,9 +12,7 @@ data class WidgetCaloriesState(
     val remainingCalories: Int
 ){
     val progress: Float
-        get() = if (targetCalories > 0){
-            (balanceCalories / targetCalories.toFloat()).coerceIn(0f, 1f)
-        } else 0f
+        get() = calorieProgress(eatenCalories, targetCalories)
 
     val progressPercent: Int get() = (progress * 100).roundToInt()
 
