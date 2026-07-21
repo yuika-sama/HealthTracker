@@ -52,7 +52,8 @@ class MainActivity : ComponentActivity()
 
             LaunchedEffect(settingsState?.language) {
                 val language = settingsState?.language ?: return@LaunchedEffect
-                if (resources.configuration.locales[0].language != language.localeTag) {
+                if (resources.configuration.locales[0].language != language.localeTag)
+                {
                     recreate()
                 }
             }

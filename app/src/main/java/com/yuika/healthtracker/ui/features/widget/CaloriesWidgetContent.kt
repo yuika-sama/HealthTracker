@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
+import androidx.glance.action.clickable
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.LinearProgressIndicator
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
@@ -104,7 +106,8 @@ internal fun CaloriesWidgetContent(
             .fillMaxSize()
             .background(backgroundColor)
             .cornerRadius(24.dp)
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable(onClick = actionRunCallback<RefreshWidgetAction>()),
         verticalAlignment = Alignment.Top,
         horizontalAlignment = Alignment.Start
     ) {
