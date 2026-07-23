@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.main_features.dashboard.components
+package com.yuika.healthtracker.ui.navigation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.yuika.healthtracker.R
 
 @Composable
-fun DashboardBottomNav(
+fun AppBottomNav(
     modifier: Modifier = Modifier,
     currentRoute: String = "home",
     onTabClick: (String) -> Unit = {}
@@ -33,31 +33,31 @@ fun DashboardBottomNav(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        DashboardBottomNavItem(
+        AppBottomNavItem(
             icon = Icons.Outlined.GridView,
             label = stringResource(R.string.nav_home),
             isSelected = currentRoute == "home",
             onClick = { onTabClick("home") }
         )
-        DashboardBottomNavItem(
+        AppBottomNavItem(
             icon = Icons.Outlined.Restaurant,
             label = stringResource(R.string.nav_diary),
             isSelected = currentRoute == "diary",
             onClick = { onTabClick("diary") }
         )
-        DashboardBottomNavItem(
+        AppBottomNavItem(
             icon = Icons.Outlined.FitnessCenter,
             label = stringResource(R.string.nav_activity),
             isSelected = currentRoute == "activity",
             onClick = { onTabClick("activity") }
         )
-        DashboardBottomNavItem(
+        AppBottomNavItem(
             icon = Icons.Outlined.BarChart,
             label = stringResource(R.string.nav_trends),
             isSelected = currentRoute == "trends",
             onClick = { onTabClick("trends") }
         )
-        DashboardBottomNavItem(
+        AppBottomNavItem(
             icon = Icons.Outlined.Person,
             label = stringResource(R.string.nav_profile),
             isSelected = currentRoute == "profile",

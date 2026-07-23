@@ -83,7 +83,7 @@ fun AppNavHost(
             ) { innerPadding ->
                 NavHost(
                     navController = navController,
-                    startDestination = startRoute!!,
+                    startDestination = startRoute ?: Route.Onboarding1,
                     modifier = Modifier.fillMaxSize()
                 ){
                     onboardingNavGraph(

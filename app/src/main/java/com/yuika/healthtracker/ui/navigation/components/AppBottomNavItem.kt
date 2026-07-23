@@ -1,4 +1,4 @@
-package com.yuika.healthtracker.ui.features.main_features.dashboard.components
+package com.yuika.healthtracker.ui.navigation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun DashboardBottomNavItem(
+fun AppBottomNavItem(
     icon: ImageVector,
     label: String,
     isSelected: Boolean,

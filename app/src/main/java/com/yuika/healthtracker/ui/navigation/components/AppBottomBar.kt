@@ -3,7 +3,6 @@ package com.yuika.healthtracker.ui.navigation.components
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.yuika.healthtracker.ui.features.main_features.dashboard.components.DashboardBottomNav
 
 @Composable
 fun AppBottomBar(
@@ -12,7 +11,7 @@ fun AppBottomBar(
     modifier: Modifier = Modifier
 ) {
     if (currentTab != null) {
-        DashboardBottomNav(
+        AppBottomNav(
             modifier = modifier.navigationBarsPadding(),
             currentRoute = currentTab,
             onTabClick = onTabClick
