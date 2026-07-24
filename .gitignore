@@ -17,6 +17,7 @@ local.properties
 /skills
 /skill
 *.md
+!README.md
 /.agents
 /.codex
 /.kotlin
