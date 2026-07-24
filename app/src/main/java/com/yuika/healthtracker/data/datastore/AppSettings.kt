@@ -23,21 +23,21 @@ import javax.inject.Singleton
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_settings")
 
-object PreferencesKeys
-{
-    val THEME_MODE = stringPreferencesKey("theme_mode")
-    val THEME_COLOR_PRESET = stringPreferencesKey("theme_color_preset")
-    val FONT_SIZE = stringPreferencesKey("font_size")
-    val LANGUAGE = stringPreferencesKey("language")
-    val NOTIFICATION_ENABLED = booleanPreferencesKey("notification_enabled")
-    val TEST_NOTIFICATION_ENABLED = booleanPreferencesKey("test_notification_enabled")
-}
-
 @Singleton
 class AppSettingsStore @Inject constructor(
     @param:ApplicationContext private val context: Context
 )
 {
+
+    private object PreferencesKeys
+    {
+        val THEME_MODE = stringPreferencesKey("theme_mode")
+        val THEME_COLOR_PRESET = stringPreferencesKey("theme_color_preset")
+        val FONT_SIZE = stringPreferencesKey("font_size")
+        val LANGUAGE = stringPreferencesKey("language")
+        val NOTIFICATION_ENABLED = booleanPreferencesKey("notification_enabled")
+        val TEST_NOTIFICATION_ENABLED = booleanPreferencesKey("test_notification_enabled")
+    }
     val settings: Flow<AppSettingsState> = context.dataStore.data
         .catch { error ->
             if (error is IOException) emit(emptyPreferences()) else throw error
